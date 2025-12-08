@@ -1,0 +1,565 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Figtree', sans-serif;
+    background: #F4F4FA;
+    color: #2d3436;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+/* Navigation */
+.navbar {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    padding: 12px 0;
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    margin: 20px auto;
+    max-width: 1200px;
+    border-radius: 80px;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.nav-logo {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: opacity 0.3s;
+}
+
+.nav-links a:hover {
+    opacity: 0.8;
+}
+
+.nav-cta {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-cta:hover {
+    background: white;
+    color: black;
+}
+
+/* Hero Section */
+.hero {
+    padding: 80px 0 60px;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.hero-text h1 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 24px;
+}
+
+.hero-text p {
+    font-size: 20px;
+    color: #676767;
+    line-height: 1.6;
+}
+
+.hero-image {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Search Form */
+.search-form {
+    background: white;
+    padding: 40px;
+    border-radius: 40px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.09);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+}
+
+.form-fields {
+    display: flex;
+    gap: 32px;
+    flex: 1;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #2d3436;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 16px 24px;
+    border: 1px solid #676767;
+    border-radius: 40px;
+    font-size: 18px;
+    color: #676767;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #F45B69;
+}
+
+.search-btn {
+    background: #FFC5C5;
+    color: black;
+    border: 2px solid black;
+    padding: 16px 40px;
+    border-radius: 40px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    background: #F45B69;
+    color: white;
+}
+
+/* Section Titles */
+.section-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 72px;
+    font-weight: 200;
+    text-align: center;
+    margin-bottom: 60px;
+    line-height: 1.1;
+}
+
+.section-title .highlight {
+    font-weight: 700;
+    color: #F45B69;
+}
+
+/* Job Roles Section */
+.job-roles {
+    padding: 100px 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.section-header h3 {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.carousel-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.carousel-btn {
+    width: 54px;
+    height: 54px;
+    border: 2px solid black;
+    border-radius: 40px;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.carousel-btn:hover {
+    background: black;
+    color: white;
+}
+
+.job-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.job-card {
+    background: white;
+    border-radius: 40px;
+    padding: 16px;
+    box-shadow: 10px 11px 69px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s;
+}
+
+.job-card:hover {
+    transform: translateY(-8px);
+}
+
+.job-card-image {
+    border-radius: 32px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    height: 240px;
+}
+
+.job-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.job-card-content h4 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.job-card-content p {
+    font-size: 18px;
+    color: #676767;
+    line-height: 1.6;
+}
+
+/* Locations Section */
+.locations {
+    padding: 100px 0;
+}
+
+.locations-card {
+    background: white;
+    border-radius: 40px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.locations-content h3 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.locations-content p {
+    font-size: 16px;
+    color: #676767;
+    margin-bottom: 32px;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.locations-grid span {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.locations-image {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 400px;
+}
+
+.locations-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Team Section */
+.team {
+    padding: 100px 0;
+}
+
+.team-card {
+    background: white;
+    border-radius: 40px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.team-image {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 400px;
+}
+
+.team-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.team-text h3 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.team-text p {
+    font-size: 16px;
+    color: #676767;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.view-all-btn {
+    background: transparent;
+    color: black;
+    border: 2px solid black;
+    padding: 16px 40px;
+    border-radius: 40px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    align-self: flex-start;
+}
+
+.view-all-btn:hover {
+    background: black;
+    color: white;
+}
+
+/* Life at FVC Section */
+.life-at-fvc {
+    padding: 100px 0;
+}
+
+.gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.gallery-row {
+    display: flex;
+    gap: 20px;
+}
+
+.gallery-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gallery-item {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.gallery-item.large {
+    flex: 1.5;
+    height: 300px;
+}
+
+.gallery-item.medium {
+    flex: 1.3;
+    height: 300px;
+}
+
+.gallery-item.small {
+    height: 144px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Footer */
+.footer {
+    background: black;
+    color: white;
+    padding: 80px 0 40px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.footer-column h4 {
+    color: #E09F7D;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.footer-column a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin-bottom: 16px;
+    transition: opacity 0.3s;
+}
+
+.footer-column a:hover {
+    opacity: 0.7;
+}
+
+.footer-logo {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    margin-bottom: 24px;
+}
+
+.social-links {
+    display: flex;
+    gap: 16px;
+}
+
+.social-links a {
+    margin-bottom: 0;
+}
+
+.footer-divider {
+    height: 1px;
+    background: #676767;
+    margin: 40px 0;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.copyright {
+    font-size: 18px;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 24px;
+    }
+
+    .hero-content {
+        grid-template-columns: 1fr;
+    }
+
+    .job-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .locations-card,
+    .team-card {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-content {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 48px;
+    }
+
+    .hero-text h1 {
+        font-size: 48px;
+    }
+
+    .job-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .form-fields {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

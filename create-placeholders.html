@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Placeholder Images</title>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const colors = [
+            '#667EEA', '#764BA2', '#F093FB', '#4FACFE', 
+            '#43E97B', '#FA709A'
+        ];
+        
+        colors.forEach((color, index) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 800, 600);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 48px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Life at FVC ${index + 1}`, 400, 300);
+            
+            const link = document.createElement('a');
+            link.download = `life-${index + 1}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg');
+            link.click();
+        });
+    </script>
+</body>
+</html>

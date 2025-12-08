@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Portal - FVC Careers</title>
+    <meta name="description" content="HR Portal for managing job applications and candidates">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="hr-portal.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="logo-section">
+                <div class="logo">FVC</div>
+            </div>
+
+            <!-- Welcome Text -->
+            <div class="welcome-section">
+                <h1>Welcome</h1>
+                <p>Log in to verify your credentials</p>
+            </div>
+
+            <!-- Role Tabs -->
+            <div class="role-tabs">
+                <button class="role-tab active" data-role="hr">HR Employer</button>
+                <button class="role-tab" data-role="admin">Admin</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Create Username</label>
+                    <input type="text" id="username" name="username" placeholder="john_doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••••" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="code">Enter Code</label>
+                    <input type="text" id="code" name="code" placeholder="Enter code here..." required>
+                </div>
+
+                <button type="submit" class="login-btn">Log In</button>
+            </form>
+
+            <!-- Forgot Password -->
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/hr-login.js"></script>
+</body>
+
+</html>

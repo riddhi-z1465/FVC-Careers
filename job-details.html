@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details - FVC Careers</title>
+    <meta name="description" content="View detailed information about this position at FVC">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles_aligned.css">
+    <link rel="stylesheet" href="job-details.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">FVC</div>
+            <div class="nav-links">
+                <a href="index.html">Solutions</a>
+                <a href="#">Services</a>
+                <a href="#">Brands</a>
+                <a href="#">Resources</a>
+                <a href="#">More</a>
+            </div>
+            <button class="nav-cta">Contact Us</button>
+        </div>
+    </nav>
+
+    <!-- Job Details Section -->
+    <section class="job-details-section">
+        <div class="container">
+            <!-- Back Button -->
+            <a href="jobs.html" class="back-button">
+                <span class="back-icon">←</span>
+            </a>
+
+            <!-- Job Header -->
+            <div class="job-details-header">
+                <div class="job-title-section">
+                    <h1 class="job-title" id="jobTitle">UX Designer, YouTube Paid Digital Goods</h1>
+                    <div class="job-meta-info">
+                        <span class="meta-badge">
+                            <span class="icon">🏢</span> <span id="jobCompany">YouTube</span>
+                        </span>
+                        <span class="meta-badge">
+                            <span class="icon">📍</span> <span id="jobLocation">Mumbai, India</span>
+                        </span>
+                        <span class="meta-badge">
+                            <span class="icon">💼</span> <span id="jobType">Full-time</span>
+                        </span>
+                    </div>
+                </div>
+                <button class="apply-now-btn" onclick="showApplicationForm()">Apply Now</button>
+            </div>
+
+            <!-- Job Content -->
+            <div class="job-details-content">
+                <!-- Minimum Qualifications -->
+                <div class="job-section">
+                    <h2>Minimum qualifications</h2>
+                    <ul id="minQualifications">
+                        <li>Bachelor's degree or equivalent practical experience.</li>
+                        <li>4 years of interaction design experience in product design or UX design.</li>
+                        <li>Experience with motion and prototyping tools (e.g., After Effects, Principle, or similar).
+                        </li>
+                        <li>Experience implementing visual design systems across multiple platforms and surfaces.</li>
+                        <li>Include a portfolio, website, or any other relevant link to your work in your resume
+                            (providing a viewable link or access instructions).</li>
+                    </ul>
+                </div>
+
+                <!-- Preferred Qualifications -->
+                <div class="job-section">
+                    <h2>Preferred qualifications</h2>
+                    <ul id="prefQualifications">
+                        <li>Master's degree in Design, Human-Computer Interaction, Computer Science, a related field, or
+                            equivalent practical experience.</li>
+                        <li>2 years of experience working in a cross-functional organization.</li>
+                        <li>1 year of experience leading design projects.</li>
+                        <li>Experience designing for consumer, B2C products and apps.</li>
+                    </ul>
+                </div>
+
+                <!-- About Job -->
+                <div class="job-section">
+                    <h2>About Job</h2>
+                    <div id="jobDescription">
+                        <p>At Google, we follow a simple but vital premise: "Focus on the user and all else will
+                            follow." Google's Interaction Designers take complex tasks and make them intuitive and
+                            easy-to-use for billions of people around the globe. Throughout the design process—from
+                            creating user flows and wireframes to building user interface mockups and prototypes—you'll
+                            envision how people will experience our products, and bring that vision to life in a way
+                            that feels inspired, refined, and even magical.</p>
+
+                        <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers,
+                            Researchers, Writers, Content Strategists, Program Managers, and Engineers. We care deeply
+                            about the people who use our products. The UX team plays an integral part in gathering
+                            insights about the attitudes, emotions, and behaviors of people who use our products to
+                            inspire and inform design. We collaborate closely with each other and with engineering and
+                            product management to create industry-leading products that deliver value for the people who
+                            use them, and for Google's businesses.</p>
+
+                        <p>As an Interaction Designer, you'll rely on user-centered design methods to craft
+                            industry-leading user experiences—from concept to execution. Like all of our UX jobs, you'll
+                            collaborate with your design partners to leverage and evolve the Google design language to
+                            build beautiful, innovative, inspired products that people love to use.</p>
+                    </div>
+                </div>
+
+                <!-- Responsibilities -->
+                <div class="job-section">
+                    <h2>Responsibilities</h2>
+                    <ul id="jobResponsibilities">
+                        <li>Collaborate with product managers, engineers, and cross-functional stakeholders to
+                            understand requirements, and provide creative, thoughtful solutions.</li>
+                        <li>Communicate the user experience at various stages of the design process with wireframes,
+                            flow diagrams, storyboards, mockups, or high-fidelity prototypes.</li>
+                        <li>Integrate user feedback and business requirements into ongoing product experience updates.
+                        </li>
+                        <li>Advocate for the prioritization of design-centered changes, refinements, and improvements.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Benefits (Optional) -->
+                <div class="job-section" id="benefitsSection" style="display: none;">
+                    <h2>Benefits</h2>
+                    <ul id="jobBenefits">
+                        <!-- Will be populated dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Salary Range (Optional) -->
+                <div class="job-section" id="salarySection" style="display: none;">
+                    <h2>Salary Range</h2>
+                    <p id="jobSalary" class="salary-range"></p>
+                </div>
+            </div>
+
+            <!-- Apply Button (Bottom) -->
+            <div class="apply-section">
+                <button class="apply-now-btn large" onclick="showApplicationForm()">Apply Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">FVC</div>
+                    <div class="social-links">
+                        <a href="#">LinkedIn</a>
+                        <a href="#">Facebook</a>
+                        <a href="#">Instagram</a>
+                        <a href="#">YouTube</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>About Us</h4>
+                    <a href="#">Company Overview</a>
+                    <a href="#">Demo Centers</a>
+                    <a href="#">Geographical Footprints</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Solutions</h4>
+                    <a href="#">UCC</a>
+                    <a href="#">Audio Video</a>
+                    <a href="#">Cyber Security</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <a href="#">Migration Services</a>
+                    <a href="#">Specialized SLAS</a>
+                    <a href="#">Remote & On-site Deployment</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Partners</h4>
+                    <a href="#">Vendors</a>
+                    <a href="#">Vendor Advantages</a>
+                    <a href="#">Become a Partner</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Media & Events</h4>
+                    <a href="#">News & Insights</a>
+                    <a href="#">Awards</a>
+                    <a href="#">Events</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <a href="#">Office Address</a>
+                    <a href="#">Contact Form</a>
+                    <a href="jobs.html">Open Jobs</a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Legal</a>
+                    <a href="#">Disclaimer</a>
+                </div>
+                <p class="copyright">FVC MEA DMCC © - All Rights Reserved 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/job-details.js"></script>
+</body>
+
+</html>

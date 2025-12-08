@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job - FVC Careers</title>
+    <meta name="description" content="Complete your profile to apply for this position at FVC">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles_aligned.css">
+    <link rel="stylesheet" href="apply.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">FVC</div>
+            <div class="nav-links">
+                <a href="index.html">Solutions</a>
+                <a href="#">Services</a>
+                <a href="#">Brands</a>
+                <a href="#">Resources</a>
+                <a href="#">More</a>
+            </div>
+            <button class="nav-cta">Contact Us</button>
+        </div>
+    </nav>
+
+    <!-- Application Form Section -->
+    <section class="application-section">
+        <div class="container-small">
+            <div class="application-card">
+                <div class="application-header">
+                    <h1>Build Profile</h1>
+                    <p class="subtitle">Complete your profile to apply to job</p>
+                </div>
+
+                <form id="applicationForm" enctype="multipart/form-data">
+                    <!-- Personal Info -->
+                    <div class="form-section">
+                        <h2>Personal Info</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name <span class="required">*</span></label>
+                                <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="targetRole">Target Role <span class="required">*</span></label>
+                                <input type="text" id="targetRole" name="targetRole" placeholder="UX Designer" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mobileNumber">Mobile Number <span class="required">*</span></label>
+                                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="+1 (862) 217-9"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="form-section">
+                        <h2>Education</h2>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="university">University/College <span class="required">*</span></label>
+                                <input type="text" id="university" name="university" placeholder="MIT" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="degree">Degree <span class="required">*</span></label>
+                                <input type="text" id="degree" name="degree" placeholder="UX Designer" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="graduationYear">Graduation Year <span class="required">*</span></label>
+                                <input type="text" id="graduationYear" name="graduationYear" placeholder="9/18/674372"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About You -->
+                    <div class="form-section">
+                        <h2>About You</h2>
+
+                        <!-- Photo and Resume Upload -->
+                        <div class="upload-row">
+                            <div class="upload-group">
+                                <label>Profile Photo <span class="file-size">Max: 500mb</span></label>
+                                <div class="upload-area">
+                                    <div class="upload-preview" id="photoPreview">
+                                        <div class="preview-placeholder">
+                                            <span class="camera-icon">📷</span>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" hidden>
+                                    <button type="button" class="upload-btn"
+                                        onclick="document.getElementById('profilePhoto').click()">
+                                        Upload 📤
+                                    </button>
+                                    <p class="upload-status">Recommended file format</p>
+                                </div>
+                            </div>
+
+                            <div class="upload-group">
+                                <label>CV/Resume <span class="file-size">Max: 10MB</span></label>
+                                <div class="upload-area">
+                                    <div class="file-info" id="resumeInfo">
+                                        <span class="file-name">cv.pdf</span>
+                                    </div>
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" hidden
+                                        required>
+                                    <button type="button" class="upload-btn"
+                                        onclick="document.getElementById('resume').click()">
+                                        Upload 📤
+                                    </button>
+                                    <p class="upload-status" id="resumeStatus">Successfully Uploaded</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio and Skills -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="portfolio">Portfolio/LinkedIn <span class="required">*</span></label>
+                                <input type="url" id="portfolio" name="portfolio" placeholder="https://" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="skills">Skills <span class="required">*</span></label>
+                                <input type="text" id="skills" name="skills" placeholder="eg. react, three.js, figma"
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio" rows="4"
+                                    placeholder="I am something special..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Level -->
+                    <div class="form-section">
+                        <h2>Experience Level</h2>
+                        <div class="experience-options">
+                            <div class="experience-card" data-level="junior">
+                                <div class="experience-icon">🌱</div>
+                                <div class="experience-label">Junior</div>
+                                <div class="experience-years">0-2 Years</div>
+                            </div>
+                            <div class="experience-card active" data-level="mid">
+                                <div class="experience-icon">🎯</div>
+                                <div class="experience-label">Mid Level</div>
+                                <div class="experience-years">2-5 Years</div>
+                            </div>
+                            <div class="experience-card" data-level="senior">
+                                <div class="experience-icon">🏆</div>
+                                <div class="experience-label">Senior</div>
+                                <div class="experience-years">5+ Years</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="experienceLevel" name="experienceLevel" value="mid" required>
+                    </div>
+
+                    <!-- LinkedIn Follow -->
+                    <div class="form-section">
+                        <h2>Follow Us on LinkedIn ↗</h2>
+                        <div class="linkedin-card">
+                            <div class="linkedin-banner">
+                                <img src="images/office-location.jpg" alt="FVC Banner">
+                            </div>
+                            <div class="linkedin-content">
+                                <div class="linkedin-logo">FVC</div>
+                                <div class="linkedin-info">
+                                    <h3>FVC ✓</h3>
+                                    <p class="linkedin-tagline">Your Partner for Digital Transformation</p>
+                                    <p class="linkedin-stats">IT Services and IT Consulting · Dubai · 336 followers ·
+                                        431-542 employees</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
+                        <button type="submit" class="save-btn">Save Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">FVC</div>
+                    <div class="social-links">
+                        <a href="#">LinkedIn</a>
+                        <a href="#">Facebook</a>
+                        <a href="#">Instagram</a>
+                        <a href="#">YouTube</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>About Us</h4>
+                    <a href="#">Company Overview</a>
+                    <a href="#">Demo Centers</a>
+                    <a href="#">Geographical Footprints</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Solutions</h4>
+                    <a href="#">UCC</a>
+                    <a href="#">Audio Video</a>
+                    <a href="#">Cyber Security</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <a href="#">Migration Services</a>
+                    <a href="#">Specialized SLAS</a>
+                    <a href="#">Remote & On-site Deployment</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Partners</h4>
+                    <a href="#">Vendors</a>
+                    <a href="#">Vendor Advantages</a>
+                    <a href="#">Become a Partner</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Media & Events</h4>
+                    <a href="#">News & Insights</a>
+                    <a href="#">Awards</a>
+                    <a href="#">Events</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <a href="#">Office Address</a>
+                    <a href="#">Contact Form</a>
+                    <a href="jobs.html">Open Jobs</a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Legal</a>
+                    <a href="#">Disclaimer</a>
+                </div>
+                <p class="copyright">FVC MEA DMCC © - All Rights Reserved 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/apply.js"></script>
+</body>
+
+</html>

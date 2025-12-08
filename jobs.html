@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Jobs - FVC Careers</title>
+    <meta name="description" content="Search and apply for open positions at FVC. Find your perfect role.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles_aligned.css">
+    <link rel="stylesheet" href="jobs.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">FVC</div>
+            <div class="nav-links">
+                <a href="index.html">Solutions</a>
+                <a href="#">Services</a>
+                <a href="#">Brands</a>
+                <a href="#">Resources</a>
+                <a href="#">More</a>
+            </div>
+            <button class="nav-cta">Contact Us</button>
+        </div>
+    </nav>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-header">
+                <h1>Jobs</h1>
+                <div class="search-controls">
+                    <div class="search-box">
+                        <input type="text" placeholder="UX designer" class="search-input">
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="Location" class="search-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active">
+                    <span class="filter-icon">📍</span> Filters
+                </button>
+
+                <!-- Experience Filter -->
+                <div class="filter-dropdown">
+                    <button class="filter-btn" onclick="toggleDropdown('experience')">
+                        Experience <span class="filter-count">2</span>
+                    </button>
+                    <div class="dropdown-content" id="experience">
+                        <div class="filter-option">
+                            <input type="checkbox" id="intern" name="experience">
+                            <label for="intern">Intern</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="early" name="experience">
+                            <label for="early">Early</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="mid" name="experience">
+                            <label for="mid">Mid</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="advanced" name="experience">
+                            <label for="advanced">Advanced</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="director" name="experience">
+                            <label for="director">Director+</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Type Filter -->
+                <div class="filter-dropdown">
+                    <button class="filter-btn" onclick="toggleDropdown('jobtype')">
+                        Job Type <span class="filter-count">3</span>
+                    </button>
+                    <div class="dropdown-content" id="jobtype">
+                        <div class="filter-option">
+                            <input type="checkbox" id="fulltime" name="jobtype">
+                            <label for="fulltime">Full-time</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="parttime" name="jobtype">
+                            <label for="parttime">Part-time</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="temporary" name="jobtype">
+                            <label for="temporary">Temporary</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="internship" name="jobtype">
+                            <label for="internship">Intern</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qualifications Filter -->
+                <div class="filter-dropdown">
+                    <button class="filter-btn" onclick="toggleDropdown('qualifications')">
+                        Qualifications
+                    </button>
+                    <div class="dropdown-content" id="qualifications">
+                        <div class="filter-option">
+                            <input type="checkbox" id="ongoing" name="qualifications">
+                            <label for="ongoing">Ongoing Study</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="associate" name="qualifications">
+                            <label for="associate">Associate</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="bachelors" name="qualifications">
+                            <label for="bachelors">Bachelors</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="masters" name="qualifications">
+                            <label for="masters">Masters</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="phd" name="qualifications">
+                            <label for="phd">Ph.D.</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Filter -->
+                <div class="filter-dropdown">
+                    <button class="filter-btn" onclick="toggleDropdown('skills')">
+                        Job Role
+                    </button>
+                    <div class="dropdown-content skills-dropdown" id="skills">
+                        <div class="search-skills">
+                            <input type="text" placeholder="UX Design, UI design..." class="skills-search">
+                        </div>
+                        <div class="selected-skills">
+                            <span class="skill-tag">Design <button class="remove-skill">×</button></span>
+                            <span class="skill-tag">UI <button class="remove-skill">×</button></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="filter-btn clear-btn" onclick="clearAllFilters()">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Listings -->
+    <section class="job-listings">
+        <div class="container">
+            <!-- Job Card 1 -->
+            <div class="job-listing-card">
+                <div class="job-header">
+                    <h2 class="job-title">UX Designer, YouTube Paid Digital Goods</h2>
+                    <div class="job-meta">
+                        <span class="meta-item">
+                            <span class="icon">🏢</span> YouTube
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span> Mumbai, India
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">💼</span> Full-time
+                        </span>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <h3>About</h3>
+                    <p>At Google, we follow a simple and well-proven "Focus on the user and all else will follow."
+                        Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for
+                        billions of people around the globe. Throughout the design process—from creating user flows and
+                        wireframes to building user interface mockups and prototypes—you'll envision how people will
+                        experience our products, and bring that vision to life in a way that feels inspired, refined,
+                        and even magical.</p>
+                </div>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+
+            <!-- Job Card 2 -->
+            <div class="job-listing-card">
+                <div class="job-header">
+                    <h2 class="job-title">Staff UX Designer, Google Ad Sales CRM</h2>
+                    <div class="job-meta">
+                        <span class="meta-item">
+                            <span class="icon">🏢</span> Google
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span> Mumbai, India
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">💼</span> Part-time
+                        </span>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <h3>About</h3>
+                    <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers,
+                        Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people
+                        who use our products. The UX team plays an integral part in gathering insights about the
+                        attitudes, emotions, and behaviors of people who use our products to inspire and inform design.
+                        We collaborate closely with each other and with engineering and product management to create
+                        industry-leading products that deliver value for the people who use them, and for Google's
+                        businesses.</p>
+                </div>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+
+            <!-- Job Card 3 -->
+            <div class="job-listing-card">
+                <div class="job-header">
+                    <h2 class="job-title">UX Designer, Google Home Experience</h2>
+                    <div class="job-meta">
+                        <span class="meta-item">
+                            <span class="icon">🏢</span> Google
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span> Mumbai, India
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">💼</span> Intern
+                        </span>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <h3>About</h3>
+                    <p>At Google, we follow a simple and well-proven "Focus on the user and all else will follow."
+                        Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for
+                        billions of people around the globe. Throughout the design process—from creating user flows and
+                        wireframes to building user interface mockups and prototypes—you'll envision how people will
+                        experience our products, and bring that vision to life in a way that feels inspired, refined,
+                        and even magical.</p>
+                </div>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+
+            <!-- Job Card 4 -->
+            <div class="job-listing-card">
+                <div class="job-header">
+                    <h2 class="job-title">Staff UX Designer, Google Ad Sales CRM</h2>
+                    <div class="job-meta">
+                        <span class="meta-item">
+                            <span class="icon">🏢</span> Google
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span> Mumbai, India
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">💼</span> Part-time
+                        </span>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <h3>About</h3>
+                    <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers,
+                        Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people
+                        who use our products. The UX team plays an integral part in gathering insights about the
+                        attitudes, emotions, and behaviors of people who use our products to inspire and inform design.
+                        We collaborate closely with each other and with engineering and product management to create
+                        industry-leading products that deliver value for the people who use them, and for Google's
+                        businesses.</p>
+                </div>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+
+            <!-- Job Card 5 -->
+            <div class="job-listing-card">
+                <div class="job-header">
+                    <h2 class="job-title">Staff UX Designer, Google Ad Sales CRM</h2>
+                    <div class="job-meta">
+                        <span class="meta-item">
+                            <span class="icon">🏢</span> Google
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span> Mumbai, India
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">💼</span> Part-time
+                        </span>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <h3>About</h3>
+                    <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers,
+                        Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people
+                        who use our products. The UX team plays an integral part in gathering insights about the
+                        attitudes, emotions, and behaviors of people who use our products to inspire and inform design.
+                        We collaborate closely with each other and with engineering and product management to create
+                        industry-leading products that deliver value for the people who use them, and for Google's
+                        businesses.</p>
+                </div>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+
+            <!-- Job Card 6 -->
+            <div class="job-listing-card">
+                <div class="job-header">
+                    <h2 class="job-title">UX Designer, Google Home Experience</h2>
+                    <div class="job-meta">
+                        <span class="meta-item">
+                            <span class="icon">🏢</span> Google
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">📍</span> Mumbai, India
+                        </span>
+                        <span class="meta-item">
+                            <span class="icon">💼</span> Intern
+                        </span>
+                    </div>
+                </div>
+                <div class="job-content">
+                    <h3>About</h3>
+                    <p>At Google, we follow a simple and well-proven "Focus on the user and all else will follow."
+                        Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for
+                        billions of people around the globe. Throughout the design process—from creating user flows and
+                        wireframes to building user interface mockups and prototypes—you'll envision how people will
+                        experience our products, and bring that vision to life in a way that feels inspired, refined,
+                        and even magical.</p>
+                </div>
+                <button class="learn-more-btn">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">FVC</div>
+                    <div class="social-links">
+                        <a href="#">LinkedIn</a>
+                        <a href="#">Facebook</a>
+                        <a href="#">Instagram</a>
+                        <a href="#">YouTube</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>About Us</h4>
+                    <a href="#">Company Overview</a>
+                    <a href="#">Demo Centers</a>
+                    <a href="#">Geographical Footprints</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Solutions</h4>
+                    <a href="#">UCC</a>
+                    <a href="#">Audio Video</a>
+                    <a href="#">Cyber Security</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <a href="#">Migration Services</a>
+                    <a href="#">Specialized SLAS</a>
+                    <a href="#">Remote & On-site Deployment</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Partners</h4>
+                    <a href="#">Vendors</a>
+                    <a href="#">Vendor Advantages</a>
+                    <a href="#">Become a Partner</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Media & Events</h4>
+                    <a href="#">News & Insights</a>
+                    <a href="#">Awards</a>
+                    <a href="#">Events</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <a href="#">Office Address</a>
+                    <a href="#">Contact Form</a>
+                    <a href="#">Open Jobs</a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Legal</a>
+                    <a href="#">Disclaimer</a>
+                </div>
+                <p class="copyright">FVC MEA DMCC © - All Rights Reserved 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle dropdown visibility
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const allDropdowns = document.querySelectorAll('.dropdown-content');
+
+            // Close all other dropdowns
+            allDropdowns.forEach(d => {
+                if (d.id !== id) {
+                    d.classList.remove('show');
+                }
+            });
+
+            // Toggle current dropdown
+            dropdown.classList.toggle('show');
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+
+            const skillTags = document.querySelector('.selected-skills');
+            if (skillTags) {
+                skillTags.innerHTML = '';
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        window.onclick = function (event) {
+            if (!event.target.matches('.filter-btn') && !event.target.closest('.dropdown-content')) {
+                const dropdowns = document.querySelectorAll('.dropdown-content');
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+            }
+        }
+
+        // Remove skill tag
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-skill')) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+
+    <!-- Firebase Integration -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-jobs.js"></script>
+    <script src="js/firebase-seed.js"></script>
+
+    <!-- API Integration -->
+    <script src="js/jobs.js"></script>
+</body>
+
+</html>

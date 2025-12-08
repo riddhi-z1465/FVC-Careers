@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard - FVC Careers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="hr-jobs.css">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar-expanded">
+        <div class="sidebar-header">
+            <div class="logo-text">
+                <div class="logo-icon">FVC</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Active Jobs</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Discussions</span>
+            </a>
+            <a href="#" class="menu-item" onclick="openCreateJob(); return false;">
+                <span class="menu-icon">➕</span>
+                <span class="menu-text">Post New Job</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer-expanded">
+            <div class="user-profile">
+                <div class="user-avatar-circle">
+                    <img src="https://i.pravatar.cc/40?img=1" alt="User">
+                </div>
+                <button class="logout-link" onclick="logout()">
+                    Logout <span class="logout-icon">🚪</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="page-header">
+            <h1>Jobs</h1>
+            <div class="header-tabs">
+                <button class="tab-btn active">All</button>
+                <button class="tab-btn">Active</button>
+                <button class="tab-btn">Past</button>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-label">Active Jobs</div>
+                <div class="stat-value">7</div>
+                <div class="stat-icon">📋</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Applicants</div>
+                <div class="stat-value">29</div>
+                <div class="stat-icon">👤</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Pending Reviews</div>
+                <div class="stat-value">5</div>
+                <div class="stat-icon">🕐</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Past Jobs</div>
+                <div class="stat-value">3</div>
+                <div class="stat-icon">⏱️</div>
+            </div>
+        </div>
+
+        <!-- Job Cards Grid -->
+        <div class="jobs-grid" id="jobsGrid">
+            <!-- Jobs will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Discussion Panel -->
+    <aside class="discussion-panel" id="discussionPanel">
+        <div class="discussion-header">
+            <h3>Discussion</h3>
+            <button class="close-btn" onclick="closeDiscussion()">×</button>
+        </div>
+
+        <div class="discussion-list" id="discussionList">
+            <!-- Discussion threads will be shown here -->
+        </div>
+    </aside>
+
+    <!-- Chat Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-header">
+            <div class="chat-title">
+                <span class="back-btn" onclick="closeChat()">←</span>
+                <span id="chatJobTitle">HR Intern</span>
+            </div>
+            <button class="close-btn" onclick="closeChat()">×</button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be loaded here -->
+        </div>
+
+        <div class="chat-input">
+            <button class="attach-btn">📎</button>
+            <input type="text" placeholder="Type a message..." id="messageInput">
+            <button class="send-btn" onclick="sendMessage()">
+                <span>➤</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Job Management Popup -->
+    <div class="job-popup-overlay" id="jobPopupOverlay" onclick="closeJobPopup()"></div>
+    <div class="job-popup" id="jobPopup">
+        <div class="job-popup-header">
+            <div>
+                <h2 id="popupJobTitle">Quality Assurance Intern</h2>
+                <div class="job-popup-badges">
+                    <span class="popup-badge" id="popupSalary">₹ 7000</span>
+                    <span class="popup-badge" id="popupLocation">📍 Remote</span>
+                    <button class="delete-job-btn">🗑️</button>
+                </div>
+            </div>
+            <button class="close-btn" onclick="closeJobPopup()">×</button>
+        </div>
+
+        <div class="job-popup-about">
+            <h3>About</h3>
+            <p id="popupDescription">A Quality Assurance Intern supports testing activities by executing test cases,
+                identifying defects, documenting results, and assisting the QA team in ensuring the product meets
+                quality and performance standards.</p>
+        </div>
+
+        <div class="job-popup-applicants">
+            <h3><span id="applicantCount">6</span> Applicants</h3>
+
+            <div class="applicants-grid" id="applicantsGrid">
+                <!-- Applicants will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create New Job Popup -->
+    <div class="create-job-overlay" id="createJobOverlay" onclick="closeCreateJob()"></div>
+    <div class="create-job-popup" id="createJobPopup">
+        <div class="create-job-header">
+            <h2>Create New Job</h2>
+            <button class="close-btn" onclick="closeCreateJob()">×</button>
+        </div>
+
+        <form class="create-job-form" id="createJobForm" onsubmit="handleCreateJob(event)">
+            <div class="form-group-full">
+                <label for="jobTitle">Job Title <span class="required">*</span></label>
+                <input type="text" id="jobTitle" placeholder="eg. Senior Software Engineer" required>
+            </div>
+
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label for="salaryRange">Salary Range <span class="required">*</span></label>
+                    <input type="text" id="salaryRange" placeholder="eg. 7000-8000" required>
+                </div>
+                <div class="form-group">
+                    <label for="jobLocation">Location <span class="required">*</span></label>
+                    <input type="text" id="jobLocation" placeholder="eg. Remote / Mumbai" required>
+                </div>
+                <div class="form-group">
+                    <label for="assessmentLink">Test/Assessment Link <span class="required">*</span></label>
+                    <input type="text" id="assessmentLink" placeholder="91182747372" required>
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                <label for="jobDescription">Description</label>
+                <textarea id="jobDescription" rows="4" placeholder="Describe the job..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="closeCreateJob()">Cancel</button>
+                <button type="submit" class="publish-btn">Publish Job</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Reject Confirmation Dialog -->
+    <div class="reject-overlay" id="rejectOverlay" onclick="closeRejectDialog()"></div>
+    <div class="reject-dialog" id="rejectDialog">
+        <h3>Reject</h3>
+        <p>Are you sure you want to Reject this Applicant?</p>
+        <div class="reject-actions">
+            <button class="reject-no-btn" onclick="closeRejectDialog()">No</button>
+            <button class="reject-yes-btn" onclick="confirmReject()">Yes</button>
+        </div>
+    </div>
+
+    <script src="js/hr-jobs.js"></script>
+</body>
+
+</html>
