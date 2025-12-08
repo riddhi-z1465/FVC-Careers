@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Clear Cache & Reload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>✅ Code Updated!</h1>
+        <p>The job posting bug has been fixed. Please clear your browser cache and reload the HR portal.</p>
+
+        <h3>Instructions:</h3>
+        <p><strong>Mac:</strong> Press <kbd>Cmd + Shift + R</kbd></p>
+        <p><strong>Windows:</strong> Press <kbd>Ctrl + Shift + R</kbd></p>
+
+        <p style="margin-top: 30px;">Or click below to open HR portal:</p>
+        <button onclick="window.location.href='hr-login.html'">Open HR Portal</button>
+
+        <p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
+            After opening, press the keyboard shortcuts above to hard refresh
+        </p>
+    </div>
+</body>
+
+</html>

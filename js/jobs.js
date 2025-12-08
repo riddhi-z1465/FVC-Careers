@@ -80,13 +80,41 @@ const jobsPerPage = 10;
 async function fetchJobs() {
     console.log('🔍 fetchJobs called, USE_MOCK_DATA:', USE_MOCK_DATA);
     try {
+        // Try to fetch from Firebase first
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
+            console.log('📡 Fetching jobs from Firebase...');
+
+            const result = await firebaseJobs.fetchJobs(currentFilters);
+
+            if (result.success && result.data && result.data.length > 0) {
+                console.log(`✅ Loaded ${result.data.length} jobs from Firebase`);
+
+                // Combine with Mock Data if enabled
+                let allJobs = result.data;
+                if (USE_MOCK_DATA) {
+                    console.log('➕ Merging with MOCK_JOBS');
+                    allJobs = [...result.data, ...MOCK_JOBS];
+                }
+
+                displayJobs(allJobs);
+
+                if (result.pagination) {
+                    updatePagination(result.pagination);
+                }
+                return;
+            } else {
+                console.log('⚠️ No jobs in Firebase, using mock data');
+            }
+        }
+
+        // Fallback to mock data
         if (USE_MOCK_DATA) {
             console.log('✅ Using MOCK_JOBS, not calling backend API');
             displayJobs(MOCK_JOBS);
             return;
         }
 
-        // Build query parameters
+        // Build query parameters for backend API
         const params = new URLSearchParams();
 
         if (currentFilters.search) params.append('search', currentFilters.search);

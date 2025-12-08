@@ -15,8 +15,15 @@ firebase.initializeApp(firebaseConfig);
 // Initialize Firestore
 const db = firebase.firestore();
 
-// Initialize Storage (NOT USED - avoiding CORS issues)
-const storage = firebase.storage();
+// Initialize Storage for resume and photo uploads
+let storage = null;
+try {
+    storage = firebase.storage();
+    console.log('[SUCCESS] Firebase Storage initialized');
+} catch (error) {
+    console.error('[ERROR] Firebase Storage initialization failed:', error.message);
+    console.warn('[WARNING] File uploads will not work without Storage');
+}
 
 // Export for use in other files
 window.firebaseDB = db;
@@ -24,4 +31,4 @@ window.db = db;  // Also export as db for easier access
 window.firebaseStorage = storage;
 window.firebase = firebase;
 
-console.log('✅ Firebase initialized with project: fvc-careers');
+console.log('[SUCCESS] Firebase initialized with project: fvc-careers');

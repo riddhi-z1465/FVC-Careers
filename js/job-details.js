@@ -2,44 +2,124 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 const USE_MOCK_DATA = true; // Using mock data to avoid CORS issues
 
-// Mock job data
-const MOCK_JOB = {
-    _id: 'mock-1',
-    title: 'UX Designer, YouTube Paid Digital Goods',
-    company: 'YouTube',
-    location: 'Mumbai, India',
-    jobType: 'Full-time',
-    experience: 'Mid',
-    qualifications: ['Bachelors', 'Masters'],
-    skills: ['UX Design', 'UI Design', 'Figma'],
-    description: `At Google, we follow a simple but vital premise: "Focus on the user and all else will follow." Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for billions of people around the globe. Throughout the design process—from creating user flows and wireframes to building user interface mockups and prototypes—you'll envision how people will experience our products, and bring that vision to life in a way that feels inspired, refined, and even magical.
+// Mock jobs data - matches jobs from jobs.js
+const MOCK_JOBS = {
+    'mock-1': {
+        _id: 'mock-1',
+        title: 'UX Designer, YouTube Paid Digital Goods',
+        company: 'YouTube',
+        location: 'Mumbai, India',
+        jobType: 'Full-time',
+        experience: 'Mid',
+        qualifications: ['Bachelors', 'Masters'],
+        skills: ['UX Design', 'UI Design', 'Figma', 'Prototyping'],
+        description: `At Google, we follow a simple but vital premise: "Focus on the user and all else will follow." Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for billions of people around the globe. Throughout the design process—from creating user flows and wireframes to building user interface mockups and prototypes—you'll envision how people will experience our products, and bring that vision to life in a way that feels inspired, refined, and even magical.
 
 Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers, Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people who use our products. The UX team plays an integral part in gathering insights about the attitudes, emotions, and behaviors of people who use our products to inspire and inform design. We collaborate closely with each other and with engineering and product management to create industry-leading products that deliver value for the people who use them, and for Google's businesses.
 
 As an Interaction Designer, you'll rely on user-centered design methods to craft industry-leading user experiences—from concept to execution. Like all of our UX jobs, you'll collaborate with your design partners to leverage and evolve the Google design language to build beautiful, innovative, inspired products that people love to use.`,
-    requirements: [
-        'Bachelor\'s degree or equivalent practical experience.',
-        '4 years of interaction design experience in product design or UX design.',
-        'Experience with motion and prototyping tools (e.g., After Effects, Principle, or similar).',
-        'Experience implementing visual design systems across multiple platforms and surfaces.',
-        'Include a portfolio, website, or any other relevant link to your work in your resume (providing a viewable link or access instructions).'
-    ],
-    responsibilities: [
-        'Collaborate with product managers, engineers, and cross-functional stakeholders to understand requirements, and provide creative, thoughtful solutions.',
-        'Communicate the user experience at various stages of the design process with wireframes, flow diagrams, storyboards, mockups, or high-fidelity prototypes.',
-        'Integrate user feedback and business requirements into ongoing product experience updates.',
-        'Advocate for the prioritization of design-centered changes, refinements, and improvements.'
-    ],
-    benefits: [
-        'Competitive salary',
-        'Health insurance',
-        'Flexible work hours',
-        'Learning and development budget'
-    ],
-    salary: {
-        min: 80000,
-        max: 120000,
-        currency: 'USD'
+        requirements: [
+            'Bachelor\'s degree or equivalent practical experience',
+            '4 years of interaction design experience in product design or UX design',
+            'Experience with motion and prototyping tools (e.g., After Effects, Principle, or similar)',
+            'Experience implementing visual design systems across multiple platforms',
+            'Include a portfolio or website showcasing your work'
+        ],
+        responsibilities: [
+            'Collaborate with product managers, engineers, and cross-functional stakeholders',
+            'Communicate the user experience with wireframes, flow diagrams, and mockups',
+            'Integrate user feedback and business requirements into ongoing product updates',
+            'Advocate for design-centered changes and improvements'
+        ],
+        benefits: [
+            'Competitive salary',
+            'Health insurance',
+            'Flexible work hours',
+            'Learning and development budget'
+        ],
+        salary: {
+            min: 80000,
+            max: 120000,
+            currency: 'USD'
+        }
+    },
+    'mock-2': {
+        _id: 'mock-2',
+        title: 'AI/ML Engineer',
+        company: 'FVC',
+        location: 'Bangalore, India',
+        jobType: 'Full-time',
+        experience: 'Mid',
+        qualifications: ['Bachelors', 'Masters'],
+        skills: ['Python', 'TensorFlow', 'PyTorch', 'Machine Learning'],
+        description: `Join our AI/ML team to develop smart models that help automate decisions and unlock new insights. You'll work on cutting-edge machine learning projects that directly impact millions of users.
+
+We're looking for passionate ML engineers who can design, build, and deploy scalable machine learning systems. You'll collaborate with cross-functional teams to understand business problems and create innovative solutions using state-of-the-art AI/ML techniques.`,
+        requirements: [
+            '3+ years of ML engineering experience',
+            'Strong proficiency in Python and ML frameworks (TensorFlow, PyTorch)',
+            'Experience with data processing and model deployment',
+            'Understanding of ML algorithms and statistical methods',
+            'Bachelor\'s or Master\'s degree in Computer Science or related field'
+        ],
+        responsibilities: [
+            'Design and implement ML models for various use cases',
+            'Optimize model performance and scalability',
+            'Deploy models to production environments',
+            'Collaborate with data scientists and engineers',
+            'Monitor and improve model accuracy'
+        ],
+        benefits: [
+            'Competitive salary package',
+            'Health and life insurance',
+            'Remote work options',
+            'Latest GPU infrastructure',
+            'Conference and training budget'
+        ],
+        salary: {
+            min: 90000,
+            max: 140000,
+            currency: 'USD'
+        }
+    },
+    'mock-3': {
+        _id: 'mock-3',
+        title: 'Product Manager',
+        company: 'FVC',
+        location: 'Delhi, India',
+        jobType: 'Full-time',
+        experience: 'Mid',
+        qualifications: ['Bachelors', 'MBA preferred'],
+        skills: ['Product Strategy', 'Agile', 'Analytics', 'User Research'],
+        description: `Drive product direction, align teams, and ensure every feature solves a real problem. As a Product Manager at FVC, you'll own the product roadmap and work closely with engineering, design, and business teams to deliver impactful features.
+
+You'll be responsible for understanding user needs, defining product requirements, and driving execution from concept to launch. The ideal candidate has a passion for technology, strong analytical skills, and excellent communication abilities.`,
+        requirements: [
+            '4+ years of product management experience',
+            'Strong analytical and problem-solving skills',
+            'Experience with Agile development methodologies',
+            'Proven track record of shipping successful products',
+            'Bachelor\'s degree; MBA preferred'
+        ],
+        responsibilities: [
+            'Define product vision and strategy',
+            'Manage and prioritize product roadmap',
+            'Work with cross-functional teams to deliver features',
+            'Conduct user research and gather feedback',
+            'Analyze metrics and iterate on product features'
+        ],
+        benefits: [
+            'Competitive compensation',
+            'Health insurance',
+            'Equity options',
+            'Flexible work environment',
+            'Professional development opportunities'
+        ],
+        salary: {
+            min: 100000,
+            max: 150000,
+            currency: 'USD'
+        }
     }
 };
 
@@ -52,11 +132,27 @@ function getJobIdFromURL() {
 // Fetch job details from API
 async function fetchJobDetails(jobId) {
     try {
-        if (USE_MOCK_DATA || jobId.startsWith('mock-')) {
-            console.log('Using mock data for job:', jobId);
-            displayJobDetails(MOCK_JOB);
+        // 1. Check Mock Data first
+        if (MOCK_JOBS[jobId]) {
+            console.log('✅ Found job in Mock Data:', jobId);
+            displayJobDetails(MOCK_JOBS[jobId]);
             return;
         }
+
+        // 2. Try fetching from Firebase
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.getJobById) {
+            console.log('📡 Fetching job from Firebase:', jobId);
+            const result = await firebaseJobs.getJobById(jobId);
+
+            if (result.success && result.data) {
+                console.log('✅ Found job in Firebase');
+                displayJobDetails(result.data);
+                return;
+            }
+        }
+
+        // 3. Fallback logic
+        console.warn('⚠️ Job not found in Mock or Firebase');
 
         const response = await fetch(`${API_BASE_URL}/jobs/${jobId}`);
 
@@ -70,12 +166,12 @@ async function fetchJobDetails(jobId) {
             displayJobDetails(data.data);
         } else {
             showError('Job not found. Showing sample data.');
-            displayJobDetails(MOCK_JOB);
+            displayJobDetails(MOCK_JOBS['mock-1']);
         }
     } catch (error) {
         console.error('Error fetching job details:', error);
         console.log('Backend not available. Using sample data.');
-        displayJobDetails(MOCK_JOB);
+        displayJobDetails(MOCK_JOBS['mock-1']);
     }
 }
 

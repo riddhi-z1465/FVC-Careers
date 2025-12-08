@@ -194,13 +194,103 @@ let currentJobPopup = null;
 document.addEventListener('DOMContentLoaded', function () {
     loadJobs();
     loadDiscussions();
+    loadStats();
 });
 
-// Load jobs into grid
-function loadJobs() {
-    const jobsGrid = document.getElementById('jobsGrid');
+// Load and update statistics
+async function loadStats() {
+    try {
+        let activeJobsCount = 0;
+        let totalApplicantsCount = 0;
+        let pendingReviewsCount = 0;
+        let pastJobsCount = 0;
 
-    const html = jobsData.map(job => `
+        // Fetch jobs from Firebase
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
+            const jobsResult = await firebaseJobs.fetchJobs();
+
+            if (jobsResult.success && jobsResult.data) {
+                // Count active jobs (isActive = true)
+                activeJobsCount = jobsResult.data.filter(job => job.isActive === true).length;
+
+                // Count past jobs (isActive = false)
+                pastJobsCount = jobsResult.data.filter(job => job.isActive === false).length;
+
+                // Sum up all applicants from all jobs
+                totalApplicantsCount = jobsResult.data.reduce((sum, job) => {
+                    return sum + (job.applicationsCount || 0);
+                }, 0);
+            }
+        }
+
+        // Fetch applications to get pending reviews count
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
+            const applicationsResult = await firebaseJobs.fetchAllApplications();
+
+            if (applicationsResult.success && applicationsResult.data) {
+                // Count applications with status 'pending' or 'under_review'
+                pendingReviewsCount = applicationsResult.data.filter(app =>
+                    app.status === 'pending' || app.status === 'under_review'
+                ).length;
+            }
+        }
+
+        // Update the UI
+        document.getElementById('activeJobsCount').textContent = activeJobsCount;
+        document.getElementById('totalApplicantsCount').textContent = totalApplicantsCount;
+        document.getElementById('pendingReviewsCount').textContent = pendingReviewsCount;
+        document.getElementById('pastJobsCount').textContent = pastJobsCount;
+
+        console.log('[STATS] Updated:', {
+            activeJobs: activeJobsCount,
+            totalApplicants: totalApplicantsCount,
+            pendingReviews: pendingReviewsCount,
+            pastJobs: pastJobsCount
+        });
+    } catch (error) {
+        console.error('[ERROR] Error loading stats:', error);
+    }
+}
+
+// Load jobs into grid
+async function loadJobs() {
+    const jobsGrid = document.getElementById('jobsGrid');
+    let jobs = [];
+
+    try {
+        // Try to fetch jobs from Firebase
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
+            console.log('[INFO] Fetching jobs from Firebase...');
+            const result = await firebaseJobs.fetchJobs();
+
+            if (result.success && result.data && result.data.length > 0) {
+                console.log(`[SUCCESS] Loaded ${result.data.length} jobs from Firebase`);
+                jobs = result.data.map(job => ({
+                    id: job.id,
+                    title: job.title || 'Untitled Job',
+                    type: job.salaryRange || 'Not specified',
+                    location: job.location || 'Not specified',
+                    applicants: job.applicationsCount || 0,
+                    description: job.description || 'No description available',
+                    avatars: [],
+                    discussions: 0
+                }));
+            } else {
+                console.log('[INFO] No jobs in Firebase, using mock data');
+                jobs = jobsData;
+            }
+        } else {
+            console.log('[INFO] Firebase not available, using mock data');
+            jobs = jobsData;
+        }
+    } catch (error) {
+        console.error('[ERROR] Error fetching jobs:', error);
+        console.log('[INFO] Falling back to mock data');
+        jobs = jobsData;
+    }
+
+    // Render jobs
+    const html = jobs.map(job => `
         <div class="job-card">
             <div class="job-card-header">
                 <div>
@@ -210,7 +300,11 @@ function loadJobs() {
                             ₹ ${job.type}
                         </span>
                         <span class="job-badge remote">
-                            📍 ${job.location}
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            ${job.location}
                         </span>
                     </div>
                 </div>
@@ -227,7 +321,7 @@ function loadJobs() {
             
             <div class="job-footer">
                 <div class="applicant-avatars">
-                    ${job.avatars.length > 0 ? `
+                    ${job.avatars && job.avatars.length > 0 ? `
                         <div class="avatar-group">
                             ${job.avatars.map(avatar => `
                                 <div class="avatar">
@@ -235,18 +329,21 @@ function loadJobs() {
                                 </div>
                             `).join('')}
                         </div>
-                        <button class="manage-btn" onclick="openDiscussion(${job.id})">
-                            💬 ${job.discussions || 0}
+                        <button class="manage-btn" onclick="openDiscussion('${job.id}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            ${job.discussions || 0}
                         </button>
                     ` : `
-                        <button class="manage-btn" onclick="openJobPopup(${job.id})">Manage</button>
+                        <button class="manage-btn" onclick="openJobPopup('${job.id}')">Manage</button>
                     `}
                 </div>
             </div>
         </div>
     `).join('');
 
-    jobsGrid.innerHTML = html;
+    jobsGrid.innerHTML = html || '<p style="text-align: center; padding: 40px; color: #676767;">No jobs available. Create your first job!</p>';
 }
 
 // Load discussions
@@ -508,26 +605,74 @@ function closeCreateJob() {
 }
 
 // Handle create job form submission
-function handleCreateJob(event) {
+async function handleCreateJob(event) {
     event.preventDefault();
 
-    const formData = {
-        title: document.getElementById('jobTitle').value,
-        salaryRange: document.getElementById('salaryRange').value,
-        location: document.getElementById('jobLocation').value,
-        assessmentLink: document.getElementById('assessmentLink').value,
-        description: document.getElementById('jobDescription').value
-    };
+    console.log('[INFO] handleCreateJob called');
 
-    console.log('Creating new job:', formData);
-    alert(`Job "${formData.title}" created successfully!`);
+    try {
+        // Get form values first
+        const title = document.getElementById('jobTitle')?.value || '';
+        const salaryRange = document.getElementById('salaryRange')?.value || '';
+        const location = document.getElementById('jobLocation')?.value || '';
+        const assessmentLink = document.getElementById('assessmentLink')?.value || '';
+        const description = document.getElementById('jobDescription')?.value || '';
 
-    // Here you would send the data to your backend
-    // await createJobInDatabase(formData);
+        console.log('[INFO] Form values:', { title, salaryRange, location, description });
 
-    closeCreateJob();
-    // Reload jobs
-    loadJobs();
+        // Validate required fields
+        if (!title || !location || !description) {
+            alert('Please fill in all required fields (Title, Location, Description)');
+            return;
+        }
+
+        // Create job data object
+        const jobData = {
+            title: title,
+            salaryRange: salaryRange,
+            location: location,
+            assessmentLink: assessmentLink,
+            description: description,
+            // Add additional required fields
+            company: 'FVC',
+            jobType: 'Full-time',
+            experience: 'Mid',
+            qualifications: ['Bachelors'],
+            skills: [],
+            requirements: [description],
+            responsibilities: [],
+            isActive: true,
+            applicationsCount: 0
+        };
+
+        console.log('[INFO] Job data prepared:', jobData);
+
+        // Check if Firebase is available
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.addJob) {
+            console.log('[FIREBASE] Calling Firebase addJob...');
+            const result = await firebaseJobs.addJob(jobData);
+
+            console.log('[RESPONSE] Firebase result:', result);
+
+            if (result.success) {
+                alert(`Job "${jobData.title}" created successfully!`);
+                closeCreateJob();
+                // Reload jobs to show the newly created job
+                await loadJobs();
+            } else {
+                alert('Error creating job: ' + result.error);
+            }
+        } else {
+            console.warn('[WARNING] Firebase not available');
+            // Fallback for demo
+            alert(`Job "${jobData.title}" created successfully! (Firebase not configured)`);
+            closeCreateJob();
+            loadJobs();
+        }
+    } catch (error) {
+        console.error('[ERROR] Error in handleCreateJob:', error);
+        alert('Error creating job: ' + error.message);
+    }
 }
 
 // Tab switching
