@@ -149,9 +149,10 @@ async function deleteJob(jobId) {
 }
 
 // Submit job application
-async function submitApplication(applicationData, resumeFile) {
+async function submitApplication(applicationData, resumeFile, photoFile = null) {
     try {
         let resumeURL = null;
+        let photoURL = null;
 
         // Upload resume to Firebase Storage if provided
         if (resumeFile) {
@@ -163,24 +164,37 @@ async function submitApplication(applicationData, resumeFile) {
             resumeURL = await resumeRef.getDownloadURL();
         }
 
-        // Check if already applied
-        const existingApp = await db.collection(applicationsCollection)
-            .where('jobId', '==', applicationData.jobId)
-            .where('email', '==', applicationData.email)
-            .get();
+        // Upload photo to Firebase Storage if provided
+        if (photoFile) {
+            const storageRef = storage.ref();
+            const photoPath = `photos/${Date.now()}_${photoFile.name}`;
+            const photoRef = storageRef.child(photoPath);
 
-        if (!existingApp.empty) {
-            return {
-                success: false,
-                error: 'You have already applied for this position'
-            };
+            await photoRef.put(photoFile);
+            photoURL = await photoRef.getDownloadURL();
+        }
+
+        // Check if already applied (using phone number instead of email)
+        if (applicationData.mobileNumber) {
+            const existingApp = await db.collection(applicationsCollection)
+                .where('jobId', '==', applicationData.jobId)
+                .where('mobileNumber', '==', applicationData.mobileNumber)
+                .get();
+
+            if (!existingApp.empty) {
+                return {
+                    success: false,
+                    error: 'You have already applied for this position'
+                };
+            }
         }
 
         // Create application document
         const docRef = await db.collection(applicationsCollection).add({
             ...applicationData,
             resumeURL: resumeURL,
-            status: 'Submitted',
+            photoURL: photoURL,
+            status: applicationData.status || 'Submitted',
             appliedDate: firebase.firestore.FieldValue.serverTimestamp(),
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });

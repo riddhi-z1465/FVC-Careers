@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL = 'http://localhost:5000/api';
-const USE_MOCK_DATA = false; // Set to true if backend is not running
+const USE_MOCK_DATA = true; // Using Firebase/mock data to avoid CORS issues
 
 // Sample mock data for testing without backend
 const MOCK_JOBS = [
@@ -78,8 +78,10 @@ const jobsPerPage = 10;
 
 // Fetch jobs from API or use mock data
 async function fetchJobs() {
+    console.log('🔍 fetchJobs called, USE_MOCK_DATA:', USE_MOCK_DATA);
     try {
         if (USE_MOCK_DATA) {
+            console.log('✅ Using MOCK_JOBS, not calling backend API');
             displayJobs(MOCK_JOBS);
             return;
         }

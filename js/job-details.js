@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL = 'http://localhost:5000/api';
-const USE_MOCK_DATA = false; // Set to true if backend is not running
+const USE_MOCK_DATA = true; // Using mock data to avoid CORS issues
 
 // Mock job data
 const MOCK_JOB = {

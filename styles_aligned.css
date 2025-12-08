@@ -43,6 +43,14 @@ body {
     font-size: 24px;
     font-weight: 700;
     font-family: 'Manrope', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
 }
 
 .nav-links {
@@ -536,6 +544,75 @@ body {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+/* ===== SMOOTH SCROLLING & ANIMATIONS ===== */
+
+/* Smooth scrolling for entire page */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Fade-in animation for page sections */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animations to main sections */
+.hero-section,
+.search-section,
+.job-listings,
+.locations-section,
+.team-section,
+.gallery-section {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Smooth hover effects for job cards */
+.job-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Smooth button transitions */
+.nav-cta,
+.search-btn,
+.view-all-btn {
+    transition: all 0.3s ease;
+}
+
+.nav-cta:hover,
+.search-btn:hover,
+.view-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth image transitions */
+.gallery-item img {
+    transition: transform 0.4s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Smooth logo hover */
+.logo-img {
+    transition: transform 0.3s ease;
+}
+
 
 @media (max-width: 768px) {
     .section-title {

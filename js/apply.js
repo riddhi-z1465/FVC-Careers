@@ -1,6 +1,3 @@
-// API Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
-
 // Get job ID from URL
 function getJobIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -49,56 +46,21 @@ document.querySelectorAll('.experience-card').forEach(card => {
 });
 
 // Handle form submission
-document.getElementById('applicationForm')?.addEventListener('submit', async function (e) {
+async function handleFormSubmit(e) {
     e.preventDefault();
 
     const jobId = getJobIdFromURL();
-
     if (!jobId) {
         showMessage('No job selected', 'error');
         return;
     }
 
-    // Get form data
-    const formData = new FormData();
-
-    // Personal Info
-    const fullName = document.getElementById('fullName').value.split(' ');
-    formData.append('firstName', fullName[0]);
-    formData.append('lastName', fullName.slice(1).join(' ') || fullName[0]);
-    formData.append('email', document.getElementById('fullName').value + '@example.com'); // You should add email field
-    formData.append('phone', document.getElementById('mobileNumber').value);
-    formData.append('location', 'Mumbai, India'); // You should add location field
-
-    // Job Info
-    formData.append('jobId', jobId);
-
-    // Education
-    formData.append('degree', document.getElementById('degree').value);
-    formData.append('institution', document.getElementById('university').value);
-    formData.append('graduationYear', document.getElementById('graduationYear').value);
-
-    // About You
-    formData.append('portfolio', document.getElementById('portfolio').value);
-    formData.append('linkedin', document.getElementById('portfolio').value);
-    formData.append('coverLetter', document.getElementById('bio').value);
-
-    // Experience
+    // Get form values
     const experienceLevel = document.getElementById('experienceLevel').value;
-    let experienceYears = 0;
-    if (experienceLevel === 'junior') experienceYears = 1;
-    else if (experienceLevel === 'mid') experienceYears = 3;
-    else if (experienceLevel === 'senior') experienceYears = 7;
 
-    formData.append('experienceYears', experienceYears);
-    formData.append('currentRole', document.getElementById('targetRole').value);
-    formData.append('currentCompany', 'Current Company');
-
-    // Files
+    // Get files (optional for now)
+    const photoFile = document.getElementById('profilePhoto').files[0];
     const resumeFile = document.getElementById('resume').files[0];
-    if (resumeFile) {
-        formData.append('resume', resumeFile);
-    }
 
     try {
         // Show loading state
@@ -107,32 +69,7 @@ document.getElementById('applicationForm')?.addEventListener('submit', async fun
         submitBtn.textContent = 'Submitting...';
         submitBtn.disabled = true;
 
-        const response = await fetch(`${API_BASE_URL}/applications`, {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showMessage('Application submitted successfully!', 'success');
-
-            // Redirect after 2 seconds
-            setTimeout(() => {
-                window.location.href = 'jobs.html';
-            }, 2000);
-        } else {
-            showMessage(data.error || 'Failed to submit application', 'error');
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
-    } catch (error) {
-        console.error('Error submitting application:', error);
-
-        // For demo purposes, show success even without backend
-        showMessage('Application saved locally (backend not available)', 'success');
-
-        // Store in localStorage for demo
+        // Prepare application data
         const applicationData = {
             jobId: jobId,
             fullName: document.getElementById('fullName').value,
@@ -145,22 +82,94 @@ document.getElementById('applicationForm')?.addEventListener('submit', async fun
             skills: document.getElementById('skills').value,
             bio: document.getElementById('bio').value,
             experienceLevel: experienceLevel,
+            status: 'new',
+            resumeFileName: resumeFile ? resumeFile.name : 'Not uploaded',
+            photoFileName: photoFile ? photoFile.name : 'Not uploaded',
             submittedAt: new Date().toISOString()
         };
 
-        localStorage.setItem('lastApplication', JSON.stringify(applicationData));
+        // Check if Firebase is available and db exists
+        if (typeof db !== 'undefined' && db !== null) {
+            console.log('Using Firebase Firestore...');
+            console.log('Submitting application data:', applicationData);
 
-        setTimeout(() => {
-            window.location.href = 'jobs.html';
-        }, 2000);
+            try {
+                // Save directly to Firestore without file uploads
+                const docRef = await db.collection('applications').add({
+                    ...applicationData,
+                    appliedDate: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                console.log('✅ Application saved to Firestore with ID:', docRef.id);
+                showMessage('Application submitted successfully! (Files will be collected later)', 'success');
+
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'jobs.html';
+                }, 2000);
+
+            } catch (firestoreError) {
+                console.error('❌ Firestore error:', firestoreError);
+                console.error('Error code:', firestoreError.code);
+                console.error('Error message:', firestoreError.message);
+
+                // Show user-friendly error
+                if (firestoreError.code === 'permission-denied') {
+                    showMessage('Permission denied. Please update Firestore security rules.', 'error');
+                } else {
+                    showMessage('Error: ' + firestoreError.message, 'error');
+                }
+
+                // Reset button
+                const submitBtn = document.querySelector('.save-btn');
+                submitBtn.textContent = 'Save Profile';
+                submitBtn.disabled = false;
+            }
+        } else {
+            // Fallback: Store in localStorage
+            console.log('Firebase not available, storing locally...');
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            applications.push(applicationData);
+            localStorage.setItem('applications', JSON.stringify(applications));
+
+            showMessage('Application saved locally (Firebase not configured)', 'success');
+
+            setTimeout(() => {
+                window.location.href = 'jobs.html';
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Error submitting application:', error);
+        showMessage(error.message || 'Failed to submit application. Please try again.', 'error');
+
+        // Reset button
+        const submitBtn = document.querySelector('.save-btn');
+        submitBtn.textContent = 'Save Profile';
+        submitBtn.disabled = false;
     }
-});
+}
+
+// Attach form submit handler
+document.getElementById('applicationForm')?.addEventListener('submit', handleFormSubmit);
 
 // Show message
 function showMessage(message, type = 'success') {
     const messageDiv = document.createElement('div');
     messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
     messageDiv.textContent = message;
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        background: ${type === 'success' ? '#4CAF50' : '#f44336'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        font-size: 16px;
+    `;
     document.body.appendChild(messageDiv);
 
     setTimeout(() => {
@@ -174,7 +183,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const jobTitle = sessionStorage.getItem('currentJobTitle');
 
     if (jobTitle) {
-        document.getElementById('targetRole').value = jobTitle;
+        const targetRoleInput = document.getElementById('targetRole');
+        if (targetRoleInput) {
+            targetRoleInput.value = jobTitle;
+        }
     }
 
     console.log('Application form loaded for job:', jobId);

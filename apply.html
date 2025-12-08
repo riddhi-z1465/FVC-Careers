@@ -13,13 +13,21 @@
         rel="stylesheet">
     <link rel="stylesheet" href="styles_aligned.css">
     <link rel="stylesheet" href="apply.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 </head>
 
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">FVC</div>
+            <div class="nav-logo">
+                <img src="images/fvc-logo.png" alt="FVC Logo" class="logo-img">
+                FVC
+            </div>
             <div class="nav-links">
                 <a href="index.html">Solutions</a>
                 <a href="#">Services</a>
@@ -112,8 +120,7 @@
                                     <div class="file-info" id="resumeInfo">
                                         <span class="file-name">cv.pdf</span>
                                     </div>
-                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" hidden
-                                        required>
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" hidden>
                                     <button type="button" class="upload-btn"
                                         onclick="document.getElementById('resume').click()">
                                         Upload 📤
@@ -269,6 +276,8 @@
         </div>
     </footer>
 
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-jobs.js"></script>
     <script src="js/apply.js"></script>
 </body>
 
