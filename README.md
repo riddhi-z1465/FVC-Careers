@@ -1,164 +1,102 @@
-# FVC Careers Page
+# FVC Careers Portal
 
-A modern, premium careers/jobs page for FVC (Future Vision Company) built with HTML, CSS, and JavaScript.
+A modern, full-stack featured careers and HR management platform built for FVC (Future Vision Company). This application facilitates the end-to-end recruitment process, from job posting to applicant tracking and assessment.
 
 ## Features
 
-### Design
-- **Premium Aesthetics**: Modern gradient colors, smooth animations, and glassmorphism effects
-- **Responsive Layout**: Fully responsive design that works on desktop, tablet, and mobile
-- **Smooth Animations**: Fade-in effects, hover animations, and parallax scrolling
-- **Modern Typography**: Uses Inter font family for clean, professional look
+### 🎨 Candidate Experience
+*   **Premium Design**: Modern, glassmorphism-inspired UI with smooth animations and responsive layout.
+*   **Job Search**: Interactive search form with filters for role and location.
+*   **Job Listings**: Dynamic job board fueled by Firebase/LocalStorage data.
+*   **Application System**: Easy-to-use application form with file upload support for resumes and photos.
+*   **Visual Feedback**: Real-time feedback for file uploads and form submission.
 
-### Sections
-1. **Navigation Bar**: Fixed header with smooth scroll navigation
-2. **Hero Section**: Eye-catching headline with "Build The Future With Us" message
-3. **Job Search Form**: Interactive search form for role and location
-4. **Frequently Searched Job Roles**: Carousel of job categories with cards
-5. **Locations**: Display of office locations with interactive tags
-6. **Find Your Team**: Team spotlight section with UX team example
-7. **Life at FVC**: Photo gallery showcasing company culture
-8. **Footer**: Comprehensive footer with social links and site navigation
+### 👩‍💼 HR Management Portal
+*   **Dashboard**: Comprehensive overview of active jobs, applicant stats, and pending reviews.
+*   **Job Management**: 
+    *   Create, Edit, and **Delete** job postings.
+    *   Toggle job visibility (active/past).
+*   **Applicant Tracking System (ATS)**:
+    *   View all applicants for a specific job.
+    *   Status tracking (Received, Reviewing, Interview, Selected, Rejected).
+    *   **Resume Viewing**: Direct links to uploaded resumes.
+*   **Communication**:
+    *   Built-in chat interface to communicate with candidates.
+    *   "Discussion" panel to see online candidates and active threads.
 
-### Interactive Features
-- Smooth scrolling navigation
-- Navbar scroll effects
-- Job cards carousel with prev/next buttons
-- Form validation and submission handling
-- Favorite button toggle
-- Location tag selection
-- Parallax hero image effect
-- Button ripple effects
-- Intersection observer animations
-- Gallery lightbox (ready for implementation)
+### 🛠 Technical Architecture
+*   **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6+).
+*   **Backend / Database**: 
+    *   **Firebase Firestore**: For real-time data persistence (Jobs, Applications, Messages).
+    *   **Firebase Storage**: For secure file hosting (Resumes, Profile Photos).
+    *   **LocalStorage Fallback**: Robust offline-first design that switches to browser storage if Firebase is unavailable.
+*   **Authentication**: Session-based HR login system.
 
-## File Structure
+## Project Structure
 
 ```
 FVC/
-├── index.html          # Main HTML structure
-├── styles.css          # Complete styling with design system
-├── script.js           # Interactive JavaScript features
-├── hero-image.jpg      # Hero section image
-├── job-notes.jpg       # Job seeker card image
-├── ux-expert.jpg       # UX Expert card image
-├── product-manager.jpg # Product Manager card image
-├── office-location.jpg # Office location image
-├── team-meeting.jpg    # Team section image
-├── life-1.jpg          # Gallery image 1
-├── life-2.jpg          # Gallery image 2
-├── life-3.jpg          # Gallery image 3
-├── life-4.jpg          # Gallery image 4
-├── life-5.jpg          # Gallery image 5
-└── life-6.jpg          # Gallery image 6
+├── index.html            # Landing page for candidates
+├── jobs.html             # Job listings page
+├── apply.html            # Job application form
+├── job-details.html      # Individual job view
+├── hr-login.html         # HR authentication page
+├── hr-jobs.html          # Main HR Dashboard
+├── js/
+│   ├── firebase-config.js   # Firebase initialization
+│   ├── firebase-jobs.js     # Data service layer
+│   ├── hr-jobs.js           # HR portal logic
+│   ├── apply.js             # Application handling logic
+│   └── jobs.js              # Job listing logic
+├── css/
+│   ├── styles_aligned.css   # Main design system
+│   ├── hr-jobs.css          # HR specific styling
+│   └── apply.css            # Application form styling
+└── images/                  # Assets
 ```
 
-## Design System
+## Setup & Running
 
-### Colors
-- **Primary**: #FF6B6B (Coral Red)
-- **Secondary**: #4ECDC4 (Turquoise)
-- **Accent**: #FFE66D (Yellow)
-- **Dark Background**: #1A1A2E
-- **Light Background**: #F8F9FA
-- **Text Dark**: #2D3436
-- **Text Light**: #636E72
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/riddhi-z1465/FVC-Careers.git
+    cd FVC-Careers
+    ```
 
-### Gradients
-- **Primary Gradient**: Linear gradient from #FF6B6B to #FF8E53
-- **Secondary Gradient**: Linear gradient from #667EEA to #764BA2
+2.  **Open the project**:
+    You can simply open `index.html` in your browser. For the best experience (and to avoid CORS issues with file uploads), use a local development server.
 
-### Typography
-- **Font Family**: Inter (Google Fonts)
-- **Sizes**: Responsive scale from 0.75rem to 4rem
-- **Weights**: 300, 400, 500, 600, 700, 800
+    Using VS Code Live Server:
+    *   Right-click `index.html`
+    *   Select "Open with Live Server"
 
-### Spacing
-- Uses consistent spacing scale (0.5rem to 6rem)
-- Grid-based layouts with CSS Grid
-- Responsive gaps and padding
+3.  **Firebase Configuration**:
+    *   The project expects a `js/firebase-config.js` file.
+    *   If missing, create one with your Firebase project credentials:
+        ```javascript
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        ```
 
-### Shadows
-- 4 levels of elevation (sm, md, lg, xl)
-- Consistent shadow system for depth
+## HR Access
+*   Access the HR portal at `/hr-login.html`.
+*   Standard credentials (configurable in `hr-login.js`).
 
-### Border Radius
-- 4 sizes (sm: 8px, md: 12px, lg: 16px, xl: 24px)
-- Rounded corners throughout for modern feel
-
-## Browser Compatibility
-- Modern browsers (Chrome, Firefox, Safari, Edge)
-- CSS Grid and Flexbox support required
-- Intersection Observer API for animations
-- ES6+ JavaScript features
-
-## Usage
-
-Simply open `index.html` in a web browser to view the page. No build process or dependencies required.
-
-For local development:
-1. Open the folder in your code editor
-2. Use a local server (e.g., Live Server extension in VS Code)
-3. Make changes to HTML, CSS, or JS files
-4. Refresh browser to see updates
-
-## Customization
-
-### Changing Colors
-Edit the CSS custom properties in `styles.css`:
-```css
-:root {
-    --primary-color: #FF6B6B;
-    --secondary-color: #4ECDC4;
-    /* ... other colors */
-}
-```
-
-### Adding New Job Cards
-Add new card HTML in the `.job-cards` div in `index.html`:
-```html
-<div class="job-card">
-    <div class="job-card-image">
-        <img src="your-image.jpg" alt="Job Title">
-    </div>
-    <h3 class="job-card-title">Your Job Title</h3>
-    <p class="job-card-desc">Description here</p>
-    <a href="#" class="job-card-link">Explore →</a>
-</div>
-```
-
-### Updating Locations
-Modify the location tags in the locations section:
-```html
-<span class="location-tag">Your City</span>
-```
-
-## Performance
-- Optimized images (JPEG format)
-- Minimal JavaScript
-- CSS animations using GPU acceleration
-- Lazy loading ready for implementation
-
-## SEO
-- Semantic HTML5 structure
-- Proper heading hierarchy
-- Meta descriptions and title tags
-- Alt text for all images
-- Unique IDs for interactive elements
-
-## Future Enhancements
-- [ ] Add actual job listings integration
-- [ ] Implement backend for form submission
-- [ ] Add lightbox modal for gallery
-- [ ] Integrate with ATS (Applicant Tracking System)
-- [ ] Add job filters and search functionality
-- [ ] Implement user authentication
-- [ ] Add application form
-- [ ] Mobile menu for navigation
-
-## Credits
-Created with modern web development best practices, focusing on user experience and visual excellence.
+## Recent Updates
+*   **Frontend**: Fixed styling inconsistencies and refined the search form design.
+*   **Search**: Implemented a pill-shaped, centered search bar with visual enhancements.
+*   **Functionality**: Fixed "Delete Job" and "Manage Job" buttons in HR dashboard.
+*   **Data**: Enhanced data persistence logic to seamlessly handle hybrid cloud/local states.
 
 ---
-
-**Note**: Replace placeholder images with actual company photos for production use.
+**Status**: Production Ready 🚀
+**Version**: 2.0.0
