@@ -368,7 +368,9 @@ async function loadJobs() {
         }
     }
 
-    // Render jobs
+    // Save to global state for popups
+    window.currentRenderedJobs = jobs;
+
     const html = jobs.map(job => `
         <div class="job-card">
             <div class="job-card-header">
@@ -401,22 +403,23 @@ async function loadJobs() {
             <div class="job-footer">
                 <div class="applicant-avatars">
                     ${job.avatars && job.avatars.length > 0 ? `
-                        <div class="avatar-group">
+                        <div class="avatar-group" onclick="openJobPopup('${job.id}')" style="cursor: pointer;" title="View Applicants">
                             ${job.avatars.map(avatar => `
                                 <div class="avatar">
                                     <img src="${avatar}" alt="Applicant">
                                 </div>
                             `).join('')}
                         </div>
-                        <button class="manage-btn" onclick="openDiscussion('${job.id}')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
-                                <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
-                            ${job.discussions || 0}
-                        </button>
-                    ` : `
-                        <button class="manage-btn" onclick="openJobPopup('${job.id}')">Manage</button>
-                    `}
+                    ` : ''}
+                    <button class="manage-btn" onclick="openJobPopup('${job.id}')">Manage</button>
+                    ${job.discussions > 0 ? `
+                    <button class="action-icon-btn" onclick="openDiscussion('${job.id}')" title="Discussions">
+                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                         </svg>
+                         ${job.discussions}
+                    </button>
+                    ` : ''}
                 </div>
             </div>
         </div>
@@ -428,6 +431,7 @@ async function loadJobs() {
 // Load discussions
 function loadDiscussions() {
     const discussionList = document.getElementById('discussionList');
+    if (!discussionList) return;
 
     const html = discussionThreads.map(thread => `
         <div class="discussion-item ${thread.id === 1 ? 'active' : ''}" onclick="openChat(${thread.id})">
@@ -440,9 +444,19 @@ function loadDiscussions() {
 }
 
 // Open job popup
-function openJobPopup(jobId) {
-    const job = jobsData.find(j => j.id === jobId);
-    if (!job) return;
+async function openJobPopup(jobId) {
+    // Look in the currently rendered jobs first (supports Firebase/Local)
+    let job = window.currentRenderedJobs ? window.currentRenderedJobs.find(j => String(j.id) === String(jobId)) : null;
+
+    // Fallback to static data if not found
+    if (!job) {
+        job = jobsData.find(j => String(j.id) === String(jobId));
+    }
+
+    if (!job) {
+        console.error('Job not found:', jobId);
+        return;
+    }
 
     currentJobPopup = job;
 
@@ -452,68 +466,130 @@ function openJobPopup(jobId) {
     document.getElementById('popupLocation').textContent = `📍 ${job.location}`;
     document.getElementById('popupDescription').textContent = job.description;
 
-    // Load applicants
-    const applicants = applicantsData[jobId] || [];
-    document.getElementById('applicantCount').textContent = applicants.length;
-
+    // Show loading state for applicants
+    document.getElementById('applicantCount').textContent = '...';
     const applicantsGrid = document.getElementById('applicantsGrid');
-    applicantsGrid.innerHTML = applicants.map(applicant => `
-        <div class="applicant-card">
-            <div class="applicant-header">
-                <div class="applicant-info">
-                    <div class="applicant-avatar">
-                        <img src="${applicant.avatar}" alt="${applicant.name}">
-                    </div>
-                    <div class="applicant-details">
-                        <div class="applicant-name">${applicant.name}</div>
-                        <div class="applicant-role">${applicant.role}</div>
-                    </div>
-                </div>
-                <span class="applicant-status ${applicant.status}">${applicant.statusText}</span>
-            </div>
-            
-            <div class="applicant-meta">
-                <div class="applicant-meta-item">
-                    🎓 ${applicant.university}
-                </div>
-            </div>
-            <div class="applicant-meta">
-                <div class="applicant-meta-item">
-                    📍 ${applicant.location}
-                </div>
-            </div>
-            <div class="applicant-meta">
-                <div class="applicant-meta-item">
-                    📞 ${applicant.phone}
-                </div>
-            </div>
-            
-            <div class="applicant-actions">
-                <button class="action-icon-btn" onclick="chatWithApplicant(${applicant.id})">
-                    💬 Chat
-                </button>
-                <button class="action-icon-btn" onclick="scheduleInterview(${applicant.id})">
-                    📅 Interview
-                </button>
-                <button class="action-icon-btn" onclick="assessApplicant(${applicant.id})">
-                    📝 Assess
-                </button>
-            </div>
-            
-            <div class="applicant-decision-btns">
-                <button class="decision-btn select-btn" onclick="selectApplicant(${applicant.id})">
-                    ✓ Select
-                </button>
-                <button class="decision-btn reject-btn" onclick="rejectApplicant(${applicant.id})">
-                    ✕ Reject
-                </button>
-            </div>
-        </div>
-    `).join('');
+    applicantsGrid.innerHTML = '<div style="text-align:center; padding: 20px;">Loading applicants...</div>';
 
-    // Show popup
+    // Show popup immediately
     document.getElementById('jobPopupOverlay').classList.add('show');
     document.getElementById('jobPopup').classList.add('show');
+
+    // Fetch Applicants Logic
+    let allApplicants = [];
+
+    // 1. Try Firebase
+    if (typeof firebaseJobs !== 'undefined' && firebaseJobs.getApplicationsByJob) {
+        try {
+            console.log(`[INFO] Fetching applications for job ${jobId} from Firebase...`);
+            const result = await firebaseJobs.getApplicationsByJob(String(jobId));
+            if (result.success && result.data) {
+                console.log(`[SUCCESS] Found ${result.data.length} applicants in Firebase`);
+                allApplicants = [...allApplicants, ...result.data.map(app => ({
+                    id: app.id,
+                    name: app.fullName,
+                    role: app.targetRole,
+                    avatar: app.photoURL || 'https://i.pravatar.cc/150?u=' + app.id,
+                    university: app.university,
+                    location: app.mobileNumber || 'Not specified', // Using mobile as generic info
+                    phone: app.mobileNumber,
+                    linkedin: !!app.portfolio,
+                    resume: app.resumeURL, // Pass the URL directly
+                    status: app.status || 'new',
+                    statusText: app.status || 'Received'
+                }))];
+            }
+        } catch (e) {
+            console.error('Error fetching from Firebase:', e);
+        }
+    }
+
+    // 2. Try Local Storage
+    try {
+        const localApps = JSON.parse(localStorage.getItem('applications') || '[]');
+        const filteredLocal = localApps.filter(app => String(app.jobId) === String(jobId));
+        console.log(`[INFO] Found ${filteredLocal.length} applicants in LocalStorage`);
+
+        allApplicants = [...allApplicants, ...filteredLocal.map((app, index) => ({
+            id: `local-${app.id || index}`, // Use app.id if available, otherwise index
+            name: app.fullName,
+            role: app.targetRole,
+            avatar: 'https://i.pravatar.cc/150?u=' + (app.id || index), // Placeholder
+            university: app.university,
+            location: app.mobileNumber,
+            phone: app.mobileNumber,
+            linkedin: !!app.portfolio,
+            resume: app.resumeURL || true, // Local apps imply resume uploaded conceptually, or use URL if present
+            status: app.status || 'new',
+            statusText: app.status || 'Received'
+        }))];
+    } catch (e) {
+        console.error('Error fetching from LocalStorage:', e);
+    }
+
+    // 3. Fallback/Merge Mock Data (only if we didn't find "real" data or you want to mix them)
+    // For now, let's keep mock data if we found NOTHING else, to avoid empty states in demo
+    if (allApplicants.length === 0) {
+        const mockApps = applicantsData[jobId] || [];
+        allApplicants = [...mockApps];
+    }
+
+    // Render Applicants
+    document.getElementById('applicantCount').textContent = allApplicants.length;
+
+    if (allApplicants.length === 0) {
+        applicantsGrid.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">No applicants yet.</div>';
+    } else {
+        applicantsGrid.innerHTML = allApplicants.map(applicant => `
+            <div class="applicant-card">
+                <div class="applicant-header">
+                    <div class="applicant-info">
+                        <div class="applicant-avatar">
+                            <img src="${applicant.avatar}" alt="${applicant.name}">
+                        </div>
+                        <div class="applicant-details">
+                            <div class="applicant-name">${applicant.name}</div>
+                            <div class="applicant-role">${applicant.role}</div>
+                        </div>
+                    </div>
+                    <span class="applicant-status ${applicant.status}">${applicant.statusText}</span>
+                </div>
+                
+                <div class="applicant-meta">
+                    <div class="applicant-meta-item">
+                        🎓 ${applicant.university}
+                    </div>
+                </div>
+                <div class="applicant-meta">
+                    <div class="applicant-meta-item">
+                        📞 ${applicant.phone}
+                    </div>
+                </div>
+                
+                <div class="applicant-actions">
+                    <button class="action-icon-btn" onclick="chatWithApplicant('${applicant.id}')">
+                        💬 Chat
+                    </button>
+                    ${applicant.resume ? `
+                    <button class="action-icon-btn" onclick="window.open('${applicant.resume}', '_blank')">
+                        📄 Resume
+                    </button>` : ''}
+                    <button class="action-icon-btn" onclick="assessApplicant('${applicant.id}')">
+                        📝 Assess
+                    </button>
+                </div>
+                
+                <div class="applicant-decision-btns">
+                    <button class="decision-btn select-btn" onclick="selectApplicant('${applicant.id}')">
+                        ✓ Select
+                    </button>
+                    <button class="decision-btn reject-btn" onclick="rejectApplicant('${applicant.id}')">
+                        ✕ Reject
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
 }
 
 // Close job popup
@@ -792,6 +868,77 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// Delete current job
+async function deleteCurrentJob() {
+    if (!currentJobPopup) return;
+
+    // Check if it's a "demo" job (ids 1-4 usually) - optional protection
+    // if ([1, 2, 3, 4].includes(currentJobPopup.id)) {
+    //    alert("You cannot delete demo jobs.");
+    //    return;
+    // }
+
+    if (!confirm(`Are you sure you want to delete the job position "${currentJobPopup.title}"? This action cannot be undone.`)) {
+        return;
+    }
+
+    const jobId = currentJobPopup.id;
+    console.log('[DELETE] Attempting to delete job:', jobId);
+
+    try {
+        let deleted = false;
+
+        // 1. Try Firebase Deletion
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.deleteJob) {
+            // Only try if it looks like a firebase ID (string, not number 1-4) or if we just try anyway
+            // Simple heuristic: if it's not in the static jobsData array, it might be firebase/local
+            // But we can just try calling the API.
+            try {
+                const result = await firebaseJobs.deleteJob(String(jobId));
+                if (result.success) {
+                    deleted = true;
+                    console.log('[DELETE] Deleted from Firebase');
+                }
+            } catch (e) {
+                console.warn('[DELETE] Firebase delete failed (might be local or not found)', e);
+            }
+        }
+
+        // 2. Try LocalStorage Deletion (always try this to clean up hybrids)
+        const storedJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+        const verifyIndex = storedJobs.findIndex(j => String(j._id || j.id) === String(jobId));
+
+        if (verifyIndex !== -1) {
+            storedJobs.splice(verifyIndex, 1);
+            localStorage.setItem('fvc_jobs_local_storage', JSON.stringify(storedJobs));
+            deleted = true;
+            console.log('[DELETE] Deleted from LocalStorage');
+        }
+
+        // 3. Fallback/Success handling
+        if (deleted) {
+            alert('Job deleted successfully.');
+            closeJobPopup();
+            await loadJobs(); // Refresh grid
+            await loadStats(); // Refresh stats
+
+            // If the deleted job was active in chat, close it
+            if (currentChatJob && String(currentChatJob.id) === String(jobId)) {
+                closeChat();
+                loadDiscussions(); // Refresh discussion list
+            }
+        } else {
+            // It might be a static mock job
+            alert('This is a demo job and cannot be permanently deleted in this preview.');
+            closeJobPopup();
+        }
+
+    } catch (error) {
+        console.error('[DELETE] Error:', error);
+        alert('An error occurred while deleting the job.');
+    }
+}
 
 // Logout function
 function logout() {
