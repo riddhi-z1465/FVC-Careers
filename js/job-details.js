@@ -142,10 +142,33 @@ async function fetchJobDetails(jobId) {
         // 1.5 Check Local Storage (user created jobs)
         try {
             const localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
-            const localJob = localJobs.find(j => j._id === jobId);
+            // HR jobs use 'id', Mock jobs use '_id'. We check both.
+            const localJob = localJobs.find(j =>
+                String(j._id) === String(jobId) || String(j.id) === String(jobId)
+            );
+
             if (localJob) {
                 console.log('✅ Found job in LocalStorage:', jobId);
-                displayJobDetails(localJob);
+
+                // Normalizing HR job data format to match expected format
+                const normalizedJob = {
+                    ...localJob,
+                    _id: localJob._id || localJob.id,
+                    jobType: localJob.jobType || localJob.type, // HR dashboard uses 'type'
+                    description: localJob.description || 'No description available',
+                    company: localJob.company || 'FVC', // Default to FVC if missing
+                    location: localJob.location || 'Remote',
+                    // Default values for missing fields to avoid errors
+                    requirements: localJob.requirements || ['No specific requirements listed.'],
+                    responsibilities: localJob.responsibilities || ['No specific responsibilities listed.'],
+                    qualifications: localJob.qualifications || [],
+                    benefits: localJob.benefits || [],
+                    salary: localJob.salary || (localJob.type && !isNaN(localJob.type) ? {
+                        min: parseInt(localJob.type), max: parseInt(localJob.type), currency: 'INR'
+                    } : null)
+                };
+
+                displayJobDetails(normalizedJob);
                 return;
             }
         } catch (e) {
@@ -308,6 +331,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchJobDetails(jobId);
     } else {
         showError('No job ID provided. Showing sample job.');
-        displayJobDetails(MOCK_JOB);
+        displayJobDetails(MOCK_JOBS['mock-1']);
     }
 });

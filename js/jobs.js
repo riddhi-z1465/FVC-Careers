@@ -182,26 +182,26 @@ function displayJobs(jobs) {
     }
 
     container.innerHTML = jobs.map(job => `
-        <div class="job-listing-card" data-job-id="${job._id}">
+        <div class="job-listing-card" data-job-id="${job._id || job.id}">
             <div class="job-header">
                 <h2 class="job-title">${job.title}</h2>
                 <div class="job-meta">
                     <span class="meta-item">
-                        <span class="icon">🏢</span> ${job.company}
+                        <span class="icon">🏢</span> ${job.company || 'FVC'}
                     </span>
                     <span class="meta-item">
-                        <span class="icon">📍</span> ${job.location}
+                        <span class="icon">📍</span> ${job.location || 'Remote'}
                     </span>
                     <span class="meta-item">
-                        <span class="icon">💼</span> ${job.jobType}
+                        <span class="icon">💼</span> ${job.jobType || job.type || 'Full-time'}
                     </span>
                 </div>
             </div>
             <div class="job-content">
                 <h3>About</h3>
-                <p>${job.description.substring(0, 300)}${job.description.length > 300 ? '...' : ''}</p>
+                <p>${job.description ? (job.description.substring(0, 300) + (job.description.length > 300 ? '...' : '')) : 'No description available'}</p>
             </div>
-            <button class="learn-more-btn" onclick="viewJobDetails('${job._id}')">Learn More</button>
+            <button class="learn-more-btn" onclick="viewJobDetails('${job._id || job.id}')">Learn More</button>
         </div>
     `).join('');
 }

@@ -258,7 +258,7 @@ body {
     border-radius: 50px;
     font-size: var(--font-size-base);
     transition: var(--transition-fast);
-    font-family: var(--font-primary);
+    font-family: 'Manrope', sans-serif;
 }
 
 .form-group input:focus {

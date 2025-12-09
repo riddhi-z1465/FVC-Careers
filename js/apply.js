@@ -89,25 +89,25 @@ async function handleFormSubmit(e) {
         };
 
         // Check if Firebase is available and db exists
-        if (typeof db !== 'undefined' && db !== null) {
+        if (typeof db !== 'undefined' && db !== null && typeof firebaseJobs !== 'undefined') {
             console.log('Using Firebase Firestore...');
             console.log('Submitting application data:', applicationData);
 
             try {
-                // Save directly to Firestore without file uploads
-                const docRef = await db.collection('applications').add({
-                    ...applicationData,
-                    appliedDate: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                // Use the centralized submitApplication function which handles storage uploads
+                const result = await firebaseJobs.submitApplication(applicationData, resumeFile, photoFile);
 
-                console.log('✅ Application saved to Firestore with ID:', docRef.id);
-                showMessage('Application submitted successfully! (Files will be collected later)', 'success');
+                if (result.success) {
+                    console.log('✅ Application submitted with ID:', result.id);
+                    showMessage('Application submitted successfully!', 'success');
 
-                // Redirect after 2 seconds
-                setTimeout(() => {
-                    window.location.href = 'jobs.html';
-                }, 2000);
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'jobs.html';
+                    }, 2000);
+                } else {
+                    throw new Error(result.error);
+                }
 
             } catch (firestoreError) {
                 console.error('❌ Firestore error:', firestoreError);
@@ -116,7 +116,10 @@ async function handleFormSubmit(e) {
 
                 // Show user-friendly error
                 if (firestoreError.code === 'permission-denied') {
-                    showMessage('Permission denied. Please update Firestore security rules.', 'error');
+                    // This error comes from Storage rules or Firestore rules
+                    showMessage('Permission denied. Please check your internet connection or try again.', 'error');
+                } else if (firestoreError.message.includes('Storage')) {
+                    showMessage('Resume/Photo upload failed. ' + firestoreError.message, 'error');
                 } else {
                     showMessage('Error: ' + firestoreError.message, 'error');
                 }
