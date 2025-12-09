@@ -32,6 +32,9 @@ A modern, full-stack featured careers and HR management platform built for FVC (
     *   **LocalStorage Fallback**: Robust offline-first design that switches to browser storage if Firebase is unavailable.
 *   **Authentication**: Session-based HR login system.
 
+## Deployment Links
+* Candidate Carrers portal: https://fvc-careers.vercel.app/index.html
+* HR portal: https://fvc-careers.vercel.app/hr-login.html
 ## Project Structure
 
 ```
