@@ -1,272 +1,203 @@
 /* Job Details Page Styles */
 
 .job-details-section {
-    background: #F4F4FA;
-    padding: 40px 0 80px;
+    padding: 60px 0;
     min-height: 100vh;
+    position: relative;
+    /* Background blobs are handled by body .page-background */
 }
 
-/* Back Button */
-.back-button {
-    display: inline-flex;
+/* Centered Card Container */
+.job-card-container {
+    background: white;
+    border-radius: 40px;
+    padding: 60px;
+    max-width: 900px;
+    margin: 40px auto;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Back Button (Circular) */
+.back-button-circle {
+    display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid #E5E7EB;
+    background: white;
     color: #2d3436;
     text-decoration: none;
-    font-size: 16px;
-    margin-bottom: 32px;
-    padding: 8px 16px;
-    border-radius: 24px;
-    transition: all 0.3s;
+    font-size: 24px;
+    position: absolute;
+    top: -80px;
+    /* Position outside above the card */
+    left: 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.back-button:hover {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.back-button-circle:hover {
+    background: #FFC5C5;
+    color: black;
+    transform: translateX(-4px);
 }
 
-.back-icon {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* Job Header */
-.job-details-header {
-    background: white;
-    padding: 40px;
-    border-radius: 24px;
-    margin-bottom: 32px;
+/* Header */
+.job-header-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 32px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.job-title-section {
-    flex: 1;
+    gap: 24px;
+    margin-bottom: 24px;
 }
 
 .job-title {
     font-family: 'Manrope', sans-serif;
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 600;
-    color: #2d3436;
-    margin-bottom: 16px;
+    color: #1a1a1a;
     line-height: 1.3;
+    max-width: 80%;
 }
 
-.job-meta-info {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.meta-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 16px;
-    color: #676767;
-    padding: 8px 16px;
-    background: #F4F4FA;
-    border-radius: 20px;
-}
-
-.meta-badge .icon {
-    font-size: 18px;
-}
-
-/* Apply Button */
-.apply-now-btn {
-    background: #F45B69;
-    color: white;
-    border: none;
-    padding: 16px 40px;
-    border-radius: 28px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
+.apply-btn-pill {
     white-space: nowrap;
-}
-
-.apply-now-btn:hover {
-    background: #e04555;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(244, 91, 105, 0.3);
-}
-
-.apply-now-btn.large {
-    padding: 20px 60px;
-    font-size: 20px;
-}
-
-/* Job Content */
-.job-details-content {
-    background: white;
-    padding: 48px;
-    border-radius: 24px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.job-section {
-    margin-bottom: 48px;
-}
-
-.job-section:last-child {
-    margin-bottom: 0;
-}
-
-.job-section h2 {
-    font-family: 'Manrope', sans-serif;
-    font-size: 28px;
-    font-weight: 600;
-    color: #2d3436;
-    margin-bottom: 20px;
-}
-
-.job-section p {
+    border: 1px solid #1a1a1a;
+    background: transparent;
+    color: #1a1a1a;
+    padding: 10px 24px;
+    border-radius: 100px;
     font-size: 16px;
-    line-height: 1.8;
-    color: #676767;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.apply-btn-pill:hover {
+    background: #FFC5C5;
+    color: black;
+}
+
+/* Metadata */
+.job-meta-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+    color: #4b5563;
+    font-size: 15px;
+    font-weight: 500;
+    align-items: center;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.meta-icon {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* Divider */
+.divider-line {
+    height: 1px;
+    background: #E5E7EB;
+    margin: 0 0 40px 0;
+    width: 100%;
+}
+
+/* Content Sections */
+.job-section {
+    margin-bottom: 40px;
+}
+
+.job-section h3 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
     margin-bottom: 16px;
+}
+
+.job-section p,
+.job-section ul li {
+    font-family: 'Inter', sans-serif;
+    /* Assuming Inter or standard sans */
+    font-size: 16px;
+    line-height: 1.6;
+    color: #4b5563;
+    /* Gray-600 */
 }
 
 .job-section ul {
     list-style: none;
+    /* Custom bullets */
     padding: 0;
     margin: 0;
 }
 
 .job-section ul li {
-    font-size: 16px;
-    line-height: 1.8;
-    color: #676767;
-    margin-bottom: 12px;
-    padding-left: 28px;
     position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
 }
 
 .job-section ul li::before {
     content: "•";
     position: absolute;
-    left: 8px;
-    color: #F45B69;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* Salary Range */
-.salary-range {
-    font-size: 24px;
-    font-weight: 600;
-    color: #F45B69;
-}
-
-/* Apply Section */
-.apply-section {
-    margin-top: 48px;
-    text-align: center;
-}
-
-/* No Results */
-.no-results {
-    text-align: center;
-    padding: 80px 20px;
-}
-
-.no-results h3 {
-    font-size: 28px;
-    font-weight: 600;
-    color: #2d3436;
-    margin-bottom: 12px;
-}
-
-.no-results p {
+    left: 0;
+    color: #1a1a1a;
+    /* Darker bullet for better visibility */
     font-size: 18px;
-    color: #676767;
+    line-height: 1.6;
 }
 
-/* Loading State */
+/* Loading/Error States */
 .loading {
     text-align: center;
-    padding: 80px 20px;
+    padding: 40px;
+    color: #6b7280;
 }
 
-.loading::after {
-    content: "Loading...";
-    font-size: 20px;
-    color: #676767;
-}
-
-/* Error Message */
 .error-message {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    background: #F45B69;
-    color: white;
-    padding: 16px 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 10000;
-    animation: slideIn 0.3s ease-out;
+    color: #ef4444;
+    text-align: center;
+    padding: 20px;
 }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(400px);
-        opacity: 0;
+/* Responsive */
+@media (max-width: 768px) {
+    .job-card-container {
+        padding: 30px;
+        margin: 20px;
     }
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .job-details-header {
-        flex-direction: column;
-        align-items: stretch;
+    .job-header-top {
+        flex-direction: column-reverse;
+        /* Button on top or bottom? Image has button top right. Mobile maybe under title. */
+        align-items: flex-start;
     }
 
-    .apply-now-btn {
+    .apply-btn-pill {
         width: 100%;
         text-align: center;
     }
 
-    .job-details-content {
-        padding: 32px;
-    }
-}
-
-@media (max-width: 768px) {
-    .job-title {
-        font-size: 28px;
-    }
-
-    .job-section h2 {
-        font-size: 24px;
-    }
-
-    .job-details-content {
-        padding: 24px;
-    }
-
-    .job-meta-info {
+    .job-meta-row {
         flex-direction: column;
         gap: 12px;
+        align-items: flex-start;
     }
 
-    .meta-badge {
-        width: fit-content;
-    }
-
-    .apply-now-btn.large {
-        padding: 16px 40px;
-        font-size: 18px;
+    .back-button-circle {
+        top: -60px;
+        left: 20px;
     }
 }

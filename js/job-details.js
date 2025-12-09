@@ -237,17 +237,19 @@ function displayJobDetails(job) {
     }
 
     // Update minimum qualifications (requirements)
-    if (job.requirements && job.requirements.length > 0) {
-        const minQualList = document.getElementById('minQualifications');
-        if (minQualList) {
+    const minQualList = document.getElementById('minQualifications');
+    if (minQualList) {
+        if (job.requirements && job.requirements.length > 0) {
             minQualList.innerHTML = job.requirements.map(req => `<li>${req}</li>`).join('');
+        } else {
+            minQualList.innerHTML = '<li>No specific requirements listed.</li>';
         }
     }
 
     // Update preferred qualifications
-    if (job.qualifications && job.qualifications.length > 0) {
-        const prefQualList = document.getElementById('prefQualifications');
-        if (prefQualList) {
+    const prefQualList = document.getElementById('prefQualifications');
+    if (prefQualList) {
+        if (job.qualifications && job.qualifications.length > 0) {
             const qualText = job.qualifications.map(q => {
                 switch (q) {
                     case 'Bachelors': return "Bachelor's degree in Design, Human-Computer Interaction, Computer Science, a related field, or equivalent practical experience.";
@@ -259,14 +261,18 @@ function displayJobDetails(job) {
                 }
             });
             prefQualList.innerHTML = qualText.map(q => `<li>${q}</li>`).join('');
+        } else {
+            prefQualList.innerHTML = '<li>No preferred qualifications listed.</li>';
         }
     }
 
     // Update responsibilities
-    if (job.responsibilities && job.responsibilities.length > 0) {
-        const respList = document.getElementById('jobResponsibilities');
-        if (respList) {
+    const respList = document.getElementById('jobResponsibilities');
+    if (respList) {
+        if (job.responsibilities && job.responsibilities.length > 0) {
             respList.innerHTML = job.responsibilities.map(resp => `<li>${resp}</li>`).join('');
+        } else {
+            respList.innerHTML = '<li>No specific responsibilities listed.</li>';
         }
     }
 
