@@ -16,6 +16,12 @@
 </head>
 
 <body>
+    <!-- Background Effects -->
+    <div class="page-background">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -50,17 +56,19 @@
 
             <!-- Search Form -->
             <div class="search-form">
-                <div class="form-fields">
-                    <div class="form-group">
-                        <label>Role</label>
+                <div class="form-group">
+                    <label>Role</label>
+                    <div class="input-container">
                         <input type="text" placeholder="UX Designer">
                     </div>
-                    <div class="form-group">
-                        <label>Location</label>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <div class="input-container">
                         <input type="text" placeholder="Mumbai, India">
                     </div>
                 </div>
-                <a href="jobs.html" class="search-btn">Search Jobs</a>
+                <button class="search-btn" onclick="window.location.href='jobs.html'">Search Jobs</button>
             </div>
         </div>
     </section>

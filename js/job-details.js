@@ -291,7 +291,7 @@ function displayJobDetails(job) {
     }
 
     // Store job ID for application
-    sessionStorage.setItem('currentJobId', job._id);
+    sessionStorage.setItem('currentJobId', job._id || job.id);
     sessionStorage.setItem('currentJobTitle', job.title);
 }
 

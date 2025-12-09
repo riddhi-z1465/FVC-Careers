@@ -20,13 +20,17 @@ document.getElementById('profilePhoto')?.addEventListener('change', function (e)
 // Handle resume upload
 document.getElementById('resume')?.addEventListener('change', function (e) {
     const file = e.target.files[0];
-    if (file) {
-        const fileInfo = document.getElementById('resumeInfo');
-        const status = document.getElementById('resumeStatus');
+    const fileInfo = document.getElementById('resumeInfo');
+    const status = document.getElementById('resumeStatus');
 
+    if (file) {
         fileInfo.innerHTML = `<span class="file-name">${file.name}</span>`;
         status.textContent = 'Successfully Uploaded';
         status.classList.add('success');
+    } else {
+        fileInfo.innerHTML = '';
+        status.textContent = '';
+        status.classList.remove('success');
     }
 });
 
@@ -50,8 +54,8 @@ async function handleFormSubmit(e) {
     e.preventDefault();
 
     const jobId = getJobIdFromURL();
-    if (!jobId) {
-        showMessage('No job selected', 'error');
+    if (!jobId || jobId === 'undefined' || jobId === 'null') {
+        showMessage('Invalid Job ID. Please go back and select a job again.', 'error');
         return;
     }
 

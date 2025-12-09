@@ -253,7 +253,6 @@
         try {
             const snapshot = await db.collection(applicationsCollection)
                 .where('jobId', '==', jobId)
-                .orderBy('appliedDate', 'desc')
                 .get();
 
             const applications = [];
@@ -262,6 +261,13 @@
                     id: doc.id,
                     ...doc.data()
                 });
+            });
+
+            // Sort client-side to avoid composite index requirement
+            applications.sort((a, b) => {
+                const dateA = a.appliedDate && a.appliedDate.toDate ? a.appliedDate.toDate() : new Date(a.appliedDate || 0);
+                const dateB = b.appliedDate && b.appliedDate.toDate ? b.appliedDate.toDate() : new Date(b.appliedDate || 0);
+                return dateB - dateA;
             });
 
             return {

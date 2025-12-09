@@ -10,6 +10,54 @@ body {
     background: #F4F4FA;
     color: #2d3436;
     line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll from blobs */
+}
+
+/* Background Effects */
+.page-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.blob {
+    position: absolute;
+    width: 948px;
+    height: 741px;
+    filter: blur(244px);
+    border-radius: 50%;
+}
+
+/* Fuchsia Blob (Top) */
+.blob-2 {
+    left: 659px;
+    /* Or use percent for responsiveness, e.g. 50% */
+    top: -200px;
+    /* Adjusted to be visible in hero */
+    background: #d946ef;
+    /* fuchsia-500 */
+    opacity: 0.1;
+    transform-origin: top left;
+    transform: rotate(-35.78deg);
+}
+
+/* Amber Blob (Lower down) */
+.blob-1 {
+    left: 100px;
+    /* Adjusted for visibility */
+    top: 1992px;
+    background: #fde68a;
+    /* amber-200 */
+    opacity: 0.2;
+    transform-origin: top left;
+    transform: rotate(75.53deg);
 }
 
 .container {
@@ -99,11 +147,15 @@ body {
 }
 
 .hero-text h1 {
-    font-family: 'Figtree', sans-serif;
+    font-family: 'Manrope', sans-serif;
     font-size: 72px;
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: 24px;
+}
+
+.hero-text p {
+    font-family: 'Figtree', sans-serif;
 }
 
 .hero-text p {
@@ -128,61 +180,104 @@ body {
     background: white;
     padding: 40px;
     border-radius: 40px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.09);
+    box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.09);
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: flex-end;
     gap: 32px;
-}
-
-.form-fields {
-    display: flex;
-    gap: 32px;
-    flex: 1;
+    width: 100%;
+    max-width: 780px;
+    margin: -40px auto 0;
+    position: relative;
+    z-index: 10;
+    border: none;
 }
 
 .form-group {
-    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
 }
 
 .form-group label {
-    display: block;
-    font-size: 18px;
-    margin-bottom: 8px;
-    color: #2d3436;
+    color: black;
+    font-size: 20px;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    line-height: 32px;
+    margin-left: 0;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 16px 24px;
-    border: 1px solid #676767;
+.input-container {
+    align-self: stretch;
+    padding: 12px 20px;
+    background: white;
     border-radius: 40px;
-    font-size: 18px;
-    color: #676767;
-    outline: none;
-    transition: border-color 0.3s;
+    border: 1px solid #78716c;
+    /* stone-500 */
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
 }
 
-.form-group input:focus {
-    border-color: #F45B69;
+.input-container input {
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #78716c;
+    font-size: 20px;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    line-height: 32px;
+    background: transparent;
+    padding: 0;
+}
+
+.input-container input::placeholder {
+    color: #78716c;
+    opacity: 0.7;
 }
 
 .search-btn {
+    padding: 12px 24px;
     background: #FFC5C5;
-    color: black;
-    border: 2px solid black;
-    padding: 16px 40px;
+    /* bg-red-200 replacement or #FECACA */
+    background-color: #fecaca;
+    /* red-200 */
     border-radius: 40px;
-    font-size: 18px;
-    font-weight: 500;
+    box-shadow: 4px 4px 0px 0px #000000;
+    border: 2px solid black;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    color: black;
+    font-size: 20px;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    line-height: 32px;
     cursor: pointer;
-    transition: all 0.3s;
-    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
 .search-btn:hover {
-    background: #F45B69;
-    color: white;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px #000000;
+    background-color: #fecaca;
+}
+
+/* Remove old styles */
+.form-fields,
+.divider,
+.input-wrapper {
+    display: none;
 }
 
 /* Section Titles */
