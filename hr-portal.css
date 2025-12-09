@@ -56,14 +56,13 @@ body::before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
-    background: #2d3436;
-    border-radius: 12px;
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    font-family: 'Manrope', sans-serif;
+    background: transparent;
+}
+
+.logo img {
+    width: 140px;
+    height: auto;
+    object-fit: contain;
 }
 
 /* Welcome Section */

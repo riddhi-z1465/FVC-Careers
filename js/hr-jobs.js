@@ -1,5 +1,10 @@
 // HR Jobs Management Logic
 
+// Check authentication
+if (sessionStorage.getItem('hrLoggedIn') !== 'true') {
+    window.location.href = 'hr-login.html';
+}
+
 // Sample jobs data
 const jobsData = [
     {
@@ -198,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Load and update statistics
+// Load and update statistics
 async function loadStats() {
     try {
         let activeJobsCount = 0;
@@ -206,40 +212,84 @@ async function loadStats() {
         let pastJobsCount = 0;
 
         // Fetch jobs from Firebase
+        let usedFirebase = false;
+
         if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
-            const jobsResult = await firebaseJobs.fetchJobs();
+            try {
+                const jobsResult = await firebaseJobs.fetchJobs();
 
-            if (jobsResult.success && jobsResult.data) {
-                // Count active jobs (isActive = true)
-                activeJobsCount = jobsResult.data.filter(job => job.isActive === true).length;
+                if (jobsResult.success && jobsResult.data) {
+                    usedFirebase = true;
+                    // Count active jobs (isActive = true)
+                    activeJobsCount = jobsResult.data.filter(job => job.isActive === true).length;
 
-                // Count past jobs (isActive = false)
-                pastJobsCount = jobsResult.data.filter(job => job.isActive === false).length;
+                    // Count past jobs (isActive = false)
+                    pastJobsCount = jobsResult.data.filter(job => job.isActive === false).length;
 
-                // Sum up all applicants from all jobs
-                totalApplicantsCount = jobsResult.data.reduce((sum, job) => {
-                    return sum + (job.applicationsCount || 0);
-                }, 0);
+                    // Sum up all applicants from all jobs
+                    totalApplicantsCount = jobsResult.data.reduce((sum, job) => {
+                        return sum + (job.applicationsCount || 0);
+                    }, 0);
+                }
+            } catch (e) {
+                console.warn('[STATS] Firebase fetch failed, falling back to mock data');
             }
         }
 
-        // Fetch applications to get pending reviews count
-        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
-            const applicationsResult = await firebaseJobs.fetchAllApplications();
+        // Fallback to mock data if Firebase wasn't used
+        if (!usedFirebase) {
+            console.log('[STATS] Using mock data');
 
-            if (applicationsResult.success && applicationsResult.data) {
-                // Count applications with status 'pending' or 'under_review'
-                pendingReviewsCount = applicationsResult.data.filter(app =>
-                    app.status === 'pending' || app.status === 'under_review'
-                ).length;
+            // Get local storage jobs count
+            let localCount = 0;
+            let localApplicants = 0;
+            try {
+                const stored = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+                localCount = stored.length;
+                localApplicants = stored.reduce((sum, j) => sum + (j.applicationsCount || 0), 0);
+            } catch (e) {
+                console.error('[STATS] Error reading local storage:', e);
+            }
+
+            // Mock Data Calculation
+            activeJobsCount = jobsData.length + localCount;
+
+            // Calculate total applicants from jobsData + local storage
+            totalApplicantsCount = jobsData.reduce((sum, job) => {
+                return sum + (job.applicants || 0);
+            }, 0) + localApplicants;
+
+            // Mock values for stats not fully represented in simple jobsData
+            pendingReviewsCount = 5; // Default mock value
+            pastJobsCount = 3;       // Default mock value
+        }
+
+        // Fetch applications to get pending reviews count (Firebase only)
+        if (usedFirebase && typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
+            try {
+                const applicationsResult = await firebaseJobs.fetchAllApplications();
+
+                if (applicationsResult.success && applicationsResult.data) {
+                    // Count applications with status 'pending' or 'under_review'
+                    pendingReviewsCount = applicationsResult.data.filter(app =>
+                        app.status === 'pending' || app.status === 'under_review'
+                    ).length;
+                }
+            } catch (e) {
+                console.warn('[STATS] Firebase applications fetch failed');
             }
         }
 
         // Update the UI
-        document.getElementById('activeJobsCount').textContent = activeJobsCount;
-        document.getElementById('totalApplicantsCount').textContent = totalApplicantsCount;
-        document.getElementById('pendingReviewsCount').textContent = pendingReviewsCount;
-        document.getElementById('pastJobsCount').textContent = pastJobsCount;
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        };
+
+        setVal('activeJobsCount', activeJobsCount);
+        setVal('totalApplicantsCount', totalApplicantsCount);
+        setVal('pendingReviewsCount', pendingReviewsCount);
+        setVal('pastJobsCount', pastJobsCount);
 
         console.log('[STATS] Updated:', {
             activeJobs: activeJobsCount,
@@ -287,6 +337,35 @@ async function loadJobs() {
         console.error('[ERROR] Error fetching jobs:', error);
         console.log('[INFO] Falling back to mock data');
         jobs = jobsData;
+    }
+
+    // Merge shared localStorage jobs (from both hr-jobs and jobs.js context)
+    // Only if we are falling back to mock jobs (checking if jobs === jobsData is unsafe if we modified it, so just check if we have any jobs or if we want to enforce local ones)
+    // We'll enforce local ones always if they exist, assuming they are "new" jobs not present in static data.
+
+    if (jobs === jobsData || jobs.length === 0) { // Simple check: if using mock data
+        try {
+            const stored = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+            if (stored.length > 0) {
+                const storedMapped = stored.map((s, index) => ({
+                    id: s.id || `local-${index}`,
+                    title: s.title,
+                    type: s.salaryRange,
+                    location: s.location,
+                    applicants: s.applicationsCount || 0,
+                    description: s.description,
+                    avatars: [],
+                    discussions: 0
+                }));
+                // Add to top of list
+                // Filter out any that might have been added to jobsData in-memory to avoid duplicates?
+                // If we remove the in-memory push in handleCreateJob, we don't need to filter.
+                // For now, let's just prepend.
+                jobs = [...storedMapped.reverse(), ...jobs];
+            }
+        } catch (e) {
+            console.error('Error loading local storage jobs in hr-jobs:', e);
+        }
     }
 
     // Render jobs
@@ -659,15 +738,35 @@ async function handleCreateJob(event) {
                 closeCreateJob();
                 // Reload jobs to show the newly created job
                 await loadJobs();
+                await loadStats();
             } else {
                 alert('Error creating job: ' + result.error);
             }
         } else {
             console.warn('[WARNING] Firebase not available');
+
+            // Save to localStorage for jobs.html visibility
+            try {
+                const storedJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+                storedJobs.push({
+                    _id: 'local-' + Date.now(),
+                    ...jobData,
+                    isActive: true,
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('fvc_jobs_local_storage', JSON.stringify(storedJobs));
+                console.log('[INFO] Job saved to localStorage');
+            } catch (e) {
+                console.error('[ERROR] Failed to save to localStorage', e);
+            }
+
             // Fallback for demo
             alert(`Job "${jobData.title}" created successfully! (Firebase not configured)`);
             closeCreateJob();
-            loadJobs();
+
+            // Reload jobs and stats
+            await loadJobs();
+            await loadStats();
         }
     } catch (error) {
         console.error('[ERROR] Error in handleCreateJob:', error);

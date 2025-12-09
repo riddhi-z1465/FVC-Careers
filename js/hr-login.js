@@ -86,9 +86,10 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         sessionStorage.setItem('hrRole', currentRole);
         sessionStorage.setItem('hrUsername', username);
 
-        // Redirect to dashboard after 1.5 seconds
+        // Redirect based on role
         setTimeout(() => {
-            window.location.href = 'hr-dashboard.html';
+            console.log(`[LOGIN] Redirecting user (${currentRole}) to hr-jobs.html`);
+            window.location.replace('hr-jobs.html');
         }, 1500);
 
     } else {
@@ -133,8 +134,25 @@ function removeMessages() {
 
 // Check if already logged in
 document.addEventListener('DOMContentLoaded', function () {
+    // Prevent infinite redirect loops
+    // If we came from hr-jobs.html and are still "logged in", we might be in a loop if hr-jobs.html redirected us back.
+    // However, if we came from hr-dashboard, we SHOULD redirect to hr-jobs.html if that is the target.
+    // The previous logic cleared session on ANY return. We should only clear if we are stuck.
+
+    const referrer = document.referrer;
+    console.log('[LOGIN] Referrer:', referrer);
+
+    // If we were explicitly sent back to login (e.g. from logout), session should be cleared already. 
+    // If not, let's trust the session unless we see a loop pattern.
+    if (referrer && referrer.includes('hr-jobs.html')) {
+        // If we came from hr-jobs.html, it probably means authentication failed there or we clicked logout.
+        // In either case, we should NOT auto-redirect back to hr-jobs.html immediately.
+        console.log('[LOGIN] Returning from hr-jobs.html. NOT redirecting.');
+        return;
+    }
     if (sessionStorage.getItem('hrLoggedIn') === 'true') {
-        window.location.href = 'hr-dashboard.html';
+        // Always redirect to hr-jobs.html
+        window.location.replace('hr-jobs.html');
     }
 
     // Show demo credentials in console

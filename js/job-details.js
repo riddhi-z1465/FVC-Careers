@@ -139,6 +139,19 @@ async function fetchJobDetails(jobId) {
             return;
         }
 
+        // 1.5 Check Local Storage (user created jobs)
+        try {
+            const localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+            const localJob = localJobs.find(j => j._id === jobId);
+            if (localJob) {
+                console.log('✅ Found job in LocalStorage:', jobId);
+                displayJobDetails(localJob);
+                return;
+            }
+        } catch (e) {
+            console.error('Error checking LocalStorage:', e);
+        }
+
         // 2. Try fetching from Firebase
         if (typeof firebaseJobs !== 'undefined' && firebaseJobs.getJobById) {
             console.log('📡 Fetching job from Firebase:', jobId);

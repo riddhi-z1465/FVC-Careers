@@ -37,17 +37,18 @@ body {
     gap: 12px;
 }
 
+/* Logo Styles */
+.sidebar-logo {
+    max-width: 100px;
+    height: auto;
+    object-fit: contain;
+    margin-left: -5px;
+    /* slight adjustment to align if needed */
+}
+
+/* Legacy icon style - kept just in case */
 .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: #2d3436;
-    color: white;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 16px;
+    display: none;
 }
 
 .sidebar-menu {

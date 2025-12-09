@@ -110,7 +110,18 @@ async function fetchJobs() {
         // Fallback to mock data
         if (USE_MOCK_DATA) {
             console.log('✅ Using MOCK_JOBS, not calling backend API');
-            displayJobs(MOCK_JOBS);
+
+            // Get locally saved jobs (from HR dashboard)
+            let localJobs = [];
+            try {
+                localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+                console.log(`📂 Loaded ${localJobs.length} local jobs`);
+            } catch (e) {
+                console.error('Error loading local jobs:', e);
+            }
+
+            // Merge local jobs with mock jobs (local jobs first)
+            displayJobs([...localJobs, ...MOCK_JOBS]);
             return;
         }
 
