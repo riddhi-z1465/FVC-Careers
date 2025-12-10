@@ -492,6 +492,11 @@ body {
     padding: 0;
 }
 
+.action-icon-btn:hover {
+    background: #FFC5C5;
+    color: black;
+}
+
 .manage-btn {
     padding: 8px 24px;
     background: white;
@@ -505,8 +510,8 @@ body {
 }
 
 .manage-btn:hover {
-    background: #000;
-    color: white;
+    background: #FFC5C5;
+    color: black;
 }
 
 /* Discussion Panel */
@@ -849,6 +854,8 @@ body {
 .job-popup-about {
     padding: 24px 32px;
     border-bottom: 1px solid #E5E5E5;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .job-popup-about h3 {
@@ -915,11 +922,11 @@ body {
 }
 
 .applicant-avatar {
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid #F8F8F8;
+    background: #F0F0F0;
     flex-shrink: 0;
 }
 
@@ -927,6 +934,17 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    /* Ensures no extra space if image is present */
+}
+
+/* Ensure initials are centered if img is missing/replaced by text */
+.applicant-avatar span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
 .applicant-identity {
@@ -1412,6 +1430,7 @@ body {
         padding: 24px;
     }
 }
+
 .footer-left-group {
     display: flex;
     align-items: center;

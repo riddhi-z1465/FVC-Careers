@@ -147,7 +147,7 @@ const applicantsData = {
             id: 3,
             name: 'Kruti Mehta',
             role: 'Vibe-coding Intern',
-            avatar: 'https://i.pravatar.cc/48?img=22',
+            avatar: null, // Testing initials fallback
             university: '------',
             location: '------',
             phone: '9182909064',
@@ -467,7 +467,7 @@ async function loadJobs() {
                     ${job.avatars && job.avatars.length > 0 ? `
                         <div class="avatar-group" onclick="openJobPopup('${job.id}')" style="cursor: pointer;" title="View Applicants">
                             ${job.avatars.map(avatar => `
-                                <div class="avatar" style="background-color: #eee; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: #555;">
+                                <div class="avatar" style="background-color: ${avatar.type === 'image' ? '#eee' : '#FFE5E8'}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: ${avatar.type === 'image' ? '#555' : '#D63031'};">
                                     ${avatar.type === 'image'
             ? `<img src="${avatar.value}" alt="Applicant">`
             : `${avatar.value}`}
@@ -545,7 +545,7 @@ async function openJobPopup(jobId) {
                     id: app.id,
                     name: app.fullName,
                     role: app.targetRole,
-                    avatar: app.photoURL || 'https://i.pravatar.cc/150?u=' + app.id,
+                    avatar: app.photoURL && app.photoURL.length > 0 ? app.photoURL : null,
                     university: app.university,
                     location: app.mobileNumber || 'Not specified', // Using mobile as generic info
                     phone: app.mobileNumber,
@@ -570,7 +570,7 @@ async function openJobPopup(jobId) {
             id: `local-${app.id || index}`, // Use app.id if available, otherwise index
             name: app.fullName,
             role: app.targetRole,
-            avatar: 'https://i.pravatar.cc/150?u=' + (app.id || index), // Placeholder
+            avatar: null, // Local apps don't have photo uploads fully wired to persistent URLs without Firebase Storage, so default to null (initials) to avoid broken images or random faces
             university: app.university,
             location: app.mobileNumber,
             phone: app.mobileNumber,
@@ -601,8 +601,11 @@ async function openJobPopup(jobId) {
                 <!-- Top Row: Profile + Status -->
                 <div class="applicant-top-row">
                     <div class="applicant-profile">
-                        <div class="applicant-avatar">
-                            <img src="${applicant.avatar}" alt="${applicant.name}">
+                        <div class="applicant-avatar" style="background-color: ${applicant.avatar ? 'transparent' : '#FFE5E8'}; display: flex; align-items: center; justify-content: center;">
+                            ${applicant.avatar ?
+                `<img src="${applicant.avatar}" alt="${applicant.name}">` :
+                `<span style="font-size: 18px; font-weight: 700; color: #D63031;">${applicant.name ? applicant.name.charAt(0).toUpperCase() : '?'}</span>`
+            }
                         </div>
                         <div class="applicant-identity">
                             <div class="applicant-name">${applicant.name}</div>
