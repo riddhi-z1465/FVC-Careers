@@ -203,19 +203,35 @@
                 console.log('[SUCCESS] Photo uploaded successfully');
             }
 
-            // Check if already applied (using phone number instead of email)
-            if (applicationData.mobileNumber) {
-                const existingApp = await db.collection(applicationsCollection)
-                    .where('jobId', '==', applicationData.jobId)
-                    .where('mobileNumber', '==', applicationData.mobileNumber)
-                    .get();
+            // Check if already applied (using email or phone number)
+            const checkPromises = [];
 
-                if (!existingApp.empty) {
-                    return {
-                        success: false,
-                        error: 'You have already applied for this position'
-                    };
-                }
+            if (applicationData.email) {
+                checkPromises.push(
+                    db.collection(applicationsCollection)
+                        .where('jobId', '==', applicationData.jobId)
+                        .where('email', '==', applicationData.email)
+                        .get()
+                );
+            }
+
+            if (applicationData.mobileNumber) {
+                checkPromises.push(
+                    db.collection(applicationsCollection)
+                        .where('jobId', '==', applicationData.jobId)
+                        .where('mobileNumber', '==', applicationData.mobileNumber)
+                        .get()
+                );
+            }
+
+            const snapshots = await Promise.all(checkPromises);
+            const isDuplicate = snapshots.some(snap => !snap.empty);
+
+            if (isDuplicate) {
+                return {
+                    success: false,
+                    error: 'You have already applied for this position'
+                };
             }
 
             // Create application document

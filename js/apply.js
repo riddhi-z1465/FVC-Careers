@@ -49,6 +49,101 @@ document.querySelectorAll('.experience-card').forEach(card => {
     });
 });
 
+// Validation Logic
+function validateForm() {
+    let isValid = true;
+    const errors = [];
+
+    // Helper to add error
+    const addError = (msg) => {
+        errors.push(msg);
+        isValid = false;
+    };
+
+    // 1. Required Fields Check (Basic) - HTML handle this mostly but good to safeguard
+    const requiredIds = ['fullName', 'targetRole', 'email', 'mobileNumber', 'university', 'degree', 'graduationYear', 'portfolio', 'skills'];
+    requiredIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || !el.value.trim()) {
+            addError(`${id.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} is required.`);
+            if (el) el.style.borderColor = 'red';
+        } else {
+            if (el) el.style.borderColor = '#ddd';
+        }
+    });
+
+    // 2. Email Validation
+    const email = document.getElementById('email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+        addError('Please enter a valid email address.');
+        document.getElementById('email').style.borderColor = 'red';
+    }
+
+    // 3. Mobile Number Validation (Basic length and chars)
+    const mobile = document.getElementById('mobileNumber').value.trim();
+    // Allow +, -, space, brackets, and digits usually 7-15 digits
+    const phoneRegex = /^[\d\s\+\-\(\)]{7,20}$/;
+    if (mobile && !phoneRegex.test(mobile)) {
+        addError('Please enter a valid mobile number (min 7 digits).');
+        document.getElementById('mobileNumber').style.borderColor = 'red';
+    }
+
+    // 4. Graduation Year Validation
+    const gradYear = document.getElementById('graduationYear').value.trim();
+    const currentYear = new Date().getFullYear();
+    if (gradYear) {
+        if (!/^\d{4}$/.test(gradYear) || parseInt(gradYear) < 1950 || parseInt(gradYear) > currentYear + 10) {
+            addError('Please enter a valid 4-digit graduation year (1950-' + (currentYear + 10) + ').');
+            document.getElementById('graduationYear').style.borderColor = 'red';
+        }
+    }
+
+    // 5. Portfolio URL Validation
+    const portfolio = document.getElementById('portfolio').value.trim();
+    // Simple URL check
+    if (portfolio && !portfolio.match(/^(http|https):\/\/[^ "]+$/)) {
+        addError('Please enter a valid URL (starting with http:// or https://) for Portfolio.');
+        document.getElementById('portfolio').style.borderColor = 'red';
+    }
+
+    // 6. File Validation
+    const photoInput = document.getElementById('profilePhoto');
+    if (photoInput.files.length > 0) {
+        const file = photoInput.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB limit for photo (reasonable default)
+        if (file.size > maxSize) {
+            addError('Profile photo must be less than 5MB.');
+        }
+        if (!file.type.startsWith('image/')) {
+            addError('Profile photo must be an image file.');
+        }
+    }
+
+    const resumeInput = document.getElementById('resume');
+    if (resumeInput.files.length > 0) {
+        const file = resumeInput.files[0];
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+            addError('Resume must be less than 10MB.');
+        }
+        const validTypes = ['.pdf', '.doc', '.docx'];
+        const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+        if (!validTypes.includes(ext)) {
+            addError('Resume must be a PDF, DOC, or DOCX file.');
+        }
+    }
+
+    if (!isValid) {
+        // Show the first error usually, or a summary
+        showMessage(errors[0], 'error');
+        // Optionally scroll to top or first error
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    return isValid;
+}
+
 // Handle form submission
 async function handleFormSubmit(e) {
     e.preventDefault();
@@ -56,6 +151,11 @@ async function handleFormSubmit(e) {
     const jobId = getJobIdFromURL();
     if (!jobId || jobId === 'undefined' || jobId === 'null') {
         showMessage('Invalid Job ID. Please go back and select a job again.', 'error');
+        return;
+    }
+
+    // Validate form
+    if (!validateForm()) {
         return;
     }
 
@@ -78,6 +178,7 @@ async function handleFormSubmit(e) {
             jobId: jobId,
             fullName: document.getElementById('fullName').value,
             targetRole: document.getElementById('targetRole').value,
+            email: document.getElementById('email').value,
             mobileNumber: document.getElementById('mobileNumber').value,
             university: document.getElementById('university').value,
             degree: document.getElementById('degree').value,
@@ -137,6 +238,20 @@ async function handleFormSubmit(e) {
             // Fallback: Store in localStorage
             console.log('Firebase not available, storing locally...');
             const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+
+            // Check for duplicates in localStorage
+            const isDuplicate = applications.some(app =>
+                app.jobId === applicationData.jobId &&
+                (app.email === applicationData.email || app.mobileNumber === applicationData.mobileNumber)
+            );
+
+            if (isDuplicate) {
+                showMessage('You have already applied for this position', 'error');
+                submitBtn.textContent = 'Save Profile';
+                submitBtn.disabled = false;
+                return;
+            }
+
             applications.push(applicationData);
             localStorage.setItem('applications', JSON.stringify(applications));
 
