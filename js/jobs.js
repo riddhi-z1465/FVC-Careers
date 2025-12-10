@@ -317,9 +317,21 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Toggle dropdown visibility
-function toggleDropdown(filterId) {
+// Toggle dropdown visibility
+function toggleDropdown(filterId, event) {
+    // Prevent event from bubbling to document click handler
+    if (event) {
+        event.stopPropagation();
+    }
+
+    console.log('[DEBUG] Toggling dropdown:', filterId);
     const dropdown = document.getElementById(filterId);
     const allDropdowns = document.querySelectorAll('.dropdown-content');
+
+    if (!dropdown) {
+        console.error('Dropdown not found:', filterId);
+        return;
+    }
 
     // Close all other dropdowns
     allDropdowns.forEach(d => {
@@ -330,6 +342,7 @@ function toggleDropdown(filterId) {
 
     // Toggle current dropdown
     dropdown.classList.toggle('show');
+    console.log('[DEBUG] Dropdown class list:', dropdown.classList);
 }
 
 // Clear all filters

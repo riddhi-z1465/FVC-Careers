@@ -1004,9 +1004,10 @@ async function deleteCurrentJob() {
 }
 
 // Logout function
+// Logout function
 function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        sessionStorage.clear();
-        window.location.href = 'hr-login.html';
-    }
+    console.log('[LOGOUT] Logging out...');
+    sessionStorage.removeItem('hrLoggedIn');
+    sessionStorage.clear();
+    window.location.replace('hr-login.html');
 }

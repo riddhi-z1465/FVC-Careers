@@ -47,10 +47,26 @@
                 <h1>Jobs</h1>
                 <div class="search-controls">
                     <div class="search-box">
-                        <input type="text" placeholder="UX designer" class="search-input">
+                        <label>Role</label>
+                        <div class="search-input-wrapper">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" placeholder="UX designer" class="search-input">
+                        </div>
                     </div>
                     <div class="search-box">
-                        <input type="text" placeholder="Location" class="search-input">
+                        <label>Location</label>
+                        <div class="search-input-wrapper">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" placeholder="Mumbai" class="search-input">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -63,7 +79,7 @@
 
                 <!-- Experience Filter -->
                 <div class="filter-dropdown">
-                    <button class="filter-btn" onclick="toggleDropdown('experience')">
+                    <button class="filter-btn" onclick="toggleDropdown('experience', event)">
                         Experience <span class="filter-count">2</span>
                     </button>
                     <div class="dropdown-content" id="experience">
@@ -92,7 +108,7 @@
 
                 <!-- Job Type Filter -->
                 <div class="filter-dropdown">
-                    <button class="filter-btn" onclick="toggleDropdown('jobtype')">
+                    <button class="filter-btn" onclick="toggleDropdown('jobtype', event)">
                         Job Type <span class="filter-count">3</span>
                     </button>
                     <div class="dropdown-content" id="jobtype">
@@ -117,7 +133,7 @@
 
                 <!-- Qualifications Filter -->
                 <div class="filter-dropdown">
-                    <button class="filter-btn" onclick="toggleDropdown('qualifications')">
+                    <button class="filter-btn" onclick="toggleDropdown('qualifications', event)">
                         Qualifications
                     </button>
                     <div class="dropdown-content" id="qualifications">
@@ -146,8 +162,8 @@
 
                 <!-- Skills Filter -->
                 <div class="filter-dropdown">
-                    <button class="filter-btn" onclick="toggleDropdown('skills')">
-                        Job Role
+                    <button class="filter-btn" onclick="toggleDropdown('skills', event)">
+                        Skills <span class="filter-count" style="background:black; color:white;">1</span>
                     </button>
                     <div class="dropdown-content skills-dropdown" id="skills">
                         <div class="search-skills">
