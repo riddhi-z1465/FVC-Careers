@@ -14,7 +14,13 @@ const jobsData = [
         location: 'Remote',
         applicants: 0,
         description: 'An HR intern assists with recruiting, onboarding, employee records, and administrative tasks to support day-to-day HR operations function.',
-        avatars: [],
+        avatars: [
+            'https://i.pravatar.cc/32?img=12',
+            'https://i.pravatar.cc/32?img=11',
+            'https://i.pravatar.cc/32?img=5',
+            'https://i.pravatar.cc/32?img=3',
+            'https://i.pravatar.cc/32?img=9'
+        ],
         discussions: 4
     },
     {
@@ -307,6 +313,50 @@ async function loadJobs() {
     const jobsGrid = document.getElementById('jobsGrid');
     let jobs = [];
 
+    // 1. Fetch all applications first to get avatars for the cards
+    let allApplications = [];
+    try {
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
+            const appsResult = await firebaseJobs.fetchAllApplications();
+            if (appsResult.success && appsResult.data) {
+                allApplications = appsResult.data;
+            }
+        }
+    } catch (e) {
+        console.warn('Error fetching firebase applications for avatars:', e);
+    }
+
+    // Merge with local storage applications
+    try {
+        const localApps = JSON.parse(localStorage.getItem('applications') || '[]');
+        if (localApps.length > 0) {
+            allApplications = [...allApplications, ...localApps];
+        }
+    } catch (e) {
+        console.warn('Error fetching local applications for avatars:', e);
+    }
+
+    // Helper to get real avatars for a job
+    const getJobAvatars = (jobId) => {
+        const jobApps = allApplications.filter(app => String(app.jobId) === String(jobId));
+        return jobApps.slice(0, 4).map(app => {
+            if (app.photoURL && app.photoURL.length > 0) {
+                return { type: 'image', value: app.photoURL };
+            } else {
+                const name = app.fullName || app.name || '?';
+                return { type: 'initials', value: name.charAt(0).toUpperCase() };
+            }
+        });
+    };
+
+    // Helper to generate mock avatars (fallback) - keep these as images for demo data consistency
+    const getMockAvatars = (count) => {
+        if (!count) return [];
+        return Array.from({ length: Math.min(count, 4) }, (_, i) =>
+            ({ type: 'image', value: `https://i.pravatar.cc/32?img=${Math.floor(Math.random() * 70)}` })
+        );
+    };
+
     try {
         // Try to fetch jobs from Firebase
         if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
@@ -315,28 +365,32 @@ async function loadJobs() {
 
             if (result.success && result.data && result.data.length > 0) {
                 console.log(`[SUCCESS] Loaded ${result.data.length} jobs from Firebase`);
-                jobs = result.data.map(job => ({
-                    id: job.id,
-                    title: job.title || 'Untitled Job',
-                    type: job.salaryRange || 'Not specified',
-                    location: job.location || 'Not specified',
-                    applicants: job.applicationsCount || 0,
-                    description: job.description || 'No description available',
-                    avatars: [],
-                    discussions: 0
-                }));
+                jobs = result.data.map(job => {
+                    const realAvatars = getJobAvatars(job.id);
+                    return {
+                        id: job.id,
+                        title: job.title || 'Untitled Job',
+                        type: job.salaryRange || 'Not specified',
+                        location: job.location || 'Not specified',
+                        applicants: job.applicationsCount || 0,
+                        description: job.description || 'No description available',
+                        avatars: realAvatars.length > 0 ? realAvatars : getMockAvatars(job.applicationsCount || 0),
+                        discussions: 0
+                    };
+                });
             } else {
                 console.log('[INFO] No jobs in Firebase, using mock data');
-                jobs = jobsData;
+                jobs = jobsData.map(j => ({ ...j, avatars: getMockAvatars(j.applicants) })); // Convert existing mock data structure
             }
         } else {
             console.log('[INFO] Firebase not available, using mock data');
-            jobs = jobsData;
+            // Convert existing mock data structure strictly for the fallback path
+            jobs = jobsData.map(j => ({ ...j, avatars: getMockAvatars(j.applicants) }));
         }
     } catch (error) {
         console.error('[ERROR] Error fetching jobs:', error);
         console.log('[INFO] Falling back to mock data');
-        jobs = jobsData;
+        jobs = jobsData.map(j => ({ ...j, avatars: getMockAvatars(j.applicants) }));
     }
 
     // Merge shared localStorage jobs (from both hr-jobs and jobs.js context)
@@ -347,16 +401,19 @@ async function loadJobs() {
         try {
             const stored = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
             if (stored.length > 0) {
-                const storedMapped = stored.map((s, index) => ({
-                    id: s.id || `local-${index}`,
-                    title: s.title,
-                    type: s.salaryRange,
-                    location: s.location,
-                    applicants: s.applicationsCount || 0,
-                    description: s.description,
-                    avatars: [],
-                    discussions: 0
-                }));
+                const storedMapped = stored.map((s, index) => {
+                    const realAvatars = getJobAvatars(s.id);
+                    return {
+                        id: s.id || `local-${index}`,
+                        title: s.title,
+                        type: s.salaryRange,
+                        location: s.location,
+                        applicants: s.applicationsCount || 0,
+                        description: s.description,
+                        avatars: realAvatars.length > 0 ? realAvatars : getMockAvatars(s.applicationsCount || 0),
+                        discussions: 0
+                    };
+                });
                 // Add to top of list
                 // Filter out any that might have been added to jobsData in-memory to avoid duplicates?
                 // If we remove the in-memory push in handleCreateJob, we don't need to filter.
@@ -401,26 +458,25 @@ async function loadJobs() {
             </div>
             
             <div class="job-footer">
-                <div class="applicant-avatars">
+                <div class="footer-left-group">
+                    <button class="action-icon-btn" onclick="openDiscussion('${job.id}')" title="Discussions">
+                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                         </svg>
+                    </button>
                     ${job.avatars && job.avatars.length > 0 ? `
                         <div class="avatar-group" onclick="openJobPopup('${job.id}')" style="cursor: pointer;" title="View Applicants">
                             ${job.avatars.map(avatar => `
-                                <div class="avatar">
-                                    <img src="${avatar}" alt="Applicant">
+                                <div class="avatar" style="background-color: #eee; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: #555;">
+                                    ${avatar.type === 'image'
+            ? `<img src="${avatar.value}" alt="Applicant">`
+            : `${avatar.value}`}
                                 </div>
                             `).join('')}
                         </div>
                     ` : ''}
-                    <button class="manage-btn" onclick="openJobPopup('${job.id}')">Manage</button>
-                    ${job.discussions > 0 ? `
-                    <button class="action-icon-btn" onclick="openDiscussion('${job.id}')" title="Discussions">
-                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
-                         </svg>
-                         ${job.discussions}
-                    </button>
-                    ` : ''}
                 </div>
+                <button class="manage-btn" onclick="openJobPopup('${job.id}')">Manage</button>
             </div>
         </div>
     `).join('');
