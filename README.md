@@ -35,6 +35,8 @@ A modern, full-stack featured careers and HR management platform built for FVC (
 ## Deployment Links
 * Candidate Carrers portal: https://fvc-careers.vercel.app/index.html
 * HR portal: https://fvc-careers.vercel.app/hr-login.html
+
+
 ## Project Structure
 
 ```

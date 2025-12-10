@@ -196,7 +196,7 @@ body {
 }
 
 .stat-box {
-    background: white;
+    background: #FFE5E8;
     padding: 20px;
     border-radius: 12px;
     position: relative;
@@ -737,30 +737,43 @@ body {
     gap: 20px;
 }
 
+/* Applicant Card New Styles */
 .applicant-card {
-    background: #F8F8F8;
-    padding: 20px;
-    border-radius: 16px;
-    border: 1px solid #E5E5E5;
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid #F0F0F0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.2s;
 }
 
-.applicant-header {
+.applicant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Top Row */
+.applicant-top-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 16px;
 }
 
-.applicant-info {
+.applicant-profile {
     display: flex;
-    gap: 12px;
+    gap: 16px;
+    align-items: center;
 }
 
 .applicant-avatar {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     overflow: hidden;
+    border: 2px solid #F8F8F8;
     flex-shrink: 0;
 }
 
@@ -770,107 +783,179 @@ body {
     object-fit: cover;
 }
 
-.applicant-details {
-    flex: 1;
+.applicant-identity {
+    display: flex;
+    flex-direction: column;
 }
 
 .applicant-name {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
     color: #2d3436;
     margin-bottom: 2px;
 }
 
 .applicant-role {
-    font-size: 12px;
-    color: #676767;
+    font-size: 14px;
+    color: #888;
 }
 
-.applicant-status {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 11px;
+.applicant-status-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.applicant-status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 600;
 }
 
-.applicant-status.submitted {
+.applicant-status-badge.submitted {
+    background: #E0F2F1;
+    color: #00695C;
+}
+
+.applicant-status-badge.new {
     background: #E3F2FD;
-    color: #1976D2;
+    color: #1565C0;
 }
 
-.applicant-status.assessment {
+.applicant-status-badge.view-submission {
     background: #FFF3E0;
-    color: #F57C00;
+    color: #EF6C00;
 }
 
-.applicant-status.view-submission {
-    background: #E8F5E9;
-    color: #388E3C;
-}
-
-.applicant-meta {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
-    font-size: 12px;
+.view-submission-link {
+    font-size: 13px;
     color: #676767;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
-.applicant-meta-item {
+.view-submission-link:hover {
+    color: #2d3436;
+}
+
+/* Info Rows */
+.applicant-info-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
 }
 
-.applicant-actions {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+.education-row {
+    align-items: flex-start;
 }
 
-.action-icon-btn {
-    flex: 1;
-    padding: 8px;
-    background: white;
-    border: 1px solid #E5E5E5;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
+.info-icon {
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    color: #2d3436;
 }
 
-.action-icon-btn:hover {
-    border-color: #2d3436;
-    background: #F4F4FA;
-}
-
-.applicant-decision-btns {
+.education-details {
     display: flex;
+    flex-direction: column;
+}
+
+.uni-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #2d3436;
+}
+
+.degree-year {
+    font-size: 13px;
+    color: #888;
+}
+
+.contact-row {
+    justify-content: space-between;
+    padding-top: 8px;
+    margin-bottom: 8px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
     gap: 8px;
+    font-size: 14px;
+    color: #2d3436;
+}
+
+.contact-item .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-item.clickable {
+    cursor: pointer;
+}
+
+.contact-item.clickable:hover {
+    text-decoration: underline;
+}
+
+/* Action Buttons Row */
+.applicant-actions-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 30px;
+    border: none;
+    background: #F5F5F5;
+    color: #2d3436;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: #E0E0E0;
+}
+
+/* Decision Buttons Row */
+.applicant-decision-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 4px;
 }
 
 .decision-btn {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    padding: 12px;
+    border-radius: 30px;
+    border: 1px solid transparent;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .select-btn {
-    background: #E8F5E9;
-    color: #2E7D32;
+    background: #D8F0D8;
+    /* Light Green */
+    color: #2d3436;
+    border-color: #C8E6C9;
 }
 
 .select-btn:hover {
@@ -878,12 +963,14 @@ body {
 }
 
 .reject-btn {
-    background: #FFE5E5;
-    color: #D32F2F;
+    background: #FADBD8;
+    /* Light Red */
+    color: #2d3436;
+    border-color: #F5C6CB;
 }
 
 .reject-btn:hover {
-    background: #FFCDD2;
+    background: #F5C6CB;
 }
 
 @media (max-width: 768px) {

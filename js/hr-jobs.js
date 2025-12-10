@@ -119,7 +119,7 @@ const applicantsData = {
             university: 'ITM Skills University',
             location: 'B.tech CSE (2026)',
             phone: '6376617231',
-            linkedin: true,
+            linkedin: 'https://www.linkedin.com/in/riddhi-zunjarrao-03916931a/',
             resume: true,
             status: 'submitted',
             statusText: 'Assessment Submitted'
@@ -184,7 +184,7 @@ const applicantsData = {
             university: 'ITM Skills University',
             location: 'B.tech CSE (2026)',
             phone: '6376617231',
-            linkedin: true,
+            linkedin: 'https://www.linkedin.com/in/riddhi-zunjarrao-03916931a/',
             resume: true,
             status: 'submitted',
             statusText: 'Assessment Submitted'
@@ -542,49 +542,112 @@ async function openJobPopup(jobId) {
     } else {
         applicantsGrid.innerHTML = allApplicants.map(applicant => `
             <div class="applicant-card">
-                <div class="applicant-header">
-                    <div class="applicant-info">
+                <!-- Top Row: Profile + Status -->
+                <div class="applicant-top-row">
+                    <div class="applicant-profile">
                         <div class="applicant-avatar">
                             <img src="${applicant.avatar}" alt="${applicant.name}">
                         </div>
-                        <div class="applicant-details">
+                        <div class="applicant-identity">
                             <div class="applicant-name">${applicant.name}</div>
                             <div class="applicant-role">${applicant.role}</div>
                         </div>
                     </div>
-                    <span class="applicant-status ${applicant.status}">${applicant.statusText}</span>
-                </div>
-                
-                <div class="applicant-meta">
-                    <div class="applicant-meta-item">
-                        🎓 ${applicant.university}
+                    <div class="applicant-status-container">
+                        <span class="applicant-status-badge ${applicant.status}">${applicant.statusText}</span>
+                        <a href="#" class="view-submission-link">View Submission</a>
                     </div>
                 </div>
-                <div class="applicant-meta">
-                    <div class="applicant-meta-item">
-                        📞 ${applicant.phone}
+
+                <!-- Education Row -->
+                <div class="applicant-info-row education-row">
+                    <div class="info-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
+                    <div class="education-details">
+                        <div class="uni-name">${applicant.university}</div>
+                        <div class="degree-year">${applicant.location}</div>
                     </div>
                 </div>
-                
-                <div class="applicant-actions">
-                    <button class="action-icon-btn" onclick="chatWithApplicant('${applicant.id}')">
-                        💬 Chat
-                    </button>
+
+                <!-- Contact Row -->
+                <div class="applicant-info-row contact-row">
+                    <div class="contact-item">
+                        <span class="icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.12 2h3a2 2 0 012 1.72 12.05 12.05 0 00.57 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.03 12.03 0 002.81.57A2 2 0 0122 16.92z"></path>
+                            </svg>
+                        </span>
+                        ${applicant.phone}
+                    </div>
+                    <div class="contact-item clickable" onclick="window.open('${(typeof applicant.linkedin === 'string' && applicant.linkedin.length > 5) ? applicant.linkedin : 'https://www.linkedin.com/search/results/all/?keywords=' + encodeURIComponent(applicant.name)}', '_blank')">
+                        <span class="icon">
+                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"></path>
+                                <rect x="2" y="9" width="4" height="12"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </span>
+                        LinkedIn
+                    </div>
                     ${applicant.resume ? `
-                    <button class="action-icon-btn" onclick="window.open('${applicant.resume}', '_blank')">
-                        📄 Resume
-                    </button>` : ''}
-                    <button class="action-icon-btn" onclick="assessApplicant('${applicant.id}')">
-                        📝 Assess
+                    <div class="contact-item clickable" onclick="window.open('${applicant.resume}', '_blank')">
+                        <span class="icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                        </span>
+                        View Resume
+                    </div>` : ''}
+                </div>
+
+                <!-- Action Buttons Row -->
+                <div class="applicant-actions-row">
+                    <button class="action-btn chat-btn" onclick="chatWithApplicant('${applicant.id}')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                        </svg>
+                        Chat
+                    </button>
+                    <button class="action-btn interview-btn" onclick="scheduleInterview('${applicant.id}')">
+                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        Interview
+                    </button>
+                    <button class="action-btn assess-btn" onclick="assessApplicant('${applicant.id}')">
+                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                        </svg>
+                        Assess
                     </button>
                 </div>
-                
-                <div class="applicant-decision-btns">
+
+                <!-- Decision Buttons Row -->
+                <div class="applicant-decision-row">
                     <button class="decision-btn select-btn" onclick="selectApplicant('${applicant.id}')">
-                        ✓ Select
+                        Select
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 6px;">
+                             <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
                     </button>
                     <button class="decision-btn reject-btn" onclick="rejectApplicant('${applicant.id}')">
-                        ✕ Reject
+                        Reject
+                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 6px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
                     </button>
                 </div>
             </div>
