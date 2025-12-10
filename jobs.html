@@ -479,51 +479,7 @@
         </div>
     </footer>
 
-    <script>
-        // Toggle dropdown visibility
-        function toggleDropdown(id) {
-            const dropdown = document.getElementById(id);
-            const allDropdowns = document.querySelectorAll('.dropdown-content');
 
-            // Close all other dropdowns
-            allDropdowns.forEach(d => {
-                if (d.id !== id) {
-                    d.classList.remove('show');
-                }
-            });
-
-            // Toggle current dropdown
-            dropdown.classList.toggle('show');
-        }
-
-        // Clear all filters
-        function clearAllFilters() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.checked = false);
-
-            const skillTags = document.querySelector('.selected-skills');
-            if (skillTags) {
-                skillTags.innerHTML = '';
-            }
-        }
-
-        // Close dropdowns when clicking outside
-        window.onclick = function (event) {
-            if (!event.target.matches('.filter-btn') && !event.target.closest('.dropdown-content')) {
-                const dropdowns = document.querySelectorAll('.dropdown-content');
-                dropdowns.forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                });
-            }
-        }
-
-        // Remove skill tag
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-skill')) {
-                e.target.parentElement.remove();
-            }
-        });
-    </script>
 
     <!-- Firebase Integration -->
     <script src="js/firebase-config.js"></script>

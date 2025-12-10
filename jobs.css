@@ -112,6 +112,11 @@
     border-color: #333;
 }
 
+.filter-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
 /* Icon adjustments */
 .filter-icon {
     font-size: 16px;
