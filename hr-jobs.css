@@ -13,9 +13,9 @@ body {
     min-height: 100vh;
 }
 
-/* Expanded Sidebar */
-.sidebar-expanded {
-    width: 240px;
+/* Collapsed Sidebar with Hover Expand */
+.sidebar-collapsed {
+    width: 100px;
     background: white;
     border-right: 1px solid #E5E5E5;
     display: flex;
@@ -24,79 +24,162 @@ body {
     height: 100vh;
     left: 0;
     top: 0;
-}
-
-.sidebar-expanded .sidebar-header {
-    padding: 24px 20px;
-    border-bottom: 1px solid #E5E5E5;
-}
-
-.logo-text {
-    display: flex;
+    z-index: 100;
     align-items: center;
-    gap: 12px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
-/* Logo Styles */
+.sidebar-collapsed:hover {
+    width: 250px;
+    align-items: flex-start;
+}
+
+.sidebar-header {
+    padding: 30px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.sidebar-collapsed:hover .sidebar-header {
+    justify-content: flex-start;
+    padding-left: 24px;
+}
+
+.logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.sidebar-collapsed:hover .logo-container {
+    justify-content: flex-start;
+}
+
 .sidebar-logo {
-    max-width: 100px;
+    max-width: 60px;
     height: auto;
     object-fit: contain;
-    margin-left: -5px;
-    /* slight adjustment to align if needed */
+    transition: all 0.3s;
 }
 
-/* Legacy icon style - kept just in case */
-.logo-icon {
-    display: none;
+.sidebar-collapsed:hover .sidebar-logo {
+    max-width: 100px;
 }
 
 .sidebar-menu {
     flex: 1;
-    padding: 20px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding-top: 20px;
+    transition: all 0.3s;
+}
+
+.sidebar-collapsed:hover .sidebar-menu {
+    align-items: flex-start;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 .menu-item {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 20px;
-    color: #676767;
+    justify-content: center;
+    color: #2d3436;
     text-decoration: none;
-    transition: all 0.2s ease;
-    margin: 4px 12px;
-    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-collapsed:hover .menu-item {
+    width: 100%;
+    border-radius: 30px;
+    justify-content: flex-start;
+    padding-left: 16px;
+    gap: 12px;
 }
 
 .menu-item:hover:not(.active) {
     background: #F8F8F8;
-    color: #2d3436;
+    color: #000;
 }
 
 .menu-item.active {
-    background: #FFE5E8;
-    color: #2d3436;
+    background: #FFC5C5;
+    /* Pink active state */
+    color: #000;
+    box-shadow: 0 4px 12px rgba(255, 197, 197, 0.4);
 }
 
 .menu-icon {
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.menu-icon svg {
+    width: 24px;
+    height: 24px;
 }
 
 .menu-text {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: all 0.2s;
     font-size: 15px;
     font-weight: 500;
 }
 
-.sidebar-footer-expanded {
-    padding: 20px;
-    border-top: 1px solid #E5E5E5;
+.sidebar-collapsed:hover .menu-text {
+    opacity: 1;
+    visibility: visible;
+    width: auto;
+    transition-delay: 0.1s;
+    margin-left: 0;
+}
+
+.sidebar-footer {
+    padding: 30px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-top: none;
+    transition: all 0.3s;
+}
+
+.sidebar-collapsed:hover .sidebar-footer {
+    justify-content: space-between;
+    padding: 24px;
+    align-items: center;
 }
 
 .user-profile {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.sidebar-collapsed:hover .user-profile {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .user-avatar-circle {
@@ -104,6 +187,10 @@ body {
     height: 48px;
     border-radius: 50%;
     overflow: hidden;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .user-avatar-circle img {
@@ -125,23 +212,33 @@ body {
     transition: all 0.3s;
     padding: 8px 16px;
     border-radius: 8px;
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar-collapsed:hover .logout-link {
+    opacity: 1;
+    visibility: visible;
+    width: auto;
 }
 
 .logout-link:hover {
-    background: #FFE5E8;
-}
-
-.logout-icon {
-    font-size: 16px;
+    color: #D32F2F;
 }
 
 /* Main Content */
 .main-content {
     flex: 1;
-    margin-left: 240px;
+    margin-left: 100px;
     margin-right: 320px;
     padding: 32px;
-    transition: margin-right 0.3s;
+    transition: margin-right 0.3s, margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-collapsed:hover~.main-content {
+    margin-left: 250px;
 }
 
 .main-content.full-width {

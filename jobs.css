@@ -287,11 +287,15 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s;
+    display: block;
+    margin-left: auto;
+    width: fit-content;
 }
 
 .learn-more-btn:hover {
-    background: #2d3436;
-    color: white;
+    background: #FFC5C5;
+    color: black;
+    border-color: #2d3436;
 }
 
 /* Responsive Design for Jobs Page */
