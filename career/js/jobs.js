@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL = 'http://localhost:5000/api';
-const USE_MOCK_DATA = true; // Using Firebase/mock data to avoid CORS issues
+const USE_MOCK_DATA = false; // Disable mock data so only real/Firebase jobs show
 
 // Sample mock data for testing without backend
 const MOCK_JOBS = [
@@ -152,13 +152,13 @@ async function fetchJobs() {
             updatePagination(data.pagination);
         } else {
             console.error('Error fetching jobs:', data.error);
-            showError('Failed to load jobs. Using sample data.');
-            displayJobs(MOCK_JOBS);
+            showError('Failed to load jobs. Please try again later.');
+            displayJobs([]);
         }
     } catch (error) {
         console.error('Error:', error);
-        console.log('Backend not available. Using sample data.');
-        displayJobs(MOCK_JOBS);
+        console.log('Backend not available. No jobs to display.');
+        displayJobs([]);
     }
 }
 

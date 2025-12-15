@@ -34,9 +34,9 @@ def start_server():
         print(f"📂 Serving files from: {os.getcwd()}")
         print(f"\n📄 Open these URLs in your browser:")
         print(f"   - Main Site: http://localhost:{PORT}/index.html")
-        print(f"   - Jobs: http://localhost:{PORT}/jobs.html")
-        print(f"   - Apply: http://localhost:{PORT}/apply.html")
-        print(f"   - HR Login: http://localhost:{PORT}/hr-login.html")
+        print(f"   - Jobs: http://localhost:{PORT}/career/jobs.html")
+        print(f"   - Apply: http://localhost:{PORT}/career/apply.html")
+        print(f"   - HR Login: http://localhost:{PORT}/hr/hr-login.html")
         print(f"\n❌ Press Ctrl+C to stop the server\n")
         
         # Open browser

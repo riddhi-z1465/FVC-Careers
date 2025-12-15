@@ -21,18 +21,785 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-</head>
+    <style>
+        :root {
+            --header-height: 72px;
+            --lg-bg-color: rgba(0, 0, 0, 0.30);
+            --lg-highlight: rgba(255, 255, 255, 0.2);
+            --lg-text: #ffffff;
+            --lg-hover-glow: rgba(255, 255, 255, 0.4);
+            --scale: 0.9;
+            --mobile-scale: 1.1;
+            /* Add this */
+        }
 
-<body>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Figtree', sans-serif;
+            background-color: #F4F4FA;
+            /* Light grayish-blue */
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            color: #000;
+        }
+
+
+        @keyframes bg-move {
+            from {
+                background-position: center center;
+            }
+
+            to {
+                background-position: center top;
+            }
+        }
+
+        /* Main Header Styling */
+        .main-header {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%) scale(var(--scale));
+            width: 95%;
+            max-width: 1200px;
+            z-index: 1000;
+            transform-origin: top center;
+        }
+
+        .nav-bar {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            border-radius: 80px;
+            box-shadow: 0 0 155.4px rgba(0, 0, 0, 0.20);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+            overflow: visible;
+        }
+
+        .nav-bar:hover {
+            transform: scale(1.01);
+        }
+
+        /* Glass Layers */
+        .glass-filter {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            filter: url(#lg-dist);
+            isolation: isolate;
+            border-radius: 80px;
+        }
+
+        .glass-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: var(--lg-bg-color);
+            border-radius: 80px;
+        }
+
+        .glass-specular {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            border-radius: 80px;
+            overflow: hidden;
+            box-shadow: inset 1px 1px 0 var(--lg-highlight),
+                inset 0 0 5px var(--lg-highlight);
+        }
+
+        .glass-content {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 14.4px 28.8px;
+            border-radius: 80px;
+        }
+
+        /* Logo Styling */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10.8px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-container img {
+            height: 32.4px;
+            width: auto;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+        }
+
+        .logo-container:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Desktop Navigation Links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28.8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #f0f0f0;
+            text-decoration: none;
+            font-family: 'Figtree', sans-serif;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 27px;
+            padding: 3.6px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Contact Button */
+        .contact-btn {
+            color: white;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 27px;
+            font-family: 'Figtree', sans-serif;
+            text-decoration: none;
+            padding: 10.8px 21.6px;
+            border: 2px solid white;
+            border-radius: 36px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background-color: white;
+            color: black;
+            transform: scale(1.05);
+            box-shadow: 0 0 13.5px var(--lg-hover-glow);
+        }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 4.5px;
+            z-index: 4;
+        }
+
+        .hamburger-menu .bar {
+            width: 22.5px;
+            height: 2.7px;
+            background-color: white;
+            border-radius: 4.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.9px 1.8px rgba(0, 0, 0, 0.3);
+        }
+
+        .hamburger-menu.active .bar:nth-child(1) {
+            transform: translateY(7.2px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .bar:nth-child(3) {
+            transform: translateY(-7.2px) rotate(-45deg);
+        }
+
+        /* Mega Menu */
+        .mega-menu {
+            position: absolute;
+            top: calc(100% + 13.5px);
+            left: 0;
+            width: 100%;
+            background: #EDEDED;
+            border-radius: 36px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: visible;
+            max-height: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease, visibility 0s 0.5s;
+            z-index: 999;
+        }
+
+        .mega-menu.active {
+            max-height: 900px;
+            opacity: 1;
+            visibility: visible;
+            transition: max-height 0.5s ease, opacity 0.5s ease, visibility 0s;
+        }
+
+        /* Folder Tabs */
+        .folder-tabs {
+            display: flex;
+            gap: 0;
+            padding: 9px 61.2px 0;
+            position: relative;
+        }
+
+        .folder-tab {
+            position: relative;
+            cursor: pointer;
+            z-index: 2;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .folder-tab:hover {
+            transform: translateY(-3px);
+        }
+
+        .folder-tab:hover .folder-label {
+            transform: scale(1.05);
+        }
+
+        .folder-tab svg {
+            width: 276.3px;
+            height: 72.9px;
+        }
+
+        .folder-tab path {
+            transition: fill 0.3s ease;
+        }
+
+        .folder-tab:not(.active) path {
+            fill: #DDDDDD;
+        }
+
+        .folder-tab:not(.active):hover path {
+            fill: #C8C8C8;
+        }
+
+        .folder-tab.active path {
+            fill: #FFC5C5;
+        }
+
+        .folder-label {
+            position: absolute;
+            left: 28.8px;
+            top: 22.5px;
+            color: black;
+            font-size: 21.6px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 400;
+            line-height: 32.4px;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .folder-tab.active .folder-label {
+            font-weight: 500;
+        }
+
+        /* Content Box */
+        .content-box {
+            background: white;
+            border-radius: 18px;
+            padding: 61.2px 90px;
+            margin-top: -18px;
+            position: relative;
+            z-index: 3;
+            display: none;
+        }
+
+        .content-box.active {
+            display: block;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 90px;
+        }
+
+        .content-column h4 {
+            color: #676767;
+            font-size: 14.4px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 400;
+            line-height: 21.6px;
+            margin-bottom: 18px;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 7.2px;
+            padding: 3.6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 9px;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: black;
+            transition: width 0.3s ease;
+        }
+
+        .menu-item:hover::after {
+            width: calc(100% - 7.2px);
+        }
+
+        .menu-item img {
+            width: 21.6px;
+            height: 21.6px;
+            flex-shrink: 0;
+        }
+
+        .menu-item span {
+            color: black;
+            font-size: 16px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 400;
+            line-height: 27px;
+        }
+
+        .menu-item-mobile span {
+            color: black;
+            font-size: 11px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 400;
+            line-height: 27px;
+        }
+
+        .featured-box {
+            background: #F0F0F0;
+            border-radius: 18px;
+            height: 176.4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .featured-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-cta {
+            position: absolute;
+            bottom: 18px;
+            right: 18px;
+            padding: 10.8px 18px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 61.2px;
+            display: flex;
+            align-items: center;
+            gap: 7.2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+
+        .featured-cta:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.08);
+        }
+
+
+        .featured-cta span {
+            color: #333;
+            font-size: 14.4px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 500;
+            line-height: 21.6px;
+        }
+
+        /* Content */
+        .content {
+            padding-top: calc(var(--header-height) + 135px);
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .content h1 {
+            font-size: 3.6rem;
+            margin-bottom: 0.9rem;
+            text-shadow: 0 1.8px 9px rgba(0, 0, 0, 0.5);
+        }
+
+        .content p {
+            font-size: 1.08rem;
+            line-height: 1.6;
+            text-shadow: 0 0.9px 4.5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Medium screens - adjust folder tab sizes */
+        @media (max-width: 1250px) and (min-width: 993px) {
+            .folder-tabs {
+                padding: 9px 30px 0;
+                /* Reduced from 61.2px */
+            }
+
+            .folder-tab svg {
+                width: 220px;
+                /* Reduced from 276.3px */
+                height: 58px;
+                /* Reduced from 72.9px */
+            }
+
+            .folder-label {
+                left: 22px;
+                /* Reduced from 28.8px */
+                top: 18px;
+                /* Reduced from 22.5px */
+                font-size: 17px;
+                /* Reduced from 21.6px */
+                line-height: 25.5px;
+                /* Reduced from 32.4px */
+            }
+
+            .content-box {
+                padding: 45px 60px;
+                /* Reduced from 61.2px 90px */
+            }
+
+            .content-grid {
+                gap: 60px;
+                /* Reduced from 90px */
+            }
+        }
+
+        /* Hide plus icon on desktop */
+        .plus-icon {
+            display: none;
+        }
+
+        .solutions-submenu {
+            display: none;
+        }
+    </style>
+    <style>
+        .font-manrope {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle at 10% 20%, rgba(199, 210, 254, 0.3), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(254, 202, 202, 0.3), transparent 40%);
+            opacity: 0.5;
+            filter: blur(100px);
+        }
+
+        @media (min-width: 1024px) {
+            .main-container::before {
+                background-image: radial-gradient(circle at 20% 30%, rgba(199, 210, 254, 0.4), transparent 50%),
+                    radial-gradient(circle at 80% 70%, rgba(254, 202, 202, 0.4), transparent 50%);
+            }
+        }
+
+        .glass-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-tab .tab-fill {
+            transition: fill 0.3s ease;
+        }
+
+        .hamburger-top,
+        .hamburger-middle,
+        .hamburger-bottom {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        #mobile-menu-button.open .hamburger-top {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        #mobile-menu-button.open .hamburger-middle {
+            opacity: 0;
+        }
+
+        #mobile-menu-button.open .hamburger-bottom {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+    </style>
+    <style>
+        @media (max-width: 1023px) {
+            .hero-section {
+                min-height: 70vh !important;
+            }
+        }
+    </style>
+    <style>
+        @media (max-width: 992px) {
+            #partners-mega-menu {
+                display: none !important;
+            }
+
+            #more-mega-menu {
+                display: none !important;
+            }
+        }
+
+        .partners-category-title {
+            color: #333;
+            font-size: 20px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 600;
+            line-height: 28px;
+            margin-bottom: 24px;
+        }
+
+        .partners-logo-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .ucc-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        .pro-av-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        .ucaas-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        .cyber-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        @media (min-width: 992px) {
+            .ucc-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .pro-av-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            .ucaas-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .cyber-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .partner-logo-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            border-radius: 20px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            background-color: #ecd9d9;
+        }
+
+        .partner-logo-item-dark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            border-radius: 20px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            background-color: #796666;
+        }
+
+        .partner-logo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background-color: #ffffff
+        }
+
+        .partner-logo-item-dark:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background-color: #000000
+        }
+
+        .partner-logo-item a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .partner-logo-item img {
+            max-width: 80%;
+            max-height: 60px;
+            object-fit: contain;
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .partner-logo-item:hover img {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        .partner-logo-item.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+            background-color: #f5f5f5;
+        }
+
+        .partner-logo-item.disabled:hover img {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+
+        .cyber-grid .partner-logo-item {
+            background-color: #e0e0e0;
+        }
+
+        .cyber-grid .partner-logo-item img {
+            opacity: 0.8;
+            filter: grayscale(100%) brightness(0.8);
+        }
+
+        .cyber-grid .partner-logo-item:hover img {
+            filter: grayscale(0%) brightness(1);
+            opacity: 1;
+        }
+
+        .partners-divider {
+            border: none;
+            height: 1px;
+            background-color: #E0E0E0;
+            margin-top: 40px;
+        }
+
+        .partners-cta-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 30px;
+        }
+
+        .partners-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #FFC5C5;
+            border: 1px solid #333;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #333;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .partners-cta-btn:hover {
+            background: #333;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .partners-cta-btn:hover svg path {
+            fill: white;
+        }
+    </style>
+
+<body class="bg-[#F4F4FA]"> <svg style="position: absolute; width: 0; height: 0;">
+        <defs>
+            <filter id="lg-dist" x="0%" y="0%" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+                <feGaussianBlur in="noise" stdDeviation="2" result="blurred" />
+                <feDisplacementMap in="SourceGraphic" in2="blurred" scale="70" xChannelSelector="R"
+                    yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
     <!-- Navigation -->
+    <!-- <defs>
+        <filter id="lg-dist" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+            <feGaussianBlur in="noise" stdDeviation="2" result="blurred" />
+            <feDisplacementMap in="SourceGraphic" in2="blurred" scale="70" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </defs>
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="images/fvc-logo.png" alt="FVC Logo" class="logo-img">
+                <img src="../images/fvc-logo.png" alt="FVC Logo" class="logo-img">
                 FVC
             </div>
             <div class="nav-links">
-                <a href="index.html">Solutions</a>
+                <a href="#">Solutions</a>
                 <a href="#">Services</a>
                 <a href="#">Brands</a>
                 <a href="#">Resources</a>
@@ -40,7 +807,1639 @@
             </div>
             <button class="nav-cta">Contact Us</button>
         </div>
-    </nav>
+    </nav> -->
+
+    <header class="main-header">
+        <nav class="nav-bar">
+            <div class="glass-filter"></div>
+            <div class="glass-overlay"></div>
+            <div class="glass-specular"></div>
+            <div class="glass-content">
+                <a href="#" class="logo-container">
+                    <img src="fvc.svg" alt="FVC Logo">
+                </a>
+
+                <ul class="nav-links">
+                    <li>
+                        <a id="solutions-trigger">
+                            Solutions
+                            <span class="plus-icon">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                </svg>
+                            </span>
+                        </a>
+                        <div class="solutions-submenu">
+                            <a href="/ucc">UCC</a>
+                            <a href="/pro-av">Pro AV</a>
+                            <a href="/cyber-security">Cyber Security</a>
+                            <a href="/ucaas">UCCaaS</a>
+                            <a href="/support">Support</a>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a href="/partnerform#partners" id="partners-trigger">Brands</a>
+                    </li>
+                    <li><a href="/services">Services</a></li>
+                    <li><a href="/resources">Resources</a></li>
+
+                    <li class="desktop-only-li">
+                        <a href="#" id="more-trigger">More</a>
+                    </li>
+
+                    <!-- <li class="mobile-only-li"><a href="/me">Media & Events</a></li>
+                    <li class="mobile-only-li"><a href="/about">About Us</a></li>
+                    <li class="mobile-only-li"><a href="#contact-section">Contact Us</a></li> -->
+                </ul>
+
+                <a href="#contact-section" class="contact-btn">Contact Us</a>
+
+                <div class="hamburger-menu">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+            <div class="mega-menu" id="mega-menu">
+                <div class="folder-tabs">
+                    <div class="folder-tab active" data-tab="ucc">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">UCC</span>
+                    </div>
+                    <div class="folder-tab" data-tab="proav">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">Pro AV</span>
+                    </div>
+                    <div class="folder-tab" data-tab="cyber">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">Cyber Security</span>
+                    </div>
+                    <div class="folder-tab" data-tab="ucaas">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">UCCaaS</span>
+                    </div>
+                </div>
+                <div class="content-box active" id="ucc-content">
+                    <div class="content-grid">
+                        <div class="content-column">
+                            <h4>Communication</h4>
+                            <div class="menu-items">
+                                <a href="/ucc" class="menu-item">
+                                    <img src="../assets/icons/meeting.svg" alt="Meeting">
+                                    <span>Meeting</span>
+                                </a>
+                                <a href="/ucc" class="menu-item">
+                                    <img src="../assets/icons/calling.svg" alt="Calling">
+                                    <span>Calling</span>
+                                </a>
+                                <a href="/ucc" class="menu-item">
+                                    <img src="../assets/icons/devices.svg" alt="Devices">
+                                    <span>Devices</span>
+                                </a>
+                                <a href="/ucc" class="menu-item">
+                                    <img src="../assets/icons/collaboration.svg" alt="Collaboration">
+                                    <span>Collaboration</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Support</h4>
+                            <div class="menu-items">
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/networking.svg" alt="Contact Us">
+                                    <span>Contact Us</span>
+                                </a>
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/complaince-guides.svg" alt="FAQ">
+                                    <span>FAQ</span>
+                                </a>
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/platforms.svg" alt="Downloads">
+                                    <span>Downloads</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Featured</h4>
+                            <div class="featured-box">
+                                <img src="../assets/featured-ucc.jpg" alt="Featured UCC">
+                                <a href="/jabra" class="featured-cta">
+                                    <span>Jabra</span>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-box" id="proav-content">
+                    <div class="content-grid">
+                        <div class="content-column">
+                            <h4>Visuals</h4>
+                            <div class="menu-items">
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/display.svg" alt="Display">
+                                    <span>Display</span>
+                                </a>
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/projectors.svg" alt="Projectors">
+                                    <span>Projectors</span>
+                                </a>
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/video-walls.svg" alt="Video Walls">
+                                    <span>Video Walls</span>
+                                </a>
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/video-solutions.svg" alt="Video Solutions">
+                                    <span>Video Solutions</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Audio</h4>
+                            <div class="menu-items">
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/microphones.svg" alt="Microphones">
+                                    <span>Microphones</span>
+                                </a>
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/speakers.svg" alt="Speakers">
+                                    <span>Speakers</span>
+                                </a>
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/sound-systems.svg" alt="Sound Systems">
+                                    <span>Sound Systems</span>
+                                </a>
+                                <a href="/pro-av" class="menu-item">
+                                    <img src="../assets/icons/audio-guides.svg" alt="Audio Guides">
+                                    <span>Audio Guides</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Featured</h4>
+                            <div class="featured-box">
+                                <img src="../assets/featured-proav.jpg" alt="Featured Pro AV">
+                                <a href="/lindy" class="featured-cta">
+                                    <span>Lindy</span>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-box" id="cyber-content">
+                    <div class="content-grid">
+                        <div class="content-column">
+                            <h4>Security Solutions</h4>
+                            <div class="menu-items">
+                                <a href="/cyber-security" class="menu-item">
+                                    <img src="../assets/icons/network-security.svg" alt="Firewall">
+                                    <span>Firewall</span>
+                                </a>
+                                <a href="/cyber-security" class="menu-item">
+                                    <img src="../assets/icons/endpoint.svg" alt="Endpoint">
+                                    <span>Endpoint Security</span>
+                                </a>
+                                <a href="/cyber-security" class="menu-item">
+                                    <img src="../assets/icons/cloud-security.svg" alt="Encryption">
+                                    <span>Data Encryption</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Support</h4>
+                            <div class="menu-items">
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/networking.svg" alt="Contact Us">
+                                    <span>Contact Us</span>
+                                </a>
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/complaince-guides.svg" alt="FAQ">
+                                    <span>FAQ</span>
+                                </a>
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/platforms.svg" alt="Downloads">
+                                    <span>Downloads</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Featured</h4>
+                            <div class="featured-box">
+                                <img src="../assets/featured-cyber.jpg" alt="Featured Cyber">
+                                <a href="/cyber-security" class="featured-cta">
+                                    <span>Visit Page</span>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-box" id="ucaas-content">
+                    <div class="content-grid">
+                        <div class="content-column">
+                            <h4>Cloud Voice</h4>
+                            <div class="menu-items">
+                                <a href="/ucaas" class="menu-item">
+                                    <img src="../assets/icons/data-privacy.svg" alt="VoIP">
+                                    <span>VoIP Solutions</span>
+                                </a>
+                                <a href="/ucaas" class="menu-item">
+                                    <img src="../assets/icons/security-guides.svg" alt="PBX">
+                                    <span>Cloud PBX</span>
+                                </a>
+                                <a href="/ucaas" class="menu-item">
+                                    <img src="../assets/icons/cloud.svg" alt="SIP">
+                                    <span>SIP Trunking</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Support</h4>
+                            <div class="menu-items">
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/networking.svg" alt="Contact Us">
+                                    <span>Contact Us</span>
+                                </a>
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/complaince-guides.svg" alt="FAQ">
+                                    <span>FAQ</span>
+                                </a>
+                                <a href="/support" class="menu-item">
+                                    <img src="../assets/icons/platforms.svg" alt="Downloads">
+                                    <span>Downloads</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="content-column">
+                            <h4>Featured</h4>
+                            <div class="featured-box">
+                                <img src="../assets/featured-ucaas.jpg" alt="Featured UCaaS">
+                                <a href="/zoom" class="featured-cta">
+                                    <span>Zoom</span>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mega-menu" id="partners-mega-menu">
+                <div class="folder-tabs">
+                    <div class="folder-tab active" data-tab="partners-ucc">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">UCC</span>
+                    </div>
+                    <div class="folder-tab" data-tab="partners-proav">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">Pro AV</span>
+                    </div>
+                    <div class="folder-tab" data-tab="partners-cyber">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">Cyber Security</span>
+                    </div>
+                    <div class="folder-tab" data-tab="partners-ucaas">
+                        <svg viewBox="0 0 307 81" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M0 40V64C0 73.3888 7.61116 81 17 81H303.425C305.994 81 307.003 77.6684 304.865 76.2436C304.624 76.0823 304.41 75.8816 304.235 75.6498L259.004 15.8659C251.443 5.87256 239.636 0 227.105 0H40C17.9086 0 0 17.9086 0 40Z" />
+                        </svg>
+                        <span class="folder-label">UCCaaS</span>
+                    </div>
+                </div>
+                <div class="content-box active" id="partners-ucc-content">
+                    <h4 class="partners-category-title">UCC Brands</h4>
+                    <div class="partners-logo-grid pro-av-grid">
+                        <!-- <div class="partner-logo-item">
+                            <a href="/zoom"><img src="../images/Zoom-logo-1.svg" alt="Zoom" /></a>
+                        </div> -->
+                        <div class="partner-logo-item">
+                            <a href="/logitech"><img src="../images/logitech.svg" alt="Logitech" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/hp"><img src="../images/hp.png" alt="HP" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/barco"><img src="../images/Barco_logo.svg.png" alt="Barco" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/neat"><img src="../images/neat-logo-dark.svg" alt="Neat" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/jabra"><img src="../images/Jabra_logo.svg" alt="Jabra" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/workbooth"><img src="../images/workbooth-logo.svg" alt="WorkBooth" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/yealink"><img src="../images/Yealink_logo.png" alt="yealink" /></a>
+                        </div>
+                    </div>
+                    <hr class="partners-divider">
+                    <div class="partners-cta-section">
+                        <a href="/partnerform#partners" class="partners-cta-btn">
+                            <span>Become a Partner</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="content-box" id="partners-proav-content">
+                    <h4 class="partners-category-title">Pro AV Brands</h4>
+                    <div class="partners-logo-grid pro-av-grid">
+                        <div class="partner-logo-item">
+                            <a href="/biamp"><img src="../images/hi-resolution-biamp-logo (1).png" alt="Biamp" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/lindy"><img src="../images/LINDY_LOGO.jpg" alt="Lindy" /></a>
+                        </div>
+                        <div class="partner-logo-item-dark">
+                            <a href="/x2o"><img src="../assets/x2o-logo.png" alt="X2O" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/philips"><img src="../images/Philips-logo.svg" alt="Philips" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/aver"><img src="../images/AVer_Information_logo_20130828.png" alt="Aver" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/lenovo"><img src="../images/lenovo_logo.svg" alt="Lenovo" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/sony"><img src="../images/Sony_logo.svg" alt="Sony" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/uniguest"><img src="../images/ug-logo.webp" alt="Uniguest" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/element-one"><img src="../images/ELEMENT-ONE-enjoy-your-meeting-V2.png"
+                                    alt="Element One" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/mvi"><img src="../assets/mvi-logo.png" alt="MVI" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/nureva"><img src="../assets/nu-logo.png" alt="Nureva" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/absen"><img src="../assets/absen-logo.png" alt="Absen" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/clevertouch"><img src="../images/clevertouch-logo.png" alt="Clevertouch" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/fohhn"><img src="../images/fohhn-logo.svg" alt="Fohhn" /></a>
+                        </div>
+                    </div>
+                    <hr class="partners-divider">
+                    <div class="partners-cta-section">
+                        <a href="/partnerform#partners" class="partners-cta-btn">
+                            <span>Become a Partner</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="content-box" id="partners-cyber-content">
+                    <h4 class="partners-category-title">Cyber Security Partners</h4>
+                    <div class="partners-logo-grid cyber-grid">
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-01"><img src="../images/brand/cyberbrand-01.png.png"
+                                    alt="Cyber Security Brand 01" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-02"><img src="../images/brand/cyberbrand-02.png.png"
+                                    alt="Cyber Security Brand 02" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-03"><img src="../images/brand/cyberbrand-03.png.png"
+                                    alt="Cyber Security Brand 03" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-04"><img src="../images/brand/cyberbrand-04.png.png"
+                                    alt="Cyber Security Brand 04" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-05"><img src="../images/brand/cyberbrand-05.png.png"
+                                    alt="Cyber Security Brand 05" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-06"><img src="../images/brand/cyberbrand-06.png.png"
+                                    alt="Cyber Security Brand 06" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-07"><img src="../images/brand/cyberbrand-07.png.png"
+                                    alt="Cyber Security Brand 07" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-08"><img src="../images/brand/cyberbrand-08.png.png"
+                                    alt="Cyber Security Brand 08" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-09"><img src="../images/brand/cyberbrand-09.png.png"
+                                    alt="Cyber Security Brand 09" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-10"><img src="../images/brand/cyberbrand-10.png.png"
+                                    alt="Cyber Security Brand 10" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-11"><img src="../images/brand/cyberbrand-11.png.png"
+                                    alt="Cyber Security Brand 11" /></a>
+                        </div>
+                        <div class="partner-logo-item disabled">
+                            <a href="/cyberbrand-12"><img src="../images/brand/cyberbrand-12.png.png"
+                                    alt="Cyber Security Brand 12" /></a>
+                        </div>
+                    </div>
+                    <hr class="partners-divider">
+                    <div class="partners-cta-section">
+                        <a href="/partnerform#partners" class="partners-cta-btn">
+                            <span>Become a Partner</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="content-box" id="partners-ucaas-content">
+                    <h4 class="partners-category-title">UCCaaS Platforms</h4>
+                    <div class="partners-logo-grid ucaas-grid">
+                        <div class="partner-logo-item">
+                            <a href="/zoom"><img src="../assets/Zoom-logo.svg" alt="Zoom" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/mitel"><img
+                                    src="https://s29.q4cdn.com/947791400/files/images/logos/Mitel-Logo-RGB.png"
+                                    alt="Mitel" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/nuso"><img
+                                    src="https://www.midasolutions.com/wp-content/uploads/MIda-Logos-RGB_Turtle_288.png"
+                                    alt="Mida/Nuso" /></a>
+                        </div>
+                        <div class="partner-logo-item">
+                            <a href="/ribbon"><img
+                                    src="https://ribboncommunications.com/sites/default/files/rib_logo_hor_1_color_101-r-01.png"
+                                    alt="Ribbon" /></a>
+                        </div>
+                    </div>
+                    <hr class="partners-divider">
+                    <div class="partners-cta-section">
+                        <a href="/partnerform#partners" class="partners-cta-btn">
+                            <span>Become a Partner</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.4 18L5 16.6L14.6 7H6V5H18V17H16V8.4L6.4 18Z" fill="#333" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mega-menu" id="more-mega-menu">
+                <div class="content-box active" style="padding: 60px 90px; margin-top: 0;">
+                    <div class="content-grid" style="grid-template-columns: 1fr 1fr; gap: 90px;">
+
+                        <div class="content-column">
+                            <h4>Media & Events</h4>
+                            <div class="menu-items">
+                                <a href="/me" class="menu-item">
+                                    <img src="../assets/icons/display.svg" alt="Media & Events">
+                                    <span>See Our News & Updates</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="content-column">
+                            <h4>About Us</h4>
+                            <div class="menu-items">
+                                <a href="/about" class="menu-item">
+                                    <img src="../assets/icons/networking.svg" alt="About Us">
+                                    <span>Learn More About FVC</span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </nav>
+        <!-- New Mobile -->
+        <div class="mobile-accordion-menu">
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false" aria-controls="mobile-solutions-panel">
+                    <span>Solutions</span>
+                    <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <div id="mobile-solutions-panel" class="accordion-panel">
+                    <div class="mobile-pills-container">
+                        <button class="pill active" data-tab-target="mobile-ucc-tab">UCC</button>
+                        <button class="pill" data-tab-target="mobile-proav-tab">Pro AV</button>
+                        <button class="pill" data-tab-target="mobile-cyber-tab">Cyber Security</button>
+                        <button class="pill" data-tab-target="mobile-ucaas-tab">UCCaaS</button>
+                    </div>
+
+                    <div class="mobile-tab-content-area">
+                        <div id="mobile-ucc-tab" class="mobile-tab-content active">
+                            <h4 class="column-title">Communication</h4>
+                            <div class="menu-items-grid">
+                                <a href="/ucc" class="menu-item-mobile"><img src="../assets/icons/meeting.svg"
+                                        alt="Meeting"> <span>Meeting</span></a>
+                                <a href="/ucc" class="menu-item-mobile"><img src="../assets/icons/calling.svg"
+                                        alt="Calling"> <span>Calling</span></a>
+                                <a href="/ucc" class="menu-item-mobile"><img src="../assets/icons/devices.svg"
+                                        alt="Devices"> <span>Devices</span></a>
+                                <a href="/ucc" class="menu-item-mobile"><img src="../assets/icons/collaboration.svg"
+                                        alt="Collaboration"> <span>Collaboration</span></a>
+                            </div>
+                            <hr class="mobile-menu-divider">
+                            <h4 class="column-title">Infrastructure</h4>
+                            <div class="menu-items-grid">
+                                <a href="/support" class="menu-item-mobile"><img src="../assets/icons/networking.svg"
+                                        alt="Networking"> <span>Networking</span></a>
+                                <a href="/support" class="menu-item-mobile"><img src="../assets/icons/cloud.svg"
+                                        alt="Cloud"> <span>Cloud</span></a>
+                                <a href="/support" class="menu-item-mobile"><img src="../assets/icons/platforms.svg"
+                                        alt="Platforms"> <span>Platforms</span></a>
+                            </div>
+                        </div>
+
+                        <div id="mobile-proav-tab" class="mobile-tab-content">
+                            <h4 class="column-title">Visuals</h4>
+                            <div class="menu-items-grid">
+                                <a href="/pro-av" class="menu-item-mobile"><img src="../assets/icons/display.svg"
+                                        alt="Display"> <span>Display</span></a>
+                                <a href="/pro-av" class="menu-item-mobile"><img src="../assets/icons/projectors.svg"
+                                        alt="Projectors"> <span>Projectors</span></a>
+                            </div>
+                            <hr class="mobile-menu-divider">
+                            <h4 class="column-title">Audio</h4>
+                            <div class="menu-items-grid">
+                                <a href="/pro-av" class="menu-item-mobile"><img src="../assets/icons/microphones.svg"
+                                        alt="Microphones"> <span>Microphones</span></a>
+                                <a href="/pro-av" class="menu-item-mobile"><img src="../assets/icons/speakers.svg"
+                                        alt="Speakers"> <span>Speakers</span></a>
+                            </div>
+                        </div>
+
+                        <div id="mobile-cyber-tab" class="mobile-tab-content">
+                            <h4 class="column-title">Protection</h4>
+                            <div class="menu-items-grid">
+                                <a href="/cyber-security" class="menu-item-mobile"><img
+                                        src="../assets/icons/network-security.svg" alt="Network Security"> <span>Network
+                                        Security</span></a>
+                                <a href="/cyber-security" class="menu-item-mobile"><img
+                                        src="../assets/icons/endpoint.svg" alt="Endpoint"> <span>Endpoint
+                                        Security</span></a>
+                                <a href="/cyber-security" class="menu-item-mobile"><img
+                                        src="../assets/icons/cloud-security.svg" alt="Cloud Security"> <span>Cloud
+                                        Security</span></a>
+                                <a href="/cyber-security" class="menu-item-mobile"><img
+                                        src="../assets/icons/complaince-guides.svg" alt="Compliance"> <span>Compliance
+                                        Report</span></a>
+                                <a href="/cyber-security" class="menu-item-mobile"><img
+                                        src="../assets/icons/data-privacy.svg" alt="Data Privacy"> <span>Data
+                                        Privacy</span></a>
+                                <a href="/cyber-security" class="menu-item-mobile"><img
+                                        src="../assets/icons/security-guides.svg" alt="Security Guides"> <span>Security
+                                        Guides</span></a>
+                            </div>
+                        </div>
+
+                        <div id="mobile-ucaas-tab" class="mobile-tab-content">
+                            <h4 class="column-title">Cloud Voice</h4>
+                            <div class="menu-items-grid">
+                                <a href="/ucaas" class="menu-item-mobile"><img src="../assets/icons/data-privacy.svg"
+                                        alt="VoIP"> <span>VoIP Solutions</span></a>
+                                <a href="/ucaas" class="menu-item-mobile"><img src="../assets/icons/security-guides.svg"
+                                        alt="PBX"> <span>Cloud PBX</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false" aria-controls="mobile-brands-panel">
+                    <span>Brands</span>
+                    <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <div id="mobile-brands-panel" class="accordion-panel">
+
+                    <div class="mobile-pills-container">
+                        <button class="pill active" data-tab-target="mobile-brands-ucc">UCC</button>
+                        <button class="pill" data-tab-target="mobile-brands-proav">Pro AV</button>
+                        <button class="pill" data-tab-target="mobile-brands-cyber">Cyber Security</button>
+                        <button class="pill" data-tab-target="mobile-brands-ucaas">UCCaaS</button>
+                    </div>
+
+                    <div class="mobile-tab-content-area">
+
+                        <div id="mobile-brands-ucc" class="mobile-tab-content active">
+                            <div class="brands-grid">
+                                <a href="/zoom" class="brand-item">Zoom</a>
+                                <a href="/logitech" class="brand-item">Logitech</a>
+                                <a href="/hp" class="brand-item">HP</a>
+                                <a href="/barco" class="brand-item">Barco</a>
+                                <a href="/neat" class="brand-item">Neat</a>
+                                <a href="/jabra" class="brand-item">Jabra</a>
+                                <a href="/workbooth" class="brand-item">WorkBooth</a>
+                            </div>
+                        </div>
+
+                        <div id="mobile-brands-proav" class="mobile-tab-content">
+                            <div class="brands-grid">
+                                <a href="/biamp" class="brand-item">Biamp</a>
+                                <a href="/lindy" class="brand-item">Lindy</a>
+                                <a href="/x2o" class="brand-item">X2O</a>
+                                <a href="/philips" class="brand-item">Philips</a>
+                                <a href="/aver" class="brand-item">Aver</a>
+                                <a href="/lenovo" class="brand-item">Lenovo</a>
+                                <a href="/sony" class="brand-item">Sony</a>
+                                <a href="/uniguest" class="brand-item">Uniguest</a>
+                                <a href="/element-one" class="brand-item">Element One</a>
+                                <a href="/mvi" class="brand-item">MVI</a>
+                                <a href="/nureva" class="brand-item">Nureva</a>
+                                <a href="/absen" class="brand-item">Absen</a>
+                                <a href="/clevertouch" class="brand-item">Clevertouch</a>
+                                <a href="/fohhn" class="brand-item">Fohhn</a>
+                            </div>
+                        </div>
+
+                        <div id="mobile-brands-cyber" class="mobile-tab-content">
+                            <div class="brands-grid">
+                                <a href="#" class="brand-item disabled">BeyondTrust</a>
+                                <a href="#" class="brand-item disabled">Netscout</a>
+                                <a href="#" class="brand-item disabled">Invicti</a>
+                                <a href="#" class="brand-item disabled">Accops</a>
+                                <a href="#" class="brand-item disabled">Cyble</a>
+                                <a href="#" class="brand-item disabled">Sangfor</a>
+                                <a href="#" class="brand-item disabled">Defensys</a>
+                                <a href="#" class="brand-item disabled">Banyan Cloud</a>
+                                <a href="#" class="brand-item disabled">Cerebra</a>
+                                <a href="#" class="brand-item disabled">Galaxkey</a>
+                                <a href="#" class="brand-item disabled">Flashpoint</a>
+                                <a href="#" class="brand-item disabled">Ruijie</a>
+                            </div>
+                        </div>
+
+                        <div id="mobile-brands-ucaas" class="mobile-tab-content">
+                            <div class="brands-grid">
+                                <a href="/zoom" class="brand-item">Zoom</a>
+                                <a href="/mitel" class="brand-item">Mitel</a>
+                                <a href="/nuso" class="brand-item">Mida/Nuso</a>
+                                <a href="/ribbon" class="brand-item">Ribbon</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="/partnerform#partners" class="view-all-link" style="margin-top: 20px;">View All Brands
+                        &raquo;</a>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <a href="/services" class="accordion-header is-link">
+                    <span>Services</span>
+                </a>
+            </div>
+
+            <div class="accordion-item">
+                <a href="/resources" class="accordion-header is-link">
+                    <span>Resources</span>
+                </a>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header" aria-expanded="false" aria-controls="mobile-more-panel">
+                    <span>More</span>
+                    <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <div id="mobile-more-panel" class="accordion-panel">
+                    <a href="/me" class="panel-link">Media & Events</a>
+                    <a href="/about" class="panel-link">About Us</a>
+                </div>
+            </div>
+
+            <div class="mobile-cta-section">
+                <hr class="mobile-menu-divider">
+                <p>Propel Your Business to Global Success with Video & Voice Today</p>
+                <a href="/discover" class="discover-btn">Discover ></a>
+            </div>
+        </div>
+        <style>
+            .mobile-accordion-menu {
+                display: none;
+                /* This hides it on desktop by default */
+            }
+
+            /* PASTE IT HERE */
+
+            /* =================================================================
+   NEW MOBILE ACCORDION MENU STYLES
+   ================================================================= */
+
+            @media (max-width: 992px) {
+
+                /* Hide desktop-only things on mobile */
+                .nav-links,
+                /* Your main desktop navigation */
+                .contact-btn,
+                .mega-menu {
+                    display: none !important;
+                    /* Hide all desktop specific menus */
+                }
+
+                .hamburger-menu {
+                    display: flex;
+                }
+
+                /* Show mobile accordion menu */
+                .mobile-accordion-menu {
+                    display: block;
+                    width: 100%;
+                    padding-top: 0px;
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.5s ease-out;
+
+                    /* ADD THESE 3 LINES TO FIX THE BACKGROUND AND PADDING */
+                    background-color: #f4f4faf5;
+                    /* This adds the solid background */
+                    padding-left: 28.8px;
+                    /* This indents the menu to match the header */
+                    padding-right: 28.8px;
+                    /* This indents the menu to match the header */
+                    border-radius: 15px;
+
+                    -webkit-backdrop-filter: blur(10px);
+
+                }
+
+                .mobile-accordion-menu.active {
+                    max-height: 2500px;
+                    /* A large value to allow it to expand */
+                    padding-top: 20px;
+                }
+
+                /* Accordion Item Styling */
+                .accordion-item {
+                    margin-bottom: 0;
+                    /* Adjust as needed */
+                    border-bottom: 1px solid #EAEAEA;
+                    /* Separator from the design */
+                }
+
+                /* Accordion Header (Button/Link) */
+                .accordion-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                    padding: 16px 0;
+                    /* Padding around the text */
+                    background: none;
+                    border: none;
+                    font-size: 18px;
+                    /* Match design */
+                    font-weight: 500;
+                    color: #000;
+                    cursor: pointer;
+                    text-align: left;
+                    text-decoration: none;
+                    /* For link versions */
+                }
+
+                .accordion-header.is-link .chevron-icon {
+                    display: none;
+                    /* No chevron for direct links */
+                }
+
+                .accordion-header .chevron-icon {
+                    transition: transform 0.3s ease;
+                    flex-shrink: 0;
+                }
+
+                .accordion-header[aria-expanded="true"] .chevron-icon {
+                    transform: rotate(180deg);
+                }
+
+                /* Accordion Panel (Content) */
+                .accordion-panel {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+                    /* Smooth collapse/expand */
+                    padding-bottom: 0px;
+                    /* Default collapsed */
+                }
+
+                .accordion-panel.active {
+                    /* max-height handled by JS */
+                    padding-bottom: 20px;
+                    /* Padding when expanded */
+                }
+
+                /* --- Solutions Panel Specific Styles (Pills and Grid) --- */
+
+                .mobile-pills-container {
+                    display: flex;
+                    gap: 8px;
+                    overflow-x: auto;
+                    /* Allow horizontal scrolling for pills */
+                    -webkit-overflow-scrolling: touch;
+                    padding-bottom: 12px;
+                    margin-bottom: 12px;
+                    border-bottom: 1px solid #F0F0F0;
+                    /* Hide scrollbar */
+                    scrollbar-width: none;
+                    /* Firefox */
+                }
+
+                .mobile-pills-container::-webkit-scrollbar {
+                    display: none;
+                    /* Chrome, Safari */
+                }
+
+                .mobile-pills-container .pill {
+                    padding: 8px 16px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    border: none;
+                    border-radius: 20px;
+                    background-color: #F0F0F0;
+                    /* Inactive pill background */
+                    color: #555;
+                    cursor: pointer;
+                    flex-shrink: 0;
+                    /* Prevent pills from shrinking */
+                    transition: all 0.2s ease;
+                }
+
+                .mobile-pills-container .pill.active {
+                    background-color: #FFC5C5;
+                    /* Active pill background (pink) */
+                    color: #000;
+                }
+
+                .mobile-tab-content-area {
+                    padding-top: 8px;
+                    /* Space between pills and content */
+                }
+
+                .mobile-tab-content {
+                    display: none;
+                    /* Hidden by default */
+                    animation: fadeIn 0.3s ease-out;
+                }
+
+                .mobile-tab-content.active {
+                    display: block;
+                    /* Shown when active */
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(5px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .mobile-tab-content .column-title {
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    color: #676767;
+                    margin: 0 0 12px 0;
+                }
+
+                .mobile-tab-content .menu-items-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                    /* Responsive grid */
+                    gap: 16px 12px;
+                    /* Row and column gap */
+                    margin-bottom: 20px;
+                }
+
+                .mobile-tab-content .menu-item {
+                    display: flex;
+                    flex-direction: column;
+                    /* Icon on top, text below */
+                    align-items: flex-start;
+                    gap: 8px;
+                    text-decoration: none;
+                    font-size: 8px;
+                    font-weight: 500;
+                    color: #000;
+                    white-space: nowrap;
+                    /* Prevent text wrapping inside item */
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .mobile-tab-content .menu-item img {
+                    width: 20px;
+                    /* Slightly larger icons */
+                    height: 20px;
+                }
+
+                /* Brands Panel Grid */
+                .brands-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                    /* 2-3 brands per row */
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+
+                .brand-item {
+                    display: block;
+                    padding: 8px 12px;
+                    background-color: #F0F0F0;
+                    /* Light grey background */
+                    border-radius: 20px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #000;
+                    text-decoration: none;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .view-all-link {
+                    display: block;
+                    text-align: center;
+                    padding: 10px 0;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #E57373;
+                    /* Pinkish red */
+                    text-decoration: none;
+                }
+
+                /* More Panel Links */
+                .panel-link {
+                    display: block;
+                    padding: 10px 0;
+                    font-size: 16px;
+                    color: #333;
+                    text-decoration: none;
+                    border-bottom: 1px solid #F0F0F0;
+                }
+
+                .panel-link:last-child {
+                    border-bottom: none;
+                    /* No border for the last link */
+                }
+
+                /* CTA Section (below accordions) */
+                .mobile-cta-section {
+                    padding: 20px 0 40px 0;
+                    /* Adjust padding as needed */
+                    text-align: center;
+                }
+
+                .mobile-cta-section .mobile-menu-divider {
+                    margin: 20px 0;
+                }
+
+                .mobile-cta-section p {
+                    font-size: 14px;
+                    color: #555;
+                    margin-bottom: 15px;
+                }
+
+                .mobile-cta-section .discover-btn {
+                    display: inline-block;
+                    background-color: #E57373;
+                    /* Pinkish red */
+                    color: #fff;
+                    padding: 10px 20px;
+                    border-radius: 25px;
+                    text-decoration: none;
+                    font-size: 15px;
+                    font-weight: 500;
+                    transition: background-color 0.2s ease;
+                }
+
+                .mobile-cta-section .discover-btn:hover {
+                    background-color: #D46262;
+                }
+
+                /* General Divider for Accordion Panels */
+                .mobile-menu-divider {
+                    border: none;
+                    height: 1px;
+                    background-color: #EEE;
+                    margin: 20px 0;
+                }
+            }
+        </style>
+
+
+    </header>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // === ALL ELEMENTS ===
+            const hamburger = document.querySelector('.hamburger-menu');
+            const mobileMenu = document.querySelector('.mobile-accordion-menu');
+
+            // Desktop Menu Elements
+            const solutionsTrigger = document.getElementById('solutions-trigger');
+            const solutionsMenu = document.getElementById('mega-menu');
+            const partnersTrigger = document.getElementById('partners-trigger');
+            const partnersMenu = document.getElementById('partners-mega-menu');
+            const moreTrigger = document.getElementById('more-trigger');
+            const moreMenu = document.getElementById('more-mega-menu');
+
+            // === MOBILE MENU LOGIC ===
+
+            // 1. Hamburger Toggle (To open/close the main mobile menu)
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', () => {
+                    if (window.innerWidth <= 992) {
+                        hamburger.classList.toggle('active');
+                        mobileMenu.classList.toggle('active');
+
+                        // Set max-height for animation
+                        if (mobileMenu.classList.contains('active')) {
+                            mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+                        } else {
+                            mobileMenu.style.maxHeight = '0px';
+                        }
+                    }
+                });
+            }
+
+            // 2. Internal Accordion Logic (for Solutions, Brands, More)
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                if (!header.classList.contains('is-link')) {
+                    header.addEventListener('click', () => {
+                        const panel = document.getElementById(header.getAttribute('aria-controls'));
+                        if (!panel) return;
+                        const isExpanded = header.getAttribute('aria-expanded') === 'true';
+
+                        // Close all other open accordions
+                        accordionHeaders.forEach(otherHeader => {
+                            if (otherHeader !== header && !otherHeader.classList.contains('is-link')) {
+                                otherHeader.setAttribute('aria-expanded', 'false');
+                                const otherPanel = document.getElementById(otherHeader.getAttribute('aria-controls'));
+                                if (otherPanel) {
+                                    otherPanel.style.maxHeight = '0';
+                                    otherPanel.classList.remove('active');
+                                }
+                            }
+                        });
+
+                        // Toggle current accordion
+                        header.setAttribute('aria-expanded', String(!isExpanded));
+                        if (!isExpanded) {
+                            panel.style.maxHeight = panel.scrollHeight + 'px';
+                            panel.classList.add('active');
+                        } else {
+                            panel.style.maxHeight = '0';
+                            panel.classList.remove('active');
+                        }
+
+                        // Recalculate *main* mobile menu height
+                        setTimeout(() => {
+                            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                                mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+                            }
+                        }, 400); // After accordion animation
+                    });
+                }
+            });
+
+            // 3. Internal Pills/Tabs Logic (for Solutions and Brands)
+            const mobilePillsContainers = document.querySelectorAll('.mobile-pills-container');
+            mobilePillsContainers.forEach(container => {
+                container.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('pill')) return;
+
+                    const clickedPill = e.target;
+                    const tabTargetId = clickedPill.dataset.tabTarget;
+                    const parentAccordionPanel = clickedPill.closest('.accordion-panel');
+                    if (!parentAccordionPanel) return;
+
+                    // Deactivate pills and content in this container
+                    container.querySelectorAll('.pill').forEach(pill => pill.classList.remove('active'));
+                    parentAccordionPanel.querySelectorAll('.mobile-tab-content').forEach(content => content.classList.remove('active'));
+
+                    // Activate target
+                    clickedPill.classList.add('active');
+                    const targetContent = parentAccordionPanel.querySelector(`#${tabTargetId}`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+
+                    // Recalculate *main* mobile menu height after tab switch
+                    setTimeout(() => {
+                        if (mobileMenu && mobileMenu.classList.contains('active')) {
+                            mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+                        }
+                    }, 10);
+                });
+            });
+
+            // 4. Recalculate heights on resize
+            window.addEventListener('resize', () => {
+                // For internal accordions
+                accordionHeaders.forEach(header => {
+                    const panel = document.getElementById(header.getAttribute('aria-controls'));
+                    if (panel && header.getAttribute('aria-expanded') === 'true') {
+                        panel.style.maxHeight = panel.scrollHeight + 'px';
+                    }
+                });
+                // For main mobile menu
+                if (mobileMenu && mobileMenu.classList.contains('active')) {
+                    mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+                }
+                // Ensure mobile menu is closed if resized to desktop
+                if (window.innerWidth > 992) {
+                    if (mobileMenu) mobileMenu.classList.remove('active');
+                    if (hamburger) hamburger.classList.remove('active');
+                }
+            });
+
+            // === DESKTOP MENU LOGIC (from your old script) ===
+
+            // 1. Desktop: Solutions menu 
+            if (solutionsTrigger) {
+                solutionsTrigger.addEventListener('click', (e) => {
+                    if (window.innerWidth > 992) {
+                        e.preventDefault();
+                        solutionsMenu.classList.toggle('active');
+                        if (partnersMenu) partnersMenu.classList.remove('active');
+                        if (moreMenu) moreMenu.classList.remove('active');
+                    } else {
+                        e.preventDefault(); // Stop mobile link click
+                    }
+                });
+            }
+
+            // 2. Desktop: Partners menu
+            if (partnersTrigger) {
+                partnersTrigger.addEventListener('click', (e) => {
+                    if (window.innerWidth > 992) {
+                        e.preventDefault();
+                        partnersMenu.classList.toggle('active');
+                        if (solutionsMenu) solutionsMenu.classList.remove('active');
+                        if (moreMenu) moreMenu.classList.remove('active');
+                    }
+                });
+            }
+
+            // 3. Desktop: "More" menu
+            if (moreTrigger) {
+                moreTrigger.addEventListener('click', (e) => {
+                    if (window.innerWidth > 992) {
+                        e.preventDefault();
+                        moreMenu.classList.toggle('active');
+                        if (solutionsMenu) solutionsMenu.classList.remove('active');
+                        if (partnersMenu) partnersMenu.classList.remove('active');
+                    }
+                });
+            }
+
+            // 4. Desktop: Tab Switching for Solutions
+            if (solutionsMenu) {
+                const solutionsTabs = solutionsMenu.querySelectorAll('.folder-tab');
+                const solutionsBoxes = solutionsMenu.querySelectorAll('.content-box');
+                solutionsTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        solutionsTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        solutionsBoxes.forEach(box => box.classList.remove('active'));
+                        solutionsMenu.querySelector(`#${tabName}-content`).classList.add('active');
+                    });
+                });
+            }
+
+            // 5. Desktop: Tab Switching for Partners
+            if (partnersMenu) {
+                const partnersTabs = partnersMenu.querySelectorAll('.folder-tab');
+                const partnersBoxes = partnersMenu.querySelectorAll('.content-box');
+                partnersTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        partnersTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        partnersBoxes.forEach(box => box.classList.remove('active'));
+                        partnersMenu.querySelector(`#${tabName}-content`).classList.add('active');
+                    });
+                });
+            }
+
+            // 6. Desktop: Close all mega menus on outside click
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth > 992 && !e.target.closest('.nav-bar') && !e.target.closest('.mega-menu')) {
+                    if (solutionsMenu) solutionsMenu.classList.remove('active');
+                    if (partnersMenu) partnersMenu.classList.remove('active');
+                    if (moreMenu) moreMenu.classList.remove('active');
+                }
+            });
+
+        }); // End DOMContentLoaded
+    </script>
+    <!-- <script>
+                
+                // --- Main Menu Triggers ---
+                const solutionsMenu = document.getElementById('mega-menu');
+                const partnersTrigger = document.getElementById('partners-trigger');
+                const partnersMenu = document.getElementById('partners-mega-menu');
+                
+                // --- NEW "MORE" MENU VARIABLES ---
+                const moreTrigger = document.getElementById('more-trigger');
+                const moreMenu = document.getElementById('more-mega-menu');
+            
+                // Hamburger menu toggle
+                hamburger.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                    hamburger.classList.toggle('active');
+                });
+            
+                // Close mobile menu when clicking on a link
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        // Check for desktop mega-menu triggers and prevent close
+                        if (link.id === 'solutions-trigger' && window.innerWidth > 992) {
+                            return;
+                        }
+                        if (link.id === 'partners-trigger' && window.innerWidth > 992) {
+                            return; 
+                        }
+                        if (link.id === 'more-trigger' && window.innerWidth > 992) {
+                            return;
+                        }
+                        
+                        // Close mobile menu
+                        if (window.innerWidth <= 992) {
+                            navLinks.classList.remove('active');
+                            hamburger.classList.remove('active');
+                        }
+                    });
+                });
+            
+                // Solutions menu toggle (desktop/mobile)
+                solutionsTrigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    if (window.innerWidth <= 992) {
+                        solutionsSubmenu.classList.toggle('active');
+                        plusIcon.classList.toggle('active');
+                    } else {
+                        solutionsMenu.classList.toggle('active');
+                        partnersMenu.classList.remove('active'); // Close other menu
+                        moreMenu.classList.remove('active'); // Close other menu
+                    }
+                });
+            
+                // Partners mega menu toggle (desktop only)
+                partnersTrigger.addEventListener('click', (e) => {
+                    if (window.innerWidth > 992) {
+                        e.preventDefault(); 
+                        partnersMenu.classList.toggle('active');
+                        solutionsMenu.classList.remove('active'); // Close other menu
+                        moreMenu.classList.remove('active'); // Close other menu
+                    }
+                });
+                
+                // --- NEW "MORE" MENU TOGGLE (desktop-only) ---
+                moreTrigger.addEventListener('click', (e) => {
+                    if (window.innerWidth > 992) {
+                        e.preventDefault(); 
+                        moreMenu.classList.toggle('active');
+                        solutionsMenu.classList.remove('active'); // Close other menu
+                        partnersMenu.classList.remove('active'); // Close other menu
+                    }
+                });
+                
+                // --- Tab Switching Logic (Unchanged) ---
+            
+                // Scoped Tab switching for Solutions Menu
+                const solutionsTabs = solutionsMenu.querySelectorAll('.folder-tab');
+                const solutionsBoxes = solutionsMenu.querySelectorAll('.content-box');
+            
+                solutionsTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        
+                        solutionsTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        
+                        solutionsBoxes.forEach(box => box.classList.remove('active'));
+                        solutionsMenu.querySelector(`#${tabName}-content`).classList.add('active');
+                    });
+                });
+            
+                // Scoped Tab switching for Partners Menu
+                const partnersTabs = partnersMenu.querySelectorAll('.folder-tab');
+                const partnersBoxes = partnersMenu.querySelectorAll('.content-box');
+            
+                partnersTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        
+                        partnersTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        
+                        partnersBoxes.forEach(box => box.classList.remove('active'));
+                        partnersMenu.querySelector(`#${tabName}-content`).classList.add('active');
+                    });
+                });
+            
+                // Close all mega menus when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.nav-bar') && !e.target.closest('.mega-menu')) {
+                        solutionsMenu.classList.remove('active');
+                        partnersMenu.classList.remove('active'); 
+                        moreMenu.classList.remove('active'); // Close other menu
+                    }
+                });
+            
+                // Close mobile submenu when clicking a link
+                document.querySelectorAll('.solutions-submenu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth <= 992) {
+                            solutionsSubmenu.classList.remove('active');
+                            plusIcon.classList.remove('active');
+                            navLinks.classList.remove('active');
+                            hamburger.classList.remove('active');
+                        }
+                    });
+                });
+            </script> -->
+    <!-- new more -->
+    <style>
+
+    </style>
+    <!-- new style partners -->
+    <style>
+        /* =================================================================
+   New Partners Mega Menu Styles (Tabbed Version)
+   ================================================================= */
+
+        /* Hide new partners mega menu on mobile */
+        @media (max-width: 992px) {
+            #partners-mega-menu {
+                display: none !important;
+            }
+        }
+
+        /* This is the title *inside* the content box */
+        .partners-category-title {
+            color: #333;
+            font-size: 20px;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 600;
+            line-height: 28px;
+            margin-bottom: 24px;
+            /* Space between title and logos */
+        }
+
+        .partners-logo-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        /* Responsive grid columns */
+        .ucc-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        .pro-av-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        .ucaas-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        .cyber-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        }
+
+        /* Adjust grid for larger screens for a cleaner layout */
+        @media (min-width: 992px) {
+            .ucc-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .pro-av-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            /* 14 items, 2 rows */
+            .ucaas-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .cyber-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+
+        .partner-logo-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            border-radius: 20px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            background-color: #ecd9d9;
+            /* Light pink from screenshot */
+        }
+
+        .partner-logo-item-dark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            border-radius: 20px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            background-color: #796666;
+            /* Light pink from screenshot */
+        }
+
+        .partner-logo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background-color: #ffffff
+        }
+
+        .partner-logo-item-dark:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            background-color: #000000
+        }
+
+        /* Link and Image styling */
+        .partner-logo-item a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .partner-logo-item img {
+            max-width: 80%;
+            max-height: 60px;
+            /* Constrain image height */
+            object-fit: contain;
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .partner-logo-item:hover img {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        /* Handle disabled state */
+        .partner-logo-item.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+            background-color: #f5f5f5;
+        }
+
+        .partner-logo-item.disabled:hover img {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+
+        /* Specific override for cyber-grid items */
+        .cyber-grid .partner-logo-item {
+            background-color: #e0e0e0;
+            /* Match cyber screenshot */
+        }
+
+        .cyber-grid .partner-logo-item img {
+            opacity: 0.8;
+            filter: grayscale(100%) brightness(0.8);
+        }
+
+        .cyber-grid .partner-logo-item:hover img {
+            filter: grayscale(0%) brightness(1);
+            opacity: 1;
+        }
+
+        .partners-divider {
+            border: none;
+            height: 1px;
+            background-color: #E0E0E0;
+            margin-top: 40px;
+            /* Space after logo grid */
+        }
+
+        .partners-cta-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 30px;
+            /* Space after divider */
+        }
+
+        .partners-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #FFC5C5;
+            border: 1px solid #333;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #333;
+            font-family: 'Figtree', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .partners-cta-btn:hover {
+            background: #333;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .partners-cta-btn:hover svg path {
+            fill: white;
+        }
+    </style>
+
+
+
 
     <!-- Search Section -->
     <section class="search-section">
@@ -185,206 +2584,10 @@
         </div>
     </section>
 
-    <!-- Job Listings -->
+    <!-- Job Listings (populated via jobs.js / Firebase) -->
     <section class="job-listings">
         <div class="container">
-            <!-- Job Card 1 -->
-            <div class="job-listing-card">
-                <div class="job-header">
-                    <h2 class="job-title">UX Designer, YouTube Paid Digital Goods</h2>
-                    <div class="job-meta">
-                        <span class="meta-item">
-                            <span class="icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                                    <line x1="9" y1="22" x2="9" y2="22.01"></line>
-                                    <line x1="15" y1="22" x2="15" y2="22.01"></line>
-                                    <line x1="9" y1="18" x2="9" y2="18.01"></line>
-                                    <line x1="15" y1="18" x2="15" y2="18.01"></line>
-                                    <line x1="9" y1="14" x2="9" y2="14.01"></line>
-                                    <line x1="15" y1="14" x2="15" y2="14.01"></line>
-                                    <line x1="9" y1="10" x2="9" y2="10.01"></line>
-                                    <line x1="15" y1="10" x2="15" y2="10.01"></line>
-                                    <line x1="9" y1="6" x2="9" y2="6.01"></line>
-                                    <line x1="15" y1="6" x2="15" y2="6.01"></line>
-                                </svg>
-                            </span> YouTube
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                            </span> Mumbai, India
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
-                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                                </svg>
-                            </span> Full-time
-                        </span>
-                    </div>
-                </div>
-                <div class="job-content">
-                    <h3>About</h3>
-                    <p>At Google, we follow a simple and well-proven "Focus on the user and all else will follow."
-                        Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for
-                        billions of people around the globe. Throughout the design process—from creating user flows and
-                        wireframes to building user interface mockups and prototypes—you'll envision how people will
-                        experience our products, and bring that vision to life in a way that feels inspired, refined,
-                        and even magical.</p>
-                </div>
-                <button class="learn-more-btn">Learn More</button>
-            </div>
-
-            <!-- Job Card 2 -->
-            <div class="job-listing-card">
-                <div class="job-header">
-                    <h2 class="job-title">Staff UX Designer, Google Ad Sales CRM</h2>
-                    <div class="job-meta">
-                        <span class="meta-item">
-                            <span class="icon">🏢</span> Google
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">📍</span> Mumbai, India
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">💼</span> Part-time
-                        </span>
-                    </div>
-                </div>
-                <div class="job-content">
-                    <h3>About</h3>
-                    <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers,
-                        Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people
-                        who use our products. The UX team plays an integral part in gathering insights about the
-                        attitudes, emotions, and behaviors of people who use our products to inspire and inform design.
-                        We collaborate closely with each other and with engineering and product management to create
-                        industry-leading products that deliver value for the people who use them, and for Google's
-                        businesses.</p>
-                </div>
-                <button class="learn-more-btn">Learn More</button>
-            </div>
-
-            <!-- Job Card 3 -->
-            <div class="job-listing-card">
-                <div class="job-header">
-                    <h2 class="job-title">UX Designer, Google Home Experience</h2>
-                    <div class="job-meta">
-                        <span class="meta-item">
-                            <span class="icon">🏢</span> Google
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">📍</span> Mumbai, India
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">💼</span> Intern
-                        </span>
-                    </div>
-                </div>
-                <div class="job-content">
-                    <h3>About</h3>
-                    <p>At Google, we follow a simple and well-proven "Focus on the user and all else will follow."
-                        Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for
-                        billions of people around the globe. Throughout the design process—from creating user flows and
-                        wireframes to building user interface mockups and prototypes—you'll envision how people will
-                        experience our products, and bring that vision to life in a way that feels inspired, refined,
-                        and even magical.</p>
-                </div>
-                <button class="learn-more-btn">Learn More</button>
-            </div>
-
-            <!-- Job Card 4 -->
-            <div class="job-listing-card">
-                <div class="job-header">
-                    <h2 class="job-title">Staff UX Designer, Google Ad Sales CRM</h2>
-                    <div class="job-meta">
-                        <span class="meta-item">
-                            <span class="icon">🏢</span> Google
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">📍</span> Mumbai, India
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">💼</span> Part-time
-                        </span>
-                    </div>
-                </div>
-                <div class="job-content">
-                    <h3>About</h3>
-                    <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers,
-                        Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people
-                        who use our products. The UX team plays an integral part in gathering insights about the
-                        attitudes, emotions, and behaviors of people who use our products to inspire and inform design.
-                        We collaborate closely with each other and with engineering and product management to create
-                        industry-leading products that deliver value for the people who use them, and for Google's
-                        businesses.</p>
-                </div>
-                <button class="learn-more-btn">Learn More</button>
-            </div>
-
-            <!-- Job Card 5 -->
-            <div class="job-listing-card">
-                <div class="job-header">
-                    <h2 class="job-title">Staff UX Designer, Google Ad Sales CRM</h2>
-                    <div class="job-meta">
-                        <span class="meta-item">
-                            <span class="icon">🏢</span> Google
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">📍</span> Mumbai, India
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">💼</span> Part-time
-                        </span>
-                    </div>
-                </div>
-                <div class="job-content">
-                    <h3>About</h3>
-                    <p>Google User Experience (UX) is made up of multi-disciplinary teams of UX Designers, Researchers,
-                        Writers, Content Strategists, Program Managers, and Engineers. We care deeply about the people
-                        who use our products. The UX team plays an integral part in gathering insights about the
-                        attitudes, emotions, and behaviors of people who use our products to inspire and inform design.
-                        We collaborate closely with each other and with engineering and product management to create
-                        industry-leading products that deliver value for the people who use them, and for Google's
-                        businesses.</p>
-                </div>
-                <button class="learn-more-btn">Learn More</button>
-            </div>
-
-            <!-- Job Card 6 -->
-            <div class="job-listing-card">
-                <div class="job-header">
-                    <h2 class="job-title">UX Designer, Google Home Experience</h2>
-                    <div class="job-meta">
-                        <span class="meta-item">
-                            <span class="icon">🏢</span> Google
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">📍</span> Mumbai, India
-                        </span>
-                        <span class="meta-item">
-                            <span class="icon">💼</span> Intern
-                        </span>
-                    </div>
-                </div>
-                <div class="job-content">
-                    <h3>About</h3>
-                    <p>At Google, we follow a simple and well-proven "Focus on the user and all else will follow."
-                        Google's Interaction Designers take complex tasks and make them intuitive and easy-to-use for
-                        billions of people around the globe. Throughout the design process—from creating user flows and
-                        wireframes to building user interface mockups and prototypes—you'll envision how people will
-                        experience our products, and bring that vision to life in a way that feels inspired, refined,
-                        and even magical.</p>
-                </div>
-                <button class="learn-more-btn">Learn More</button>
-            </div>
+            <!-- Jobs will render here -->
         </div>
     </section>
 

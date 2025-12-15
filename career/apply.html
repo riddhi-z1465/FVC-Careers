@@ -4,18 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Careers at FVC - Build The Future With Us</title>
-    <link rel="icon" type="image/png" href="images/favicon-v2.png">
-    <meta name="description"
-        content="Join our team at FVC and build the future with us. Explore exciting career opportunities across multiple locations.">
+    <title>Apply for Job - FVC Careers</title>
+    <link rel="icon" type="image/png" href="../images/favicon-v2.png">
+    <meta name="description" content="Complete your profile to apply for this position at FVC">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles_aligned.css?v=6">
-    <script src="com.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles_aligned.css">
+    <link rel="stylesheet" href="./apply.css">
 
+    <script src="../com.tailwindcss.com"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <style>
         :root {
             --header-height: 72px;
@@ -811,7 +816,7 @@
             <div class="glass-specular"></div>
             <div class="glass-content">
                 <a href="#" class="logo-container">
-                    <img src="fvc.svg" alt="FVC Logo">
+                    <img src="../fvc.svg" alt="FVC Logo">
                 </a>
 
                 <ul class="nav-links">
@@ -1141,28 +1146,28 @@
                     <h4 class="partners-category-title">UCC Brands</h4>
                     <div class="partners-logo-grid pro-av-grid">
                         <!-- <div class="partner-logo-item">
-                            <a href="/zoom"><img src="../images/Zoom-logo-1.svg" alt="Zoom" /></a>
+                            <a href="/zoom"><img src="../../images/Zoom-logo-1.svg" alt="Zoom" /></a>
                         </div> -->
                         <div class="partner-logo-item">
-                            <a href="/logitech"><img src="../images/logitech.svg" alt="Logitech" /></a>
+                            <a href="/logitech"><img src="../../images/logitech.svg" alt="Logitech" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/hp"><img src="../images/hp.png" alt="HP" /></a>
+                            <a href="/hp"><img src="../../images/hp.png" alt="HP" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/barco"><img src="../images/Barco_logo.svg.png" alt="Barco" /></a>
+                            <a href="/barco"><img src="../../images/Barco_logo.svg.png" alt="Barco" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/neat"><img src="../images/neat-logo-dark.svg" alt="Neat" /></a>
+                            <a href="/neat"><img src="../../images/neat-logo-dark.svg" alt="Neat" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/jabra"><img src="../images/Jabra_logo.svg" alt="Jabra" /></a>
+                            <a href="/jabra"><img src="../../images/Jabra_logo.svg" alt="Jabra" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/workbooth"><img src="../images/workbooth-logo.svg" alt="WorkBooth" /></a>
+                            <a href="/workbooth"><img src="../../images/workbooth-logo.svg" alt="WorkBooth" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/yealink"><img src="../images/Yealink_logo.png" alt="yealink" /></a>
+                            <a href="/yealink"><img src="../../images/Yealink_logo.png" alt="yealink" /></a>
                         </div>
                     </div>
                     <hr class="partners-divider">
@@ -1180,31 +1185,31 @@
                     <h4 class="partners-category-title">Pro AV Brands</h4>
                     <div class="partners-logo-grid pro-av-grid">
                         <div class="partner-logo-item">
-                            <a href="/biamp"><img src="../images/hi-resolution-biamp-logo (1).png" alt="Biamp" /></a>
+                            <a href="/biamp"><img src="../../images/hi-resolution-biamp-logo (1).png" alt="Biamp" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/lindy"><img src="../images/LINDY_LOGO.jpg" alt="Lindy" /></a>
+                            <a href="/lindy"><img src="../../images/LINDY_LOGO.jpg" alt="Lindy" /></a>
                         </div>
                         <div class="partner-logo-item-dark">
                             <a href="/x2o"><img src="../assets/x2o-logo.png" alt="X2O" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/philips"><img src="../images/Philips-logo.svg" alt="Philips" /></a>
+                            <a href="/philips"><img src="../../images/Philips-logo.svg" alt="Philips" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/aver"><img src="../images/AVer_Information_logo_20130828.png" alt="Aver" /></a>
+                            <a href="/aver"><img src="../../images/AVer_Information_logo_20130828.png" alt="Aver" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/lenovo"><img src="../images/lenovo_logo.svg" alt="Lenovo" /></a>
+                            <a href="/lenovo"><img src="../../images/lenovo_logo.svg" alt="Lenovo" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/sony"><img src="../images/Sony_logo.svg" alt="Sony" /></a>
+                            <a href="/sony"><img src="../../images/Sony_logo.svg" alt="Sony" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/uniguest"><img src="../images/ug-logo.webp" alt="Uniguest" /></a>
+                            <a href="/uniguest"><img src="../../images/ug-logo.webp" alt="Uniguest" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/element-one"><img src="../images/ELEMENT-ONE-enjoy-your-meeting-V2.png"
+                            <a href="/element-one"><img src="../../images/ELEMENT-ONE-enjoy-your-meeting-V2.png"
                                     alt="Element One" /></a>
                         </div>
                         <div class="partner-logo-item">
@@ -1217,10 +1222,10 @@
                             <a href="/absen"><img src="../assets/absen-logo.png" alt="Absen" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/clevertouch"><img src="../images/clevertouch-logo.png" alt="Clevertouch" /></a>
+                            <a href="/clevertouch"><img src="../../images/clevertouch-logo.png" alt="Clevertouch" /></a>
                         </div>
                         <div class="partner-logo-item">
-                            <a href="/fohhn"><img src="../images/fohhn-logo.svg" alt="Fohhn" /></a>
+                            <a href="/fohhn"><img src="../../images/fohhn-logo.svg" alt="Fohhn" /></a>
                         </div>
                     </div>
                     <hr class="partners-divider">
@@ -1238,51 +1243,51 @@
                     <h4 class="partners-category-title">Cyber Security Partners</h4>
                     <div class="partners-logo-grid cyber-grid">
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-01"><img src="../images/brand/cyberbrand-01.png.png"
+                            <a href="/cyberbrand-01"><img src="../../images/brand/cyberbrand-01.png.png"
                                     alt="Cyber Security Brand 01" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-02"><img src="../images/brand/cyberbrand-02.png.png"
+                            <a href="/cyberbrand-02"><img src="../../images/brand/cyberbrand-02.png.png"
                                     alt="Cyber Security Brand 02" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-03"><img src="../images/brand/cyberbrand-03.png.png"
+                            <a href="/cyberbrand-03"><img src="../../images/brand/cyberbrand-03.png.png"
                                     alt="Cyber Security Brand 03" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-04"><img src="../images/brand/cyberbrand-04.png.png"
+                            <a href="/cyberbrand-04"><img src="../../images/brand/cyberbrand-04.png.png"
                                     alt="Cyber Security Brand 04" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-05"><img src="../images/brand/cyberbrand-05.png.png"
+                            <a href="/cyberbrand-05"><img src="../../images/brand/cyberbrand-05.png.png"
                                     alt="Cyber Security Brand 05" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-06"><img src="../images/brand/cyberbrand-06.png.png"
+                            <a href="/cyberbrand-06"><img src="../../images/brand/cyberbrand-06.png.png"
                                     alt="Cyber Security Brand 06" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-07"><img src="../images/brand/cyberbrand-07.png.png"
+                            <a href="/cyberbrand-07"><img src="../../images/brand/cyberbrand-07.png.png"
                                     alt="Cyber Security Brand 07" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-08"><img src="../images/brand/cyberbrand-08.png.png"
+                            <a href="/cyberbrand-08"><img src="../../images/brand/cyberbrand-08.png.png"
                                     alt="Cyber Security Brand 08" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-09"><img src="../images/brand/cyberbrand-09.png.png"
+                            <a href="/cyberbrand-09"><img src="../../images/brand/cyberbrand-09.png.png"
                                     alt="Cyber Security Brand 09" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-10"><img src="../images/brand/cyberbrand-10.png.png"
+                            <a href="/cyberbrand-10"><img src="../../images/brand/cyberbrand-10.png.png"
                                     alt="Cyber Security Brand 10" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-11"><img src="../images/brand/cyberbrand-11.png.png"
+                            <a href="/cyberbrand-11"><img src="../../images/brand/cyberbrand-11.png.png"
                                     alt="Cyber Security Brand 11" /></a>
                         </div>
                         <div class="partner-logo-item disabled">
-                            <a href="/cyberbrand-12"><img src="../images/brand/cyberbrand-12.png.png"
+                            <a href="/cyberbrand-12"><img src="../../images/brand/cyberbrand-12.png.png"
                                     alt="Cyber Security Brand 12" /></a>
                         </div>
                     </div>
@@ -1305,7 +1310,7 @@
                         </div>
                         <div class="partner-logo-item">
                             <a href="/mitel"><img
-                                    src="https://s29.q4cdn.com/947791400/files/images/logos/Mitel-Logo-RGB.png"
+                                    src="https://s29.q4cdn.com/947791400/files/../images/logos/Mitel-Logo-RGB.png"
                                     alt="Mitel" /></a>
                         </div>
                         <div class="partner-logo-item">
@@ -2435,612 +2440,383 @@
 
 
 
-    <!-- conntecting code -->
-    <div class="relative min-h-screen">
-        <main class="main-container relative pt-0 pb-0 md:pt-28 lg:pt-0">
-            <!-- Hero Section -->
-            <section class="hero fade-in-section">
-                <div class="container">
-                    <div class="hero-content">
-                        <div class="hero-text">
-                            <h1>Build The<br>Future With Us</h1>
-                            <p>Join a team driven by ideas, innovation, and real impact. Explore roles where your work
-                                truly
-                                matters.</p>
-                        </div>
-                        <div class="hero-image">
-                            <img src="images/hero-image.jpg" alt="Team collaboration">
-                        </div>
-                    </div>
 
-                    <!-- Search Form -->
-                    <div class="search-form">
-                        <div class="form-group">
-                            <label>Role</label>
-                            <div class="input-container">
-                                <input type="text" placeholder="UX Designer">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Location</label>
-                            <div class="input-container">
-                                <input type="text" placeholder="Mumbai, India">
-                            </div>
-                        </div>
-                        <button class="search-btn" onclick="window.location.href='career/jobs.html'">Search
-                            Jobs</button>
-                    </div>
+    <!-- Application Form Section -->
+    <section class="application-section">
+        <div class="container-small">
+            <div class="application-card">
+                <div class="application-header">
+                    <h1>Build Profile</h1>
+                    <p class="subtitle">Complete your profile to apply to job</p>
                 </div>
-            </section>
 
-            <!-- Job Roles Section -->
-            <section class="job-roles fade-in-section">
-                <div class="container">
-                    <h2 class="section-title">
-                        Frequently Searched <span class="highlight">Job Role</span>
-                    </h2>
-
-                    <div class="section-header">
-                        <h3>Job Roles</h3>
-                        <div class="carousel-controls">
-                            <button class="carousel-btn prev">‹</button>
-                            <button class="carousel-btn next">›</button>
-                        </div>
-                    </div>
-
-                    <div class="job-cards">
-                        <div class="job-card">
-                            <div class="job-card-image">
-                                <img src="images/job-notes.jpg" alt="UX Designer">
+                <form id="applicationForm" enctype="multipart/form-data">
+                    <!-- Personal Info -->
+                    <div class="form-section">
+                        <h2>Personal Info</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name <span class="required">*</span></label>
+                                <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
                             </div>
-                            <div class="job-card-content">
-                                <h4>UX Designer</h4>
-                                <p>Craft simple, intuitive experiences that make complex workflows effortless.</p>
-                                <a href="career/jobs.html?role=ux" class="job-card-btn">View More ></a>
+                            <div class="form-group">
+                                <label for="targetRole">Target Role <span class="required">*</span></label>
+                                <input type="text" id="targetRole" name="targetRole" placeholder="UX Designer" required>
                             </div>
                         </div>
-
-                        <div class="job-card">
-                            <div class="job-card-image">
-                                <img src="images/ux-expert.jpg" alt="AI/ML Engineer">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="john@example.com" required>
                             </div>
-                            <div class="job-card-content">
-                                <h4>AI/ML Engineer</h4>
-                                <p>Develop smart models that help automate decisions and unlock new insights.</p>
-                                <a href="career/jobs.html?role=aiml" class="job-card-btn">View More ></a>
-                            </div>
-                        </div>
-
-                        <div class="job-card">
-                            <div class="job-card-image">
-                                <img src="images/product-manager.jpg" alt="Product Manager">
-                            </div>
-                            <div class="job-card-content">
-                                <h4>Product Manager</h4>
-                                <p>Drive product direction, align teams, and ensure every feature solves a real problem.
-                                </p>
-                                <a href="career/jobs.html?role=pm" class="job-card-btn">View More ></a>
+                            <div class="form-group">
+                                <label for="mobileNumber">Mobile Number <span class="required">*</span></label>
+                                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="+1 (862) 217-9"
+                                    required>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- Locations Section -->
-            <section class="locations fade-in-section">
-                <div class="container">
-                    <h2 class="section-title">
-                        <span class="highlight">Locations</span> we work at
-                    </h2>
-
-                    <div class="locations-card">
-                        <div class="locations-content">
-                            <h3>Our Locations</h3>
-                            <p>Our global hubs enable us to collaborate, build, and deliver at scale.</p>
-                            <div class="locations-grid">
-                                <span>Mumbai</span>
-                                <span>Delhi</span>
-                                <span>Bangalore</span>
-                                <span>Kolkata</span>
-                                <span>Hyderabad</span>
-                                <span>Chennai</span>
+                    <!-- Education -->
+                    <div class="form-section">
+                        <h2>Education</h2>
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="university">University/College <span class="required">*</span></label>
+                                <input type="text" id="university" name="university" placeholder="MIT" required>
                             </div>
                         </div>
-                        <div class="locations-image">
-                            <img src="images/office-location.jpg" alt="Office Location">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="degree">Degree <span class="required">*</span></label>
+                                <input type="text" id="degree" name="degree" placeholder="UX Designer" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="graduationYear">Graduation Year <span class="required">*</span></label>
+                                <input type="text" id="graduationYear" name="graduationYear" placeholder="2026"
+                                    required>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- Team Section -->
-            <section class="team fade-in-section">
-                <div class="container">
-                    <h2 class="section-title">
-                        Find your <span class="highlight">Team</span>
-                    </h2>
+                    <!-- About You -->
+                    <div class="form-section">
+                        <h2>About You</h2>
 
-                    <div class="team-card">
-                        <div class="team-image">
-                            <img src="images/team-meeting.jpg" alt="Team Meeting">
-                        </div>
-                        <div class="team-content">
-                            <div class="team-text">
-                                <div class="team-header">
-                                    <h3>User Experience (UX)</h3>
-                                    <button class="circle-arrow-btn">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                        <!-- Photo and Resume Upload -->
+                        <div class="upload-row">
+                            <div class="upload-group">
+                                <label>Profile Photo <span class="file-size">Max: 500mb</span></label>
+                                <div class="upload-area">
+                                    <div class="upload-preview" id="photoPreview">
+                                        <div class="preview-placeholder">
+                                            <span class="camera-icon" aria-hidden="true">
+                                                <svg width="45" height="45" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"
+                                                        stroke="currentColor" stroke-width="1.6" />
+                                                    <path
+                                                        d="M4 8.5c0-1.105.895-2 2-2h1.2l1.2-1.8c.376-.564 1.012-.9 1.69-.9h3.82c.678 0 1.314.336 1.69.9L16.8 6.5H18c1.105 0 2 .895 2 2v8c0 1.105-.895 2-2 2H6c-1.105 0-2-.895-2-2v-8Z"
+                                                        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" hidden>
+                                    <button type="button" class="upload-btn"
+                                        onclick="document.getElementById('profilePhoto').click()">
+                                        <span class="upload-icon" aria-hidden="true">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 16V4m0 0L7 9m5-5 5 5" stroke="currentColor"
+                                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"
+                                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                                            </svg>
+                                        </span>
+                                        Upload
                                     </button>
+                                    <p class="upload-status">Recommended file format</p>
                                 </div>
-                                <p>Our UX team brings ideas to life by blending research, design, and user psychology.
-                                    We focus
-                                    on creating intuitive journeys that simplify complexity and deliver meaningful
-                                    experiences
-                                    for every user.</p>
                             </div>
-                            <button class="view-all-btn">View All
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" />
+
+                            <div class="upload-group">
+                                <label>CV/Resume <span class="file-size">Max: 10MB</span></label>
+                                <div class="upload-area">
+                                    <div class="file-info" id="resumeInfo">
+                                        <span class="file-name">cv.pdf</span>
+                                    </div>
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" hidden>
+                                    <button type="button" class="upload-btn"
+                                        onclick="document.getElementById('resume').click()">
+                                        <span class="upload-icon" aria-hidden="true">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 16V4m0 0L7 9m5-5 5 5" stroke="currentColor"
+                                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"
+                                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                                            </svg>
+                                        </span>
+                                        Upload
+                                    </button>
+                                    <p class="upload-status" id="resumeStatus"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio and Skills -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="portfolio">Portfolio/LinkedIn <span class="required">*</span></label>
+                                <input type="url" id="portfolio" name="portfolio" placeholder="https://" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="skills">Skills <span class="required">*</span></label>
+                                <input type="text" id="skills" name="skills" placeholder="eg. react, three.js, figma"
+                                    required>
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio" rows="4"
+                                    placeholder="I am something special..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Level -->
+                    <div class="form-section">
+                        <h2>Experience Level</h2>
+                        <div class="experience-options">
+                            <div class="experience-card" data-level="junior">
+                                <div class="experience-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 19V5"></path>
+                                        <path d="M5 12l7-7 7 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="experience-label">Junior</div>
+                                <div class="experience-years">0-2 Years</div>
+                            </div>
+                            <div class="experience-card active" data-level="mid">
+                                <div class="experience-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="6"></circle>
+                                        <circle cx="12" cy="12" r="2"></circle>
+                                    </svg>
+                                </div>
+                                <div class="experience-label">Mid Level</div>
+                                <div class="experience-years">2-5 Years</div>
+                            </div>
+                            <div class="experience-card" data-level="senior">
+                                <div class="experience-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                        <path d="M4 22h16"></path>
+                                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                                    </svg>
+                                </div>
+                                <div class="experience-label">Senior</div>
+                                <div class="experience-years">5+ Years</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="experienceLevel" name="experienceLevel" value="mid" required>
+                    </div>
+
+                    <!-- LinkedIn Follow -->
+                    <div class="form-section">
+                        <h2>Follow Us on LinkedIn ↗</h2>
+                        <div class="linkedin-card">
+                            <div class="linkedin-banner">
+                                <img src="../images/office-location.jpg" alt="FVC Banner">
+                            </div>
+                            <div class="linkedin-content">
+                                <div class="linkedin-logo">FVC</div>
+                                <div class="linkedin-info">
+                                    <h3>FVC ✓</h3>
+                                    <p class="linkedin-tagline">Your Partner for Digital Transformation</p>
+                                    <p class="linkedin-stats">IT Services and IT Consulting · Dubai · 336 followers ·
+                                        431-542 employees</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
+                        <button type="submit" class="save-btn">Save Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white">
+        <div class="container mx-auto px-6 lg:px-16 py-16">
+            <div class="flex flex-col gap-12">
+                <div class="flex flex-col lg:flex-row justify-between gap-12">
+
+                    <div class="flex flex-col justify-between items-center lg:items-start">
+                        <a href="#" aria-label="Home" class="mb-8 lg:mb-0">
+                            <img src="../images/fvc-footer-logo.png" alt="FVC Logo" class="h-24">
+                        </a>
+                        <div class="flex items-center space-x-5">
+                            <a href="https://www.linkedin.com/company/fvc/" target="_blank" rel="noopener noreferrer"
+                                class="text-gray-400 hover:text-white transition-colors duration-300"
+                                aria-label="LinkedIn">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 3C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19ZM18.5 18.5V13.2C18.5 12.3354 18.1565 11.5062 17.5452 10.8948C16.9338 10.2835 16.1046 9.94 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17C14.6813 12.17 15.0374 12.3175 15.2999 12.5801C15.5625 12.8426 15.71 13.1987 15.71 13.57V18.5H18.5ZM6.88 8.56C7.32556 8.56 7.75288 8.383 8.06794 8.06794C8.383 7.75288 8.56 7.32556 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19C6.43178 5.19 6.00193 5.36805 5.68499 5.68499C5.36805 6.00193 5.19 6.43178 5.19 6.88C5.19 7.81 5.95 8.56 6.88 8.56ZM8.27 18.5V10.13H5.5V18.5H8.27Z" />
                                 </svg>
-                            </button>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"
+                                aria-label="Facebook">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"
+                                aria-label="Instagram">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8c1.99 0 3.6-1.61 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 1 1 0 2.5a1.25 1.25 0 0 1 0-2.5M12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"
+                                aria-label="YouTube">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M10 15l5.19-3L10 9v6m11.56-7.17c-.13-.47-.43-.85-.88-1.02C19.25 6.25 12 6.25 12 6.25s-7.25 0-8.68.56c-.45.17-.75.55-.88 1.02C2 8.75 2 12 2 12s0 3.25.44 4.17c.13.47.43.85.88 1.02C4.75 17.75 12 17.75 12 17.75s7.25 0 8.68-.56c.45-.17.75-.55.88-1.02C22 15.25 22 12 22 12s0-3.25-.44-4.17z" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- Life at FVC Section -->
-            <section class="life-at-fvc fade-in-section">
-                <div class="container">
-                    <h2 class="section-title">
-                        <span class="highlight">Life</span> at FVC
-                    </h2>
-
-                    <div class="gallery">
-                        <div class="gallery-row">
-                            <div class="gallery-item large">
-                                <img src="images/life-1.jpg" alt="Life at FVC">
-                            </div>
-                            <div class="gallery-column">
-                                <div class="gallery-item small">
-                                    <img src="images/life-2.jpg" alt="Life at FVC">
-                                </div>
-                                <div class="gallery-item small">
-                                    <img src="images/life-3.jpg" alt="Life at FVC">
-                                </div>
-                            </div>
-                            <div class="gallery-item medium">
-                                <img src="images/life-4.jpg" alt="Life at FVC">
+                    <div
+                        class="grid grid-cols-2 text-center divide-x divide-y divide-gray-700 md:text-left md:divide-x-0 md:divide-y-0 md:grid-cols-3 md:gap-x-8 md:gap-y-10">
+                        <div class="flex flex-col p-4 md:p-0">
+                            <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">About Us</h3>
+                            <div class="flex flex-col gap-2">
+                                <a href="/about"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Company
+                                    Overview</a>
+                                <a href="/about#demo-centers"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Demo
+                                    Centers</a>
+                                <a href="/about#footprints"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Geographical
+                                    Footprints</a>
                             </div>
                         </div>
-                        <div class="gallery-row">
-                            <div class="gallery-column">
-                                <div class="gallery-item small">
-                                    <img src="images/life-5.jpg" alt="Life at FVC">
-                                </div>
-                                <div class="gallery-item small">
-                                    <img src="images/life-6.jpg" alt="Life at FVC">
-                                </div>
-                            </div>
-                            <div class="gallery-item medium">
-                                <img src="images/life-7.jpg" alt="Life at FVC">
-                            </div>
-                            <div class="gallery-item large">
-                                <img src="images/life-8.jpg" alt="Life at FVC">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Footer -->
-            <footer class="bg-black text-white">
-                <div class="container mx-auto px-6 lg:px-16 py-16">
-                    <div class="flex flex-col gap-12">
-                        <div class="flex flex-col lg:flex-row justify-between gap-12">
-
-                            <div class="flex flex-col justify-between items-center lg:items-start">
-                                <a href="#" aria-label="Home" class="mb-8 lg:mb-0">
-                                    <img src="images/fvc-footer-logo.png" alt="FVC Logo" class="h-24">
-                                </a>
-                                <div class="flex items-center space-x-5">
-                                    <a href="https://www.linkedin.com/company/fvc/" target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="text-gray-400 hover:text-white transition-colors duration-300"
-                                        aria-label="LinkedIn">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M19 3C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19ZM18.5 18.5V13.2C18.5 12.3354 18.1565 11.5062 17.5452 10.8948C16.9338 10.2835 16.1046 9.94 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17C14.6813 12.17 15.0374 12.3175 15.2999 12.5801C15.5625 12.8426 15.71 13.1987 15.71 13.57V18.5H18.5ZM6.88 8.56C7.32556 8.56 7.75288 8.383 8.06794 8.06794C8.383 7.75288 8.56 7.32556 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19C6.43178 5.19 6.00193 5.36805 5.68499 5.68499C5.36805 6.00193 5.19 6.43178 5.19 6.88C5.19 7.81 5.95 8.56 6.88 8.56ZM8.27 18.5V10.13H5.5V18.5H8.27Z" />
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"
-                                        aria-label="Facebook">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"
-                                        aria-label="Instagram">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8c1.99 0 3.6-1.61 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 1 1 0 2.5a1.25 1.25 0 0 1 0-2.5M12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6z" />
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"
-                                        aria-label="YouTube">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M10 15l5.19-3L10 9v6m11.56-7.17c-.13-.47-.43-.85-.88-1.02C19.25 6.25 12 6.25 12 6.25s-7.25 0-8.68.56c-.45.17-.75.55-.88 1.02C2 8.75 2 12 2 12s0 3.25.44 4.17c.13.47.43.85.88 1.02C4.75 17.75 12 17.75 12 17.75s7.25 0 8.68-.56c.45-.17.75-.55.88-1.02C22 15.25 22 12 22 12s0-3.25-.44-4.17z" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div
-                                class="grid grid-cols-2 text-center divide-x divide-y divide-gray-700 md:text-left md:divide-x-0 md:divide-y-0 md:grid-cols-3 md:gap-x-8 md:gap-y-10">
-                                <div class="flex flex-col p-4 md:p-0">
-                                    <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">About Us</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <a href="/about"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Company
-                                            Overview</a>
-                                        <a href="/about#demo-centers"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Demo
-                                            Centers</a>
-                                        <a href="/about#footprints"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Geographical
-                                            Footprints</a>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col p-4 md:p-0">
-                                    <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Solutions
-                                    </h3>
-                                    <div class="flex flex-col gap-2">
-                                        <a href="/ucc"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">UCC</a>
-                                        <a href="/pro-av"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Audio
-                                            Video</a>
-                                        <a href="/cyber-security"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Cyber
-                                            Security</a>
-                                        <a href="/ucaas"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">UCAAS</a>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col p-4 md:p-0">
-                                    <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Services</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <a href="/services#migration"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Migration
-                                            Services</a>
-                                        <a href="/services#slas"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Specialized
-                                            SLAS</a>
-                                        <a href="/services#deployment"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Remote
-                                            & On-site Deployment</a>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col p-4 md:p-0">
-                                    <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Partners</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <a href="/partners#vendors"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Vendors</a>
-                                        <a href="/partners#advantages"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Vendor
-                                            Advantages</a>
-                                        <a href="/partnerform/become-a-partner"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Become
-                                            a Partner</a>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col p-4 md:p-0">
-                                    <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Media &
-                                        Events</h3>
-                                    <div class="flex flex-col gap-2">
-                                        <a href="/me"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">News
-                                            & Insights</a>
-                                        <a href="/me"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Awards</a>
-                                        <a href="/me"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Events</a>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col p-4 md:p-0">
-                                    <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Contact Us
-                                    </h3>
-                                    <div class="flex flex-col gap-2">
-                                        <a href="/contact#address"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Office
-                                            Address</a>
-                                        <a href="#contact-section"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Contact
-                                            Form</a>
-                                        <a href="/careers"
-                                            class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Open
-                                            Jobs</a>
-                                    </div>
-                                </div>
+                        <div class="flex flex-col p-4 md:p-0">
+                            <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Solutions</h3>
+                            <div class="flex flex-col gap-2">
+                                <a href="/ucc"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">UCC</a>
+                                <a href="/pro-av"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Audio
+                                    Video</a>
+                                <a href="/cyber-security"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Cyber
+                                    Security</a>
+                                <a href="/ucaas"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">UCAAS</a>
                             </div>
                         </div>
-
-                        <div class="border-t border-gray-800"></div>
-
-                        <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-6">
-                            <p class="text-sm text-gray-400 font-['Figtree']">FVC MEA DMCC © - All Rights Reserved 2025
-                            </p>
-                            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
-                                <a href="/privacy-policy"
-                                    class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Privacy</a>
-                                <a href="/terms-and-conditions"
-                                    class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Terms
-                                    & Conditions</a>
-                                <a href="/legal"
-                                    class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Legal</a>
-                                <a href="/disclaimer"
-                                    class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Disclaimer</a>
+                        <div class="flex flex-col p-4 md:p-0">
+                            <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Services</h3>
+                            <div class="flex flex-col gap-2">
+                                <a href="/services#migration"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Migration
+                                    Services</a>
+                                <a href="/services#slas"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Specialized
+                                    SLAS</a>
+                                <a href="/services#deployment"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Remote
+                                    & On-site Deployment</a>
+                            </div>
+                        </div>
+                        <div class="flex flex-col p-4 md:p-0">
+                            <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Partners</h3>
+                            <div class="flex flex-col gap-2">
+                                <a href="/partners#vendors"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Vendors</a>
+                                <a href="/partners#advantages"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Vendor
+                                    Advantages</a>
+                                <a href="/partnerform/become-a-partner"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Become
+                                    a Partner</a>
+                            </div>
+                        </div>
+                        <div class="flex flex-col p-4 md:p-0">
+                            <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Media & Events</h3>
+                            <div class="flex flex-col gap-2">
+                                <a href="/me"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">News
+                                    & Insights</a>
+                                <a href="/me"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Awards</a>
+                                <a href="/me"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Events</a>
+                            </div>
+                        </div>
+                        <div class="flex flex-col p-4 md:p-0">
+                            <h3 class="text-lg font-semibold text-[#E09F7D] font-['Figtree'] mb-4">Contact Us</h3>
+                            <div class="flex flex-col gap-2">
+                                <a href="/contact#address"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Office
+                                    Address</a>
+                                <a href="#contact-section"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Contact
+                                    Form</a>
+                                <a href="/careers"
+                                    class="relative inline-block text-base text-gray-300 lg:hover:text-white after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Open
+                                    Jobs</a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </footer>
-            <style>
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
 
-                /* body {
-            font-family: 'Figtree', sans-serif;
-            background: #1a1a1a;
-        } */
+                <div class="border-t border-gray-800"></div>
 
-                .footer-container {
-                    background: black;
-                    padding: 49px 303px;
-                    color: white;
-                }
+                <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-6">
+                    <p class="text-sm text-gray-400 font-['Figtree']">FVC MEA DMCC © - All Rights Reserved 2025</p>
+                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                        <a href="/privacy-policy"
+                            class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Privacy</a>
+                        <a href="/terms-and-conditions"
+                            class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Terms
+                            & Conditions</a>
+                        <a href="/legal"
+                            class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Legal</a>
+                        <a href="/disclaimer"
+                            class="relative inline-block text-sm text-gray-400 lg:hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-px after:bottom-0 after:left-1/2 after:bg-white after:transition-all after:duration-300 after:-translate-x-1/2 lg:hover:after:w-full">Disclaimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-                .footer-content {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 49px;
-                }
-
-                .footer-top {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    gap: 40px;
-                }
-
-                .footer-brand {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                    min-height: 400px;
-                    width: 130px;
-                }
-
-                .logo-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                }
-
-                .logo-dot {
-                    width: 5px;
-                    height: 5px;
-                    fill: white;
-                }
-
-                .social-links {
-                    display: flex;
-                    gap: 16px;
-                    align-items: center;
-                }
-
-                .social-icon {
-                    width: 20px;
-                    height: 20px;
-                    cursor: pointer;
-                    transition: opacity 0.3s;
-                }
-
-                .social-icon:hover {
-                    opacity: 0.7;
-                }
-
-                .footer-links {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 16px;
-                    flex: 1;
-                    justify-content: flex-end;
-                }
-
-                .footer-column {
-                    width: 230px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 33px;
-                }
-
-                .footer-column-title {
-                    color: #E09F7D;
-                    font-size: 20px;
-                    font-weight: 600;
-                    line-height: 30px;
-                }
-
-                .footer-column-links {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                }
-
-                .footer-link {
-                    color: white;
-                    font-size: 16px;
-                    font-weight: 400;
-                    line-height: 25px;
-                    text-decoration: none;
-                    cursor: pointer;
-                    transition: color 0.3s;
-                    padding: 3px 0;
-                }
-
-                .footer-link:hover {
-                    color: #E09F7D;
-                }
-
-                .footer-divider {
-                    width: 100%;
-                    height: 1px;
-                    background: #676767;
-                }
-
-                .footer-bottom {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 20px;
-                }
-
-                .footer-legal {
-                    display: flex;
-                    gap: 11px;
-                    flex-wrap: wrap;
-                }
-
-                .footer-legal-link {
-                    color: white;
-                    font-size: 16px;
-                    font-weight: 400;
-                    line-height: 25px;
-                    text-decoration: none;
-                    cursor: pointer;
-                    transition: color 0.3s;
-                    padding: 3px 0;
-                }
-
-                .footer-legal-link:hover {
-                    color: #E09F7D;
-                }
-
-                .footer-copyright {
-                    color: white;
-                    font-size: 16px;
-                    font-weight: 400;
-                    line-height: 25px;
-                    white-space: nowrap;
-                }
-
-                @media (max-width: 1400px) {
-                    .footer-container {
-                        padding: 49px 150px;
-                    }
-                }
-
-                @media (max-width: 1200px) {
-                    .footer-container {
-                        padding: 40px 60px;
-                    }
-
-                    .footer-column {
-                        width: 200px;
-                    }
-                }
-
-                @media (max-width: 992px) {
-                    .footer-container {
-                        padding: 40px 40px;
-                    }
-
-                    .footer-top {
-                        flex-direction: column;
-                    }
-
-                    .footer-brand {
-                        width: 100%;
-                        min-height: auto;
-                        flex-direction: row;
-                        justify-content: space-between;
-                        align-items: center;
-                    }
-
-                    .footer-links {
-                        width: 100%;
-                        justify-content: flex-start;
-                    }
-
-                    .footer-column {
-                        width: calc(50% - 8px);
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .footer-container {
-                        padding: 32px 24px;
-                    }
-
-                    .footer-content {
-                        gap: 32px;
-                    }
-
-                    .footer-column {
-                        width: 100%;
-                    }
-
-                    .footer-bottom {
-                        flex-direction: column;
-                        align-items: flex-start;
-                        gap: 16px;
-                    }
-
-                    .footer-legal {
-                        flex-direction: column;
-                        gap: 8px;
-                    }
-
-                    .footer-copyright {
-                        white-space: normal;
-                    }
-                }
-
-                @media (max-width: 480px) {
-                    .footer-container {
-                        padding: 24px 16px;
-                    }
-
-                    .footer-brand {
-                        flex-direction: column;
-                        gap: 24px;
-                        align-items: flex-start;
-                    }
-
-                    .footer-column-title {
-                        font-size: 18px;
-                    }
-
-                    .footer-link,
-                    .footer-legal-link,
-                    .footer-copyright {
-                        font-size: 14px;
-                        line-height: 22px;
-                    }
-                }
-            </style>
-            <script src="js/index.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-jobs.js"></script>
+    <script src="./js/apply.js"></script>
 </body>
 
 </html>

@@ -34,30 +34,40 @@ A modern, full-stack featured careers and HR management platform built for FVC (
 
 ## Deployment Links
 * Candidate Carrers portal: https://fvc-careers.vercel.app/index.html
-* HR portal: https://fvc-careers.vercel.app/hr-login.html
+* HR portal: https://fvc-careers.vercel.app/hr/hr-login.html
 
 
 ## Project Structure
 
 ```
 FVC/
-├── index.html            # Landing page for candidates
-├── jobs.html             # Job listings page
-├── apply.html            # Job application form
-├── job-details.html      # Individual job view
-├── hr-login.html         # HR authentication page
-├── hr-jobs.html          # Main HR Dashboard
-├── js/
-│   ├── firebase-config.js   # Firebase initialization
-│   ├── firebase-jobs.js     # Data service layer
-│   ├── hr-jobs.js           # HR portal logic
-│   ├── apply.js             # Application handling logic
-│   └── jobs.js              # Job listing logic
-├── css/
-│   ├── styles_aligned.css   # Main design system
-│   ├── hr-jobs.css          # HR specific styling
-│   └── apply.css            # Application form styling
-└── images/                  # Assets
+├── index.html                 # Landing page for candidates
+├── career/                    # Candidate-facing pages
+│   ├── jobs.html              # Job listings page
+│   ├── apply.html             # Job application form
+│   ├── job-details.html       # Individual job view
+│   ├── jobs.css
+│   ├── apply.css
+│   ├── job-details.css
+│   └── js/
+│       ├── jobs.js
+│       ├── apply.js
+│       └── job-details.js
+├── hr/                        # HR portal
+│   ├── hr-login.html          # HR authentication page
+│   ├── hr-jobs.html           # Main HR Dashboard
+│   ├── hr-portal.css
+│   ├── hr-jobs.css
+│   └── js/
+│       ├── hr-login.js
+│       └── hr-jobs.js
+├── js/                        # Shared services
+│   ├── firebase-config.js     # Firebase initialization
+│   ├── firebase-jobs.js       # Data service layer
+│   └── firebase-seed.js       # Sample seeding util
+├── styles_aligned.css         # Main design system
+├── navbar_complex.css
+└── images/                    # Assets
 ```
 
 ## Setup & Running
@@ -93,7 +103,7 @@ FVC/
         ```
 
 ## HR Access
-*   Access the HR portal at `/hr-login.html`.
+*   Access the HR portal at `/hr/hr-login.html`.
 *   Standard credentials (configurable in `hr-login.js`).
 
 ## Recent Updates

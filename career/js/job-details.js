@@ -123,6 +123,7 @@ You'll be responsible for understanding user needs, defining product requirement
     }
 };
 
+
 // Get job ID from URL
 function getJobIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -136,6 +137,7 @@ async function fetchJobDetails(jobId) {
         if (MOCK_JOBS[jobId]) {
             console.log('✅ Found job in Mock Data:', jobId);
             displayJobDetails(MOCK_JOBS[jobId]);
+            loadApplicantsForJob(jobId);
             return;
         }
 
@@ -169,6 +171,7 @@ async function fetchJobDetails(jobId) {
                 };
 
                 displayJobDetails(normalizedJob);
+                loadApplicantsForJob(jobId);
                 return;
             }
         } catch (e) {
@@ -183,6 +186,7 @@ async function fetchJobDetails(jobId) {
             if (result.success && result.data) {
                 console.log('✅ Found job in Firebase');
                 displayJobDetails(result.data);
+                loadApplicantsForJob(jobId);
                 return;
             }
         }
@@ -200,14 +204,17 @@ async function fetchJobDetails(jobId) {
 
         if (data.success) {
             displayJobDetails(data.data);
+            loadApplicantsForJob(jobId);
         } else {
             showError('Job not found. Showing sample data.');
             displayJobDetails(MOCK_JOBS['mock-1']);
+            loadApplicantsForJob(jobId);
         }
     } catch (error) {
         console.error('Error fetching job details:', error);
         console.log('Backend not available. Using sample data.');
         displayJobDetails(MOCK_JOBS['mock-1']);
+        loadApplicantsForJob(jobId);
     }
 }
 
@@ -299,6 +306,62 @@ function displayJobDetails(job) {
     // Store job ID for application
     sessionStorage.setItem('currentJobId', job._id || job.id);
     sessionStorage.setItem('currentJobTitle', job.title);
+}
+
+// Load applicants for this job and render profile cards
+async function loadApplicantsForJob(jobId) {
+    const listEl = document.getElementById('applicantsList');
+    const countEl = document.getElementById('applicantsCount');
+    const inlineListEl = document.getElementById('applicantsInlineList');
+
+    if (!listEl || !inlineListEl) return;
+
+    listEl.innerHTML = '<p class="muted">Loading applicants...</p>';
+    inlineListEl.innerHTML = '<span class="muted">Loading...</span>';
+
+    try {
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.getApplicationsByJob) {
+            const res = await firebaseJobs.getApplicationsByJob(jobId);
+
+            if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+                renderApplicants(res.data, listEl, countEl, inlineListEl);
+                return;
+            }
+        }
+
+        listEl.innerHTML = '<p class="muted">Applicants will appear once submissions are received.</p>';
+        inlineListEl.innerHTML = '<span class="muted">No applicants yet.</span>';
+    } catch (err) {
+        console.error('Error loading applicants:', err);
+        listEl.innerHTML = '<p class="muted">Unable to load applicants right now.</p>';
+        inlineListEl.innerHTML = '<span class="muted">Unable to load applicants.</span>';
+    }
+}
+
+function renderApplicants(applicants, listEl, countEl, inlineListEl) {
+    if (countEl) countEl.textContent = applicants.length.toString();
+
+    const cards = applicants.map(app => {
+        const avatar = app.photoURL
+            ? `<div class="avatar"><img src="${app.photoURL}" alt="${app.fullName || 'Applicant'}"></div>`
+            : `<div class="avatar placeholder">${(app.fullName || 'A').charAt(0).toUpperCase()}</div>`;
+
+        return `
+            <div class="applicant-card">
+                ${avatar}
+            </div>
+        `;
+    }).join('');
+
+    listEl.innerHTML = cards;
+    inlineListEl.innerHTML = cards;
+}
+
+function formatDate(value) {
+    if (!value) return '—';
+    const date = value.toDate ? value.toDate() : new Date(value);
+    if (isNaN(date)) return '—';
+    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 // Show application form

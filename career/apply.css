@@ -175,7 +175,8 @@
 }
 
 .camera-icon {
-    font-size: 32px;
+    color: #2d3436;
+    display: inline-flex;
 }
 
 .upload-preview img {
@@ -207,6 +208,9 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .upload-btn:hover {
@@ -228,6 +232,18 @@
     font-weight: 500;
     display: block;
     /* Visible when success class is added */
+}
+
+.upload-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-icon svg,
+.camera-icon svg {
+    width: 1em;
+    height: 1em;
 }
 
 /* Experience Level */
