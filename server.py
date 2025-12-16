@@ -9,7 +9,7 @@ import socketserver
 import webbrowser
 import os
 
-PORT = 8000
+PORT = 8080
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):

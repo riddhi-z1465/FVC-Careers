@@ -359,6 +359,94 @@
         }
     }
 
+    // Create or get chat
+    async function getOrCreateChat(jobId, applicantId, applicantName) {
+        try {
+            const chatId = `${jobId}_${applicantId}`;
+            const chatRef = db.collection('chats').doc(chatId);
+            const doc = await chatRef.get();
+
+            if (!doc.exists) {
+                await chatRef.set({
+                    jobId,
+                    applicantId,
+                    applicantName,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    messages: []
+                });
+            }
+            return { success: true, chatId };
+        } catch (error) {
+            console.error('Error creating chat:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Send chat message
+    async function sendMessage(chatId, sender, content, avatar = null) {
+        try {
+            const chatRef = db.collection('chats').doc(chatId);
+            await chatRef.update({
+                messages: firebase.firestore.FieldValue.arrayUnion({
+                    sender,
+                    avatar,
+                    content,
+                    timestamp: new Date().toISOString()
+                }),
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true };
+        } catch (error) {
+            console.error('Error sending message:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Listen to chat
+    function listenToChat(chatId, callback) {
+        return db.collection('chats').doc(chatId)
+            .onSnapshot((doc) => {
+                if (doc.exists) {
+                    callback(doc.data().messages || []);
+                } else {
+                    callback([]);
+                }
+            });
+    }
+
+    // List all chats (for HR dashboard)
+    async function fetchAllChats() {
+        try {
+            const snapshot = await db.collection('chats').orderBy('lastUpdated', 'desc').get();
+            const chats = [];
+            snapshot.forEach(doc => {
+                chats.push({ id: doc.id, ...doc.data() });
+            });
+            return { success: true, data: chats };
+        } catch (error) {
+            console.error('Error fetching chats:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Delete application
+    async function deleteApplication(applicationId) {
+        try {
+            await db.collection(applicationsCollection).doc(applicationId).delete();
+
+            return {
+                success: true,
+                message: 'Application deleted successfully'
+            };
+        } catch (error) {
+            console.error('Error deleting application:', error);
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    }
+
     // Export functions
     window.firebaseJobs = {
         fetchJobs: fetchJobsFromFirebase,
@@ -369,7 +457,12 @@
         submitApplication,
         getApplicationsByJob,
         fetchAllApplications,
-        updateApplicationStatus
+        updateApplicationStatus,
+        deleteApplication,
+        getOrCreateChat,
+        sendMessage,
+        listenToChat,
+        fetchAllChats
     };
 
     console.log('[SUCCESS] Firebase Jobs Service loaded');

@@ -364,6 +364,206 @@ function formatDate(value) {
     return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
+// Chat Variables
+let activeChatId = null;
+let chatUnsubscribe = null;
+const applicantName = 'Riddhi Zunjarrao'; // Hardcoded for this demo based on user screenshot
+const applicantId = 'guest-' + Math.floor(Math.random() * 10000); // Random session ID
+
+// Open chat
+async function openChat() {
+    const chatPopup = document.getElementById('chatPopup');
+    chatPopup.classList.add('show');
+
+    // Initialize persistent chat session if not already
+    const jobId = sessionStorage.getItem('currentJobId');
+    const title = sessionStorage.getItem('currentJobTitle');
+
+    if (document.getElementById('chatHeaderTitle')) {
+        document.getElementById('chatHeaderTitle').textContent = title || 'Chat with HR';
+    }
+
+    if (!jobId) {
+        console.error('Job ID not found');
+        return;
+    }
+
+    // Reuse existing chat or create new
+    if (!activeChatId) {
+        // Check session storage first
+        const savedChatId = sessionStorage.getItem(`chat_${jobId}`);
+        if (savedChatId) {
+            activeChatId = savedChatId;
+        } else {
+            // 1. Try Firebase
+            let firebaseSuccess = false;
+            if (typeof firebaseJobs !== 'undefined' && firebaseJobs.getOrCreateChat) {
+                const result = await firebaseJobs.getOrCreateChat(jobId, applicantId, applicantName);
+                if (result.success) {
+                    activeChatId = result.chatId;
+                    firebaseSuccess = true;
+                    // Also submit a lightweight application so HR sees it
+                    // In a real app, this might be a separate "Inquiry" record
+                    await firebaseJobs.submitApplication({
+                        jobId,
+                        fullName: applicantName,
+                        email: 'riddhi@example.com', // Dummy
+                        mobileNumber: 'N/A',
+                        status: 'inquiry', // Special status
+                        photoURL: 'https://i.pravatar.cc/150?u=' + applicantId
+                    });
+                }
+            }
+
+            // 2. Fallback to Local Storage if Firebase failed or missing
+            if (!firebaseSuccess) {
+                console.log('[CHAT] Using LocalStorage fallback');
+                activeChatId = `local_chat_${jobId}_${applicantId}`;
+
+                // Store metadata for HR title resolution
+                const metaKey = `local_chat_meta_${activeChatId}`;
+                localStorage.setItem(metaKey, JSON.stringify({
+                    jobTitle: title || 'Job Inquiry',
+                    jobId: jobId,
+                    applicantName: applicantName
+                }));
+
+                // Initialize local chat history if needed
+                const localHistory = localStorage.getItem(activeChatId);
+                if (!localHistory) {
+                    localStorage.setItem(activeChatId, JSON.stringify([
+                        {
+                            sender: 'HR',
+                            content: 'Hi there! How can I help you with the ' + (title || 'position') + '?',
+                            timestamp: new Date().toISOString(),
+                            avatar: ''
+                        }
+                    ]));
+                }
+            }
+
+            sessionStorage.setItem(`chat_${jobId}`, activeChatId);
+        }
+    }
+
+    if (activeChatId) {
+        startChatListener(activeChatId);
+    }
+}
+
+function startChatListener(chatId) {
+    if (chatUnsubscribe) chatUnsubscribe(); // Stop previous listener
+
+    // Check if it's a local chat
+    if (chatId.startsWith('local_chat_')) {
+        console.log('[CHAT] Listening to local storage');
+        // Initial load
+        const history = JSON.parse(localStorage.getItem(chatId) || '[]');
+        renderChatMessages(history);
+
+        // Listen for changes (cross-tab)
+        const storageHandler = (e) => {
+            if (e.key === chatId) {
+                const msgs = JSON.parse(e.newValue || '[]');
+                renderChatMessages(msgs);
+            }
+        };
+        window.addEventListener('storage', storageHandler);
+
+        chatUnsubscribe = () => {
+            window.removeEventListener('storage', storageHandler);
+        };
+        return;
+    }
+
+    // Firebase Listener
+    if (typeof firebaseJobs !== 'undefined' && firebaseJobs.listenToChat) {
+        chatUnsubscribe = firebaseJobs.listenToChat(chatId, (messages) => {
+            renderChatMessages(messages);
+        });
+    }
+}
+
+function renderChatMessages(messages) {
+    const chatBody = document.getElementById('chatBody');
+    if (!messages || messages.length === 0) {
+        chatBody.innerHTML = '<div class="chat-placeholder"><p>Start the conversation.</p></div>';
+        return;
+    }
+
+    chatBody.innerHTML = messages.map(msg => {
+        const isMe = msg.sender === applicantName || msg.sender === 'You'; // Simple check
+
+        return `
+            <div class="message ${isMe ? 'sent' : 'received'}">
+                <div class="message-avatar-container">
+                    ${!isMe ? `<img src="${msg.avatar || '../images/favicon-v2.png'}" class="message-avatar-img">` : ''}
+                    ${!isMe ? `<span class="message-sender-name">${msg.sender}</span>` : ''}
+                </div>
+                <div class="message-bubble">
+                    ${msg.content}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+async function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    if (!activeChatId) {
+        await openChat(); // Try to reconnect
+        if (!activeChatId) {
+            alert('Connection failed. Please refresh.');
+            return;
+        }
+    }
+
+    input.value = ''; // Clear input immediately
+
+    // Handle Local Chat
+    if (activeChatId.startsWith('local_chat_')) {
+        const history = JSON.parse(localStorage.getItem(activeChatId) || '[]');
+        history.push({
+            sender: applicantName,
+            content: text,
+            timestamp: new Date().toISOString(),
+            avatar: 'https://i.pravatar.cc/150?u=' + applicantId
+        });
+        localStorage.setItem(activeChatId, JSON.stringify(history));
+
+        // Manually trigger render since storage event doesn't fire for same window
+        renderChatMessages(history);
+        return;
+    }
+
+    // Handle Firebase Chat
+    if (typeof firebaseJobs !== 'undefined' && firebaseJobs.sendMessage) {
+        try {
+            await firebaseJobs.sendMessage(activeChatId, applicantName, text, 'https://i.pravatar.cc/150?u=' + applicantId);
+        } catch (e) {
+            console.error('[CHAT] Send error:', e);
+            alert('Error sending message.');
+        }
+    }
+}
+
+// Enter key to send
+document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendChatMessage();
+});
+
+function closeChatPopup() {
+    document.getElementById('chatPopup').classList.remove('show');
+    // We don't unsubscribe here so we can keep receiving notifications theoretically, 
+    // but for now we just hide.
+}
+
 // Show application form
 function showApplicationForm() {
     const jobId = sessionStorage.getItem('currentJobId');

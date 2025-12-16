@@ -38,7 +38,7 @@
         }
 
         body {
-            font-family: 'Inter', 'Figtree', sans-serif;
+            font-family: 'Manrope', 'Figtree', sans-serif;
             background-color: #F4F4FA;
             /* Light grayish-blue */
             overflow-x: hidden;
@@ -2570,7 +2570,16 @@
             <!-- Job Header -->
             <div class="job-header-top">
                 <h1 class="job-title" id="jobTitle">Job Title Loading...</h1>
-                <button class="apply-btn-pill" onclick="showApplicationForm()">Apply Now</button>
+                <div class="job-actions" style="display: flex; gap: 12px; align-items: center;">
+                    <button class="apply-btn-pill" onclick="showApplicationForm()">Apply Now</button>
+                    <button class="chat-btn-pill" onclick="openChat()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Chat
+                    </button>
+                </div>
             </div>
 
             <div class="applicants-inline" id="applicantsInline">
@@ -2693,6 +2702,53 @@
             <p class="muted">Loading applicants...</p>
         </div>
     </section>
+
+    <!-- Chat Popup -->
+    <div id="chatPopup" class="chat-popup">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <button class="back-btn" onclick="closeChatPopup()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <h3 id="chatHeaderTitle">Chat with HR</h3>
+            </div>
+            <button class="close-btn" onclick="closeChatPopup()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-placeholder">
+                <p>Start the conversation.</p>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <div class="chat-input-container">
+                <button class="attach-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                        </path>
+                    </svg>
+                </button>
+                <input type="text" id="chatInput" placeholder="Type a message...">
+                <button class="send-btn" onclick="sendChatMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-black text-white">

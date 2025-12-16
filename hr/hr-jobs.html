@@ -75,11 +75,23 @@
         </div>
     </aside>
 
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <!-- Main Content -->
     <main class="main-content">
         <!-- Header -->
         <header class="page-header">
-            <h1>Jobs</h1>
+            <div class="header-top-row">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1>Jobs</h1>
+            </div>
             <div class="header-tabs">
                 <button class="tab-btn active">All</button>
                 <button class="tab-btn">Active</button>
@@ -139,8 +151,23 @@
     <!-- Discussion Panel -->
     <aside class="discussion-panel" id="discussionPanel">
         <div class="discussion-header">
-            <h3>Discussion</h3>
-            <button class="close-btn" onclick="closeDiscussion()">×</button>
+            <h3>Discussions</h3>
+            <div class="discussion-actions">
+                <button class="icon-btn danger" title="Clear local chats" onclick="clearLocalChats()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2">
+                        </path>
+                    </svg>
+                </button>
+                <button class="close-btn" onclick="closeDiscussion()">×</button>
+            </div>
+        </div>
+
+        <div class="discussion-tabs">
+            <button class="discussion-tab active" data-tab="internal" onclick="setDiscussionTab('internal')">Internal
+                Team</button>
+            <button class="discussion-tab" data-tab="candidates"
+                onclick="setDiscussionTab('candidates')">Candidates</button>
         </div>
 
         <div class="discussion-list" id="discussionList">
@@ -152,8 +179,16 @@
     <div class="chat-modal" id="chatModal">
         <div class="chat-header">
             <div class="chat-title">
-                <span class="back-btn" onclick="closeChat()">←</span>
-                <span id="chatJobTitle">HR Intern</span>
+                <span class="chat-header-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </span>
+                <span id="chatJobTitle">Topic</span>
             </div>
             <button class="close-btn" onclick="closeChat()">×</button>
         </div>
@@ -162,19 +197,41 @@
             <!-- Messages will be loaded here -->
         </div>
 
-        <div class="chat-input">
-            <button class="attach-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                        d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
-                </svg>
-            </button>
-            <input type="text" placeholder="Type a message..." id="messageInput">
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <button class="attach-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+                    </svg>
+                </button>
+                <button class="voice-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
+                <input type="text" placeholder="Type a message..." id="messageInput">
+            </div>
             <button class="send-btn" onclick="sendMessage()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
                 </svg>
             </button>
+        </div>
+    </div>
+
+    <!-- Applicants Chat Picker -->
+    <div class="chat-applicants-overlay" id="chatApplicantsOverlay" onclick="closeChatApplicants()"></div>
+    <div class="chat-applicants-popup" id="chatApplicantsPopup">
+        <div class="chat-applicants-header">
+            <h3 id="chatApplicantsTitle">Applicants</h3>
+            <button class="close-btn" onclick="closeChatApplicants()">×</button>
+        </div>
+        <div class="chat-applicants-body" id="chatApplicantsList">
+            <!-- applicants with chat buttons will render here -->
         </div>
     </div>
 

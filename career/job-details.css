@@ -83,6 +83,29 @@
     color: black;
 }
 
+.chat-btn-pill {
+    white-space: nowrap;
+    border: 1px solid #1a1a1a;
+    background: #1a1a1a;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-btn-pill:hover {
+    background: #FFC5C5;
+    color: black;
+    border-color: #1a1a1a;
+}
+
 /* Metadata */
 .job-meta-row {
     display: flex;
@@ -128,8 +151,7 @@
 
 .job-section p,
 .job-section ul li {
-    font-family: 'Inter', sans-serif;
-    /* Assuming Inter or standard sans */
+    font-family: 'Manrope', sans-serif;
     font-size: 16px;
     line-height: 1.6;
     color: #4b5563;
@@ -200,4 +222,190 @@
         top: -60px;
         left: 20px;
     }
+}
+
+/* Chat Popup Styles */
+.chat-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Figtree', sans-serif;
+    border: 1px solid #eee;
+}
+
+.chat-popup.show {
+    display: flex;
+}
+
+.chat-header {
+    background: #2d3436;
+    color: white;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chat-header .back-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+}
+
+.chat-header .close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+}
+
+.chat-header .close-btn:hover {
+    color: white;
+}
+
+.chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-footer {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    padding: 4px 12px;
+}
+
+.chat-input-container input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px 0;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.chat-input-container .attach-btn,
+.chat-input-container .send-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+.chat-input-container .send-btn {
+    background: #2d3436;
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+}
+
+.chat-placeholder {
+    text-align: center;
+    color: #888;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+/* Messages */
+.message {
+    max-width: 80%;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.sent {
+    align-self: flex-end;
+}
+
+.message.received {
+    align-self: flex-start;
+}
+
+.message-bubble {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.message.sent .message-bubble {
+    background: #2d3436;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.received .message-bubble {
+    background: white;
+    color: #333;
+    border: 1px solid #eee;
+    border-bottom-left-radius: 4px;
+}
+
+.message-avatar-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+    align-items: center;
+}
+
+.message-avatar-img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.message-sender-name {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
 }
