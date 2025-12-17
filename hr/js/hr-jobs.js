@@ -56,294 +56,152 @@ const jobsData = [
 ];
 
 // Discussion threads
-const discussionThreads = [
-    {
-        id: 1,
-        jobId: 1,
-        jobTitle: 'HR Intern',
-        count: 4,
-        messages: [
-            {
-                sender: 'Sarah Connors',
-                avatar: 'https://i.pravatar.cc/32?img=10',
-                content: 'Hi candidate!',
-                timestamp: '10:30 AM'
-            },
-            {
-                sender: 'Sarah Connors',
-                avatar: 'https://i.pravatar.cc/32?img=10',
-                content: 'We\'re so excited to invite you for an interview! Please join us here on Wednesday at 2 PM. Check your application tab.',
-                timestamp: '10:31 AM'
-            },
-            {
-                sender: 'Sarah Connors',
-                avatar: 'https://i.pravatar.cc/32?img=10',
-                content: 'We can\'t wait to see you! Please complete it within 24 hours. Check your application tab.',
-                timestamp: '10:32 AM',
-                action: 'Favor you do better'
-            },
-            {
-                sender: 'Wanda Maxwell',
-                avatar: 'https://i.pravatar.cc/32?img=11',
-                content: 'question should be answered as there was delay in posting question',
-                timestamp: '10:35 AM',
-                action: 'I agree'
-            }
-        ]
-    },
-    {
-        id: 2,
-        jobId: 2,
-        jobTitle: 'QA Assistant Intern',
-        count: 0,
-        messages: []
-    },
-    {
-        id: 3,
-        jobId: 4,
-        jobTitle: 'Vibe Coding Intern',
-        count: 1,
-        messages: [
-            {
-                sender: 'John Doe',
-                avatar: 'https://i.pravatar.cc/32?img=12',
-                content: 'Looking forward to the interview!',
-                timestamp: '2:15 PM'
-            }
-        ]
-    }
-];
+const discussionThreads = [];
 
 // Sample applicants data
-const applicantsData = {
-    3: [ // Quality Assurance Intern
-        {
-            id: 1,
-            name: 'Riddhi Zunjarrao',
-            role: 'Vibe-coding Intern',
-            avatar: 'https://i.pravatar.cc/48?img=20',
-            university: 'ITM Skills University',
-            location: 'B.tech CSE (2026)',
-            phone: '6376617231',
-            linkedin: 'https://www.linkedin.com/in/riddhi-zunjarrao-03916931a/',
-            resume: true,
-            status: 'submitted',
-            statusText: 'Assessment Submitted'
-        },
-        {
-            id: 2,
-            name: 'Ayush Anchore',
-            role: 'Founder',
-            avatar: 'https://i.pravatar.cc/48?img=21',
-            university: 'NITK',
-            location: 'B.tech (2020)',
-            phone: '7719090064',
-            linkedin: true,
-            resume: true,
-            status: 'view-submission',
-            statusText: 'Assessment Sent'
-        },
-        {
-            id: 3,
-            name: 'Kruti Mehta',
-            role: 'Vibe-coding Intern',
-            avatar: null, // Testing initials fallback
-            university: '------',
-            location: '------',
-            phone: '9182909064',
-            linkedin: true,
-            resume: true,
-            status: 'assessment',
-            statusText: 'Rejected'
-        },
-        {
-            id: 4,
-            name: 'Kiran Baby',
-            role: 'Vibe-coding Intern',
-            avatar: 'https://i.pravatar.cc/48?img=23',
-            university: 'University of Hertfordshire',
-            location: 'B.tech (2020)',
-            phone: '9182909064',
-            linkedin: true,
-            resume: true,
-            status: 'view-submission',
-            statusText: 'Assessment Sent'
-        },
-        {
-            id: 5,
-            name: 'Ayush Anchore',
-            role: '------',
-            avatar: 'https://i.pravatar.cc/48?img=24',
-            university: 'NITK',
-            location: 'B.tech (2020)',
-            phone: '7719090064',
-            linkedin: true,
-            resume: true,
-            status: 'view-submission',
-            statusText: 'Assessment Sent'
-        },
-        {
-            id: 6,
-            name: 'Riddhi Zunjarrao',
-            role: 'Vibe-coding Intern',
-            avatar: 'https://i.pravatar.cc/48?img=25',
-            university: 'ITM Skills University',
-            location: 'B.tech CSE (2026)',
-            phone: '6376617231',
-            linkedin: 'https://www.linkedin.com/in/riddhi-zunjarrao-03916931a/',
-            resume: true,
-            status: 'submitted',
-            statusText: 'Assessment Submitted'
-        }
-    ]
-};
+const applicantsData = {};
 
 let currentChatJob = null;
 let currentJobPopup = null;
 
-
-// Load jobs on page load
 // Load jobs on page load
 document.addEventListener('DOMContentLoaded', async function () {
-    await loadJobs(); // Wait for jobs to populate first (so titles resolve correctly)
-
-    // Restore active tab from session or default to 'internal'
-    const savedTab = sessionStorage.getItem('hrDiscussionTab') || 'internal';
-    setDiscussionTab(savedTab);
-
+    checkUserRole();
+    await loadJobs();
+    loadDiscussions();
     loadStats();
 });
 
-function setDiscussionTab(tab) {
-    currentDiscussionTab = tab;
-    sessionStorage.setItem('hrDiscussionTab', tab); // Persist state
+// Check user role and customize UI
+function checkUserRole() {
+    const role = sessionStorage.getItem('hrRole') || 'hr'; // Default to hr
+    const clearBtn = document.getElementById('clearChatsBtn');
+    const userAvatar = document.getElementById('userAvatar');
+    // Archive Button in Popup (Note: This might be called before popup exists, so ensure we call checkUserRole when popup opens too, or just hide via CSS default and show here if admin)
+    // Actually, popups are dynamic but the button is in static HTML.
+    const archiveBtn = document.getElementById('archiveJobBtn');
 
-    // Update Tab UI
-    document.querySelectorAll('.discussion-tab').forEach(t => {
-        if (t.dataset.tab === tab) t.classList.add('active');
-        else t.classList.remove('active');
-    });
+    // Handle Delete/Archive Button Visibility
+    if (clearBtn) {
+        clearBtn.style.display = (role === 'admin') ? 'inline-flex' : 'none';
+    }
 
-    loadDiscussions();
+    // Handle Archive Job Button Visibility
+    if (archiveBtn) {
+        archiveBtn.style.display = (role === 'admin') ? 'inline-flex' : 'none';
+    }
+
+    // Handle Admin Logo/Avatar
+    const regularContainer = document.getElementById('userAvatarContainer');
+    const adminContainer = document.getElementById('adminAvatarContainer');
+
+    if (role === 'admin') {
+        if (regularContainer) regularContainer.style.display = 'none';
+        if (adminContainer) adminContainer.style.display = 'flex';
+    } else {
+        if (regularContainer) regularContainer.style.display = 'flex'; // Default to flex if consistent with CSS
+        if (adminContainer) adminContainer.style.display = 'none';
+    }
 }
 
 // Load and update statistics
 // Load and update statistics
+// Load and update statistics
 async function loadStats() {
     try {
-        let activeJobsCount = 0;
-        let totalApplicantsCount = 0;
-        let pendingReviewsCount = 0;
-        let pastJobsCount = 0;
-
-        // Fetch jobs from Firebase
+        let allJobs = [];
         let usedFirebase = false;
 
+        // 1. Fetch jobs from Firebase (if available)
         if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
             try {
                 const jobsResult = await firebaseJobs.fetchJobs();
-
                 if (jobsResult.success && jobsResult.data) {
                     usedFirebase = true;
-                    // Count active jobs (isActive = true)
-                    activeJobsCount = jobsResult.data.filter(job => job.isActive === true).length;
-
-                    // Count past jobs (isActive = false)
-                    pastJobsCount = jobsResult.data.filter(job => job.isActive === false).length;
-
-                    // Sum up all applicants from all jobs
-                    totalApplicantsCount = jobsResult.data.reduce((sum, job) => {
-                        return sum + (job.applicationsCount || 0);
-                    }, 0);
+                    // Normalize firebase data
+                    allJobs = jobsResult.data.map(j => ({
+                        id: j.id,
+                        title: j.title,
+                        isActive: j.isActive !== false, // Default to true if undefined
+                        applicationsCount: j.applicationsCount || 0
+                    }));
                 }
             } catch (e) {
                 console.warn('[STATS] Firebase fetch failed, falling back to mock data');
             }
         }
 
-        // Fallback to mock data if Firebase wasn't used
+        // 2. Fetch/Merge Mock Data if Firebase not fully authoritative or used
         if (!usedFirebase) {
-            console.log('[STATS] Using mock/local data');
+            // Static Mock Data
+            const staticJobs = jobsData.map(j => ({
+                id: j.id,
+                title: j.title,
+                isActive: true,
+                applicationsCount: j.applicants || 0
+            }));
 
-            // Re-calculate based on what loadJobs() actually loaded
-            // We can re-use the logic or just count the static items correctly
-
-            // 1. Calculate Active Jobs
-            // Static jobs (jobsData) are all active by default in this demo + local jobs
+            // LocalStorage Data
             let localJobs = [];
             try {
-                localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
-            } catch (e) { }
+                const stored = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+                localJobs = stored.map(j => ({
+                    id: j.id || j._id,
+                    title: j.title,
+                    isActive: j.isActive !== false,
+                    applicationsCount: j.applicationsCount || 0
+                }));
+            } catch (e) {
+                console.error('[STATS] Error reading local storage:', e);
+            }
 
-            activeJobsCount = jobsData.length + localJobs.length;
-
-            // 2. Calculate Total Applicants
-            // We must use the REAL count (applicantsData length), not the stale 'applicants' property in jobsData
-            let staticApplicantsSum = 0;
-            // Iterate directly over applicantsData for known job IDs (1, 2, 3, 4 are the static job IDs)
-            // Note: jobsData has IDs 1 (HR Intern), 2 (QA Assistant), 3 (QA Intern), 4 (Vibe coding)
-            // applicantsData uses keys that match these IDs.
-            // Current keys in applicantsData: '3' (QA Intern) -> 6 applicants.
-            // Wait, looking at applicantsData structure above line 118:
-            // Key '3' has an array of 6 objects.
-            // Do we have applicants for other jobs? Currently applicantsData only has key '3'.
-            // Therefore, Total Applicants should strictly be the sum of lengths of all arrays in applicantsData.
-
-            Object.values(applicantsData).forEach(list => {
-                if (Array.isArray(list)) {
-                    staticApplicantsSum += list.length;
-                }
-            });
-
-            // Add applicants from local jobs
-            let localApplicantsSum = 0;
-            localJobs.forEach(job => {
-                // Local jobs might have avatars array directly or just a count
-                // For now, assume count is in applicationsCount or avatars length
-                if (job.avatars && Array.isArray(job.avatars)) {
-                    localApplicantsSum += job.avatars.length;
-                } else {
-                    localApplicantsSum += (job.applicationsCount || 0);
-                }
-            });
-
-            totalApplicantsCount = staticApplicantsSum + localApplicantsSum;
-
-            // 3. Pending Reviews & Past Jobs
-            // "Pending Reviews" usually means status is not 'rejected' or 'hired'. 
-            // We can iterate applicantsData to find this relative to our mock data.
-            let pendingSum = 0;
-            // Iterate over all arrays in applicantsData
-            Object.values(applicantsData).forEach(apps => {
-                apps.forEach(app => {
-                    // Pending usually means not rejected or hired yet.
-                    if (app.status !== 'rejected' && app.status !== 'hired') {
-                        pendingSum++;
-                    }
-                });
-            });
-
-            pendingReviewsCount = pendingSum;
-            pastJobsCount = 0; // We don't have a "past jobs" array in mock data currently
+            allJobs = [...staticJobs, ...localJobs];
         }
 
-        // Fetch applications to get pending reviews count (Firebase only)
+        // 3. Apply Local Archive Map Override
+        // This ensures that if we archived it locally (optimistic UI), it counts as archived
+        const archivedMap = JSON.parse(localStorage.getItem('fvc_archived_jobs') || '{}');
+
+        // Filter unique by ID (in case of overlap)
+        const uniqueJobsMap = new Map();
+        allJobs.forEach(j => uniqueJobsMap.set(String(j.id), j));
+        const uniqueJobs = Array.from(uniqueJobsMap.values());
+
+        let activeJobsCount = 0;
+        let pastJobsCount = 0;
+        let totalApplicantsCount = 0;
+
+        uniqueJobs.forEach(job => {
+            const isArchivedLocally = !!archivedMap[job.id] || !!archivedMap[String(job.id)];
+
+            // Determine effective status: stored isActive AND not locally archived
+            const isEffectiveActive = job.isActive && !isArchivedLocally;
+
+            if (isEffectiveActive) {
+                activeJobsCount++;
+            } else {
+                pastJobsCount++;
+            }
+
+            totalApplicantsCount += (job.applicationsCount || 0);
+        });
+
+        // 4. Pending Reviews (Firebase Only feature mostly, fallback to mock)
+        let pendingReviewsCount = 0;
         if (usedFirebase && typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
             try {
                 const applicationsResult = await firebaseJobs.fetchAllApplications();
-
                 if (applicationsResult.success && applicationsResult.data) {
-                    // Count applications with status 'pending' or 'under_review'
                     pendingReviewsCount = applicationsResult.data.filter(app =>
                         app.status === 'pending' || app.status === 'under_review'
                     ).length;
                 }
-            } catch (e) {
-                console.warn('[STATS] Firebase applications fetch failed');
-            }
+            } catch (e) { }
+        } else {
+            pendingReviewsCount = 5; // Default mock
         }
 
-        // Update the UI
+        // 5. Update Stats Cards (DOM)
         const setVal = (id, val) => {
             const el = document.getElementById(id);
             if (el) el.textContent = val;
@@ -354,12 +212,22 @@ async function loadStats() {
         setVal('pendingReviewsCount', pendingReviewsCount);
         setVal('pastJobsCount', pastJobsCount);
 
-        console.log('[STATS] Updated:', {
-            activeJobs: activeJobsCount,
-            totalApplicants: totalApplicantsCount,
-            pendingReviews: pendingReviewsCount,
-            pastJobs: pastJobsCount
+        // 6. Update Tab Counts (Bonus: Real-time update on tabs)
+        // Find buttons by text content or date-filter
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(btn => {
+            const filter = btn.dataset.filter;
+            if (filter === 'all') {
+                btn.textContent = `All (${activeJobsCount + pastJobsCount})`;
+            } else if (filter === 'active') {
+                btn.textContent = `Active (${activeJobsCount})`;
+            } else if (filter === 'past') {
+                btn.textContent = `Past (${pastJobsCount})`;
+            }
         });
+
+        console.log('[STATS] Updated:', { active: activeJobsCount, past: pastJobsCount, applicants: totalApplicantsCount });
+
     } catch (error) {
         console.error('[ERROR] Error loading stats:', error);
     }
@@ -393,29 +261,6 @@ async function loadJobs() {
         console.warn('Error fetching local applications for avatars:', e);
     }
 
-    // Merge static applicantsData for consistent display
-    try {
-        if (typeof applicantsData !== 'undefined') {
-            Object.keys(applicantsData).forEach(jobId => {
-                const staticApps = applicantsData[jobId];
-                if (Array.isArray(staticApps)) {
-                    const mappedApps = staticApps.map(app => ({
-                        jobId: jobId,
-                        fullName: app.name,
-                        photoURL: app.avatar,
-                        // Add other fields if necessary for uniqueness matching
-                        id: `static_${app.id}`
-                    }));
-                    // Avoid duplicates if they already exist in allApplications (simple check)
-                    // Currently just creating a merged list. Real-app would be smarter.
-                    allApplications = [...allApplications, ...mappedApps];
-                }
-            });
-        }
-    } catch (e) {
-        console.warn('Error merging static applicants:', e);
-    }
-
     // Helper to get real avatars for a job
     const getJobAvatars = (jobId) => {
         const jobApps = allApplications.filter(app => String(app.jobId) === String(jobId));
@@ -447,78 +292,52 @@ async function loadJobs() {
                 console.log(`[SUCCESS] Loaded ${result.data.length} jobs from Firebase`);
                 jobs = result.data.map(job => {
                     const realAvatars = getJobAvatars(job.id);
-                    // Use actual count of known applicants if available locally/cached, otherwise fallback to job property
-                    const actualCount = realAvatars.length > 0 ? realAvatars.length : (job.applicationsCount || 0);
                     return {
                         id: job.id,
                         title: job.title || 'Untitled Job',
                         type: job.salaryRange || 'Not specified',
                         location: job.location || 'Not specified',
-                        applicants: actualCount,
+                        applicants: job.applicationsCount || 0,
                         description: job.description || 'No description available',
-                        avatars: realAvatars.length > 0 ? realAvatars : getMockAvatars(actualCount),
+                        avatars: realAvatars.length > 0 ? realAvatars : getMockAvatars(job.applicationsCount || 0),
                         discussions: 0
                     };
                 });
             } else {
                 console.log('[INFO] No jobs in Firebase, using mock data');
-                jobs = jobsData.map(j => {
-                    const realAvatars = getJobAvatars(j.id);
-                    // STRICT MODE: Only show real data. No dummy profiles.
-                    const count = realAvatars.length;
-                    return {
-                        ...j,
-                        applicants: count,
-                        avatars: realAvatars
-                    };
-                });
+                jobs = jobsData.map(j => ({ ...j, avatars: getMockAvatars(j.applicants), isActive: true })); // Convert existing mock data structure
             }
         } else {
             console.log('[INFO] Firebase not available, using mock data');
-            jobs = jobsData.map(j => {
-                const realAvatars = getJobAvatars(j.id);
-                const count = realAvatars.length;
-                return {
-                    ...j, // keeps id, title, description, etc.
-                    applicants: count,
-                    avatars: realAvatars
-                };
-            });
+            // Convert existing mock data structure strictly for the fallback path
+            jobs = jobsData.map(j => ({ ...j, avatars: getMockAvatars(j.applicants), isActive: true }));
         }
     } catch (error) {
         console.error('[ERROR] Error fetching jobs:', error);
         console.log('[INFO] Falling back to mock data');
-        jobs = jobsData.map(j => {
-            const realAvatars = getJobAvatars(j.id);
-            const count = realAvatars.length;
-            return {
-                ...j,
-                applicants: count,
-                avatars: realAvatars
-            };
-        });
+        jobs = jobsData.map(j => ({ ...j, avatars: getMockAvatars(j.applicants), isActive: true }));
     }
 
     // Merge shared localStorage jobs (from both hr-jobs and jobs.js context)
     // Only if we are falling back to mock jobs (checking if jobs === jobsData is unsafe if we modified it, so just check if we have any jobs or if we want to enforce local ones)
     // We'll enforce local ones always if they exist, assuming they are "new" jobs not present in static data.
 
-    if (jobs === jobsData || jobs.length === 0 || !typeof firebaseJobs) {
+    if (jobs === jobsData || jobs.length === 0) { // Simple check: if using mock data
         try {
             const stored = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
             if (stored.length > 0) {
                 const storedMapped = stored.map((s, index) => {
                     const realAvatars = getJobAvatars(s.id);
-                    const count = realAvatars.length > 0 ? realAvatars.length : (s.applicationsCount || 0);
                     return {
                         id: s.id || `local-${index}`,
                         title: s.title,
                         type: s.salaryRange,
                         location: s.location,
-                        applicants: count,
+                        applicants: s.applicationsCount || 0,
                         description: s.description,
                         avatars: realAvatars.length > 0 ? realAvatars : getMockAvatars(s.applicationsCount || 0),
-                        discussions: 0
+                        discussions: 0,
+                        isActive: s.isActive !== false
                     };
                 });
                 // Add to top of list
@@ -532,10 +351,60 @@ async function loadJobs() {
         }
     }
 
+
+    // Filter jobs based on currentJobFilter and archived status
+    // Filter jobs based on currentJobFilter and archived status
+    const archivedMap = JSON.parse(localStorage.getItem('fvc_archived_jobs') || '{}');
+
+    // First, map effective active status
+    const allJobsWithStatus = jobs.map(job => {
+        const isArchivedLocally = !!archivedMap[job.id];
+        // Effective Active = (Source is Active) AND (Not Archived Locally)
+        // Default to active if source doesn't verify
+        const sourceActive = job.isActive !== false;
+        return {
+            ...job,
+            isEffectiveActive: sourceActive && !isArchivedLocally,
+            isPast: !sourceActive || isArchivedLocally
+        };
+    });
+
+    // Calculate Dynamic Stats based on CURRENTLY filtered view intent
+    let viewActiveCount = 0;
+    let viewPastCount = 0;
+    let viewApplicantsCount = 0;
+
+    // Filter Logic
+    jobs = allJobsWithStatus.filter(job => {
+        let matches = true;
+        if (currentJobFilter === 'active') {
+            matches = job.isEffectiveActive;
+        } else if (currentJobFilter === 'past') {
+            matches = job.isPast;
+        }
+
+        // If this job matches the view, contribute to stats
+        if (matches) {
+            if (job.isEffectiveActive) viewActiveCount++;
+            if (job.isPast) viewPastCount++;
+            viewApplicantsCount += (job.applicants || 0);
+        }
+
+        return matches;
+    });
+
+    // Update Stats Cards with Dynamic View Data
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setVal('activeJobsCount', viewActiveCount);
+    setVal('pastJobsCount', viewPastCount);
+    setVal('totalApplicantsCount', viewApplicantsCount);
+
     // Save to global state for popups
     window.currentRenderedJobs = jobs;
 
-    const html = jobs.map(job => `
+    const html = jobs.map(job => {
+        const isPast = job.isPast;
+        return `
         <div class="job-card">
             <div class="job-card-header">
                 <div>
@@ -551,6 +420,10 @@ async function loadJobs() {
                             </svg>
                             ${job.location}
                         </span>
+                        <div class="job-status-container">
+                            <div class="job-status-dot ${isPast ? 'past' : 'active'}"></div>
+                            <span class="job-status-text ${isPast ? 'past' : 'active'}">${isPast ? 'Past Job' : 'Active'}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="applicants-count">
@@ -566,7 +439,7 @@ async function loadJobs() {
             
             <div class="job-footer">
                 <div class="footer-left-group">
-                    <button class="action-icon-btn" onclick="openChat('internal_${job.id}')" title="Internal Team Chat">
+                    <button class="action-icon-btn" onclick="openDiscussion('${job.id}')" title="Discussions">
                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
                          </svg>
@@ -576,8 +449,8 @@ async function loadJobs() {
                             ${job.avatars.map(avatar => `
                                 <div class="avatar" style="background-color: ${avatar.type === 'image' ? '#eee' : '#FFE5E8'}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: ${avatar.type === 'image' ? '#555' : '#D63031'};">
                                     ${avatar.type === 'image'
-            ? `<img src="${avatar.value}" alt="Applicant">`
-            : `${avatar.value}`}
+                ? `<img src="${avatar.value}" alt="Applicant">`
+                : `${avatar.value}`}
                                 </div>
                             `).join('')}
                         </div>
@@ -586,302 +459,158 @@ async function loadJobs() {
                 <button class="manage-btn" onclick="openJobPopup('${job.id}')">Manage</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     jobsGrid.innerHTML = html || '<p style="text-align: center; padding: 40px; color: #676767;">No jobs available. Create your first job!</p>';
+
+    // successful load, update discussions to match
+    loadDiscussions();
 }
 
-// Helper to get job title
-function getJobTitle(jobId) {
-    if (window.currentRenderedJobs) {
-        const j = window.currentRenderedJobs.find(x => String(x.id) === String(jobId));
-        if (j) return j.title;
-    }
-    const k = jobsData.find(x => String(x.id) === String(jobId));
-    if (k) return k.title;
-    return 'Unknown Job';
-}
-
+// Current View State
 let currentDiscussionTab = 'internal';
 
+function setDiscussionTab(tab) {
+    currentDiscussionTab = tab;
 
+    // Update active tab styling
+    document.querySelectorAll('.discussion-tab').forEach(btn => {
+        if (btn.dataset.tab === tab) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
 
-function clearLocalChats() {
-    if (confirm('Are you sure you want to clear all local chat history? This cannot be undone.')) {
-        const keys = Object.keys(localStorage);
-        const toRemove = keys.filter(k => k.startsWith('local_chat_'));
-        toRemove.forEach(k => localStorage.removeItem(k));
-        loadDiscussions();
-    }
+    loadDiscussions();
 }
 
-// Load discussions (Active Chats)
+// Load discussions
 async function loadDiscussions() {
     const discussionList = document.getElementById('discussionList');
     if (!discussionList) return;
 
-    discussionList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Loading...</div>';
-
     if (currentDiscussionTab === 'internal') {
-        // INTERNAL TEAM CHATS (Mocked based on Active Jobs)
-        let jobs = window.currentRenderedJobs || jobsData; // Use currently loaded jobs
+        const jobsToUse = window.currentRenderedJobs || jobsData;
 
-        if (jobs.length === 0) {
-            discussionList.innerHTML = '<p style="padding:20px; text-align:center; color:#888;">No active jobs for internal discussion.</p>';
-            return;
-        }
+        // Clear and rebuild internal threads
+        discussionThreads.length = 0;
 
-        const html = jobs.map(job => {
-            // Get actual avatars for this job
-            let avatarsHtml = '';
+        jobsToUse.forEach(job => {
+            const messages = getInternalChat(job.id);
+            discussionThreads.push({
+                id: job.id,
+                jobTitle: job.title,
+                count: Math.floor(Math.random() * 5) + 1, // Mock online count
+                messages: messages.length > 0 ? messages : [
+                    {
 
-            // Re-use logic to get real avatars
-            // We need to access getJobAvatars logic or similar. 
-            // Since getJobAvatars is scoped inside loadJobs, we might need to rely on the job.avatars property if populated
-            // OR re-implement simple logic.
-
-            if (job.applicants > 0 && job.avatars && job.avatars.length > 0) {
-                avatarsHtml = job.avatars.slice(0, 2).map(avatar => `
-                    <div class="avatar">
-                        ${avatar.type === 'image'
-                        ? `<img src="${avatar.value}" alt="User">`
-                        : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#eee; color:#555; font-weight:bold; font-size:12px;">${avatar.value}</div>`
                     }
-                    </div>
-                 `).join('');
-            } else {
-                // Fallback if no applicants - show nothing or a generic "Team" icon?
-                // User request: "correct applicant number as there are no applicant then alos profile is seen"
-                // Meaning: Don't show applicant profiles if there are 0 applicants.
-                // We'll show a generic team icon or just keep it minimal.
-                // Let's show a single generic placeholder for "Internal Team" itself if no applicants.
-                avatarsHtml = `
-                    <div class="avatar" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
-                        <span style="color:#aaa; font-weight:bold; font-size:10px;">IT</span>
-                    </div>
-                 `;
-            }
-
-            return `
-            <div class="discussion-item" onclick="openChat('internal_${job.id}')">
-                <div>
-                    <div class="discussion-title">${job.title}</div>
-                    <div class="discussion-subtitle">Internal Team</div>
-                </div>
-                <div class="discussion-avatars">
-                    ${avatarsHtml}
-                </div>
-            </div>
-            `;
-        }).join('');
-
-        discussionList.innerHTML = html;
-
-    } else {
-        // CANDIDATES CHATS (Real Logic)
-        let allChats = [];
-
-        // 0. Fetch Applications from Firebase (for avatars/details)
-        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
-            try {
-                // Check if we need to fetch or if recently fetched? 
-                // For now, fetch to be safe and fresh.
-                const appsResult = await firebaseJobs.fetchAllApplications();
-                if (appsResult.success) {
-                    window.firebaseApplicationsCache = appsResult.data;
-                }
-            } catch (e) { console.warn('Error fetching firebase apps for discussions', e); }
-        }
-
-        // 1. Fetch from Firebase Check Messages
-        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllChats) {
-            try {
-                const result = await firebaseJobs.fetchAllChats();
-                if (result.success) {
-                    allChats = result.data.map(c => ({
-                        id: c.id,
-                        jobId: c.jobId,
-                        applicantName: c.applicantName,
-                        lastMessage: c.messages && c.messages.length ? c.messages[c.messages.length - 1].content : 'New conversation',
-                        timestamp: c.lastUpdated,
-                        source: 'firebase'
-                    }));
-                }
-            } catch (e) {
-                console.warn('Error fetching chats:', e);
-            }
-        }
-
-        // 2. Fetch from Local Storage
-        try {
-            const keys = Object.keys(localStorage);
-            for (const key of keys) {
-                if (key.startsWith('local_chat_')) {
-                    // Skip metadata keys
-                    if (key.startsWith('local_chat_meta_')) continue;
-
-                    // Check for metadata
-                    let meta = {};
-                    try {
-                        meta = JSON.parse(localStorage.getItem(`local_chat_meta_${key}`) || '{}');
-                    } catch (e) { }
-
-                    // SKIP Internal Chats in this list (they are in the other tab)
-                    if (key.includes('internal') || key.includes('static') || meta.isInternal) {
-                        continue;
-                    }
-
-                    const msgs = JSON.parse(localStorage.getItem(key) || '[]');
-                    if (msgs.length > 0) {
-                        const lastMsg = msgs[msgs.length - 1];
-                        allChats.push({
-                            id: key,
-                            jobId: meta.jobId || 'Unknown',
-                            applicantName: meta.applicantName || (msgs.find(m => m.sender !== 'HR')?.sender || 'Applicant'),
-                            lastMessage: lastMsg.content,
-                            timestamp: lastMsg.timestamp,
-                            source: 'local',
-                            avatar: meta.avatarValue // Optional avatar from meta
-                        });
-                    }
-                }
-            }
-        } catch (e) {
-            console.warn('Error reading local chats:', e);
-        }
-
-        // Filter out chats that don't map to a known active job (e.g. "past" or "stale" chats)
-        allChats = allChats.filter(chat => {
-            const resolvedTitle = getJobTitle(chat.jobId);
-            // If we found a real title in active jobs list, keep it
-            if (resolvedTitle !== 'Unknown Job') return true;
-
-            // If the chat has a specific stored title that ISN'T the generic fallback, keep it
-            if (chat.jobTitle && chat.jobTitle !== 'Job Application') return true;
-
-            // Otherwise, it's a "Job Application" / Unknown / Past job -> Remove it
-            return false;
+                ]
+            });
         });
 
-        // Check if no chats found
-        if (allChats.length === 0) {
-            discussionList.innerHTML = '<p style="padding:20px; text-align:center; color:#888;">No candidate conversations yet.</p>';
+        if (discussionThreads.length === 0) {
+            discussionList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No active discussions.</div>';
+        } else {
+            const html = discussionThreads.map(thread => `
+                <div class="discussion-item ${thread.id === 1 ? 'active' : ''}" onclick="openChat('${thread.id}')">
+                    <div class="discussion-title">${thread.jobTitle}</div>
+                    <div class="discussion-count">+ ${thread.count} Online</div>
+                </div>
+            `).join('');
+            discussionList.innerHTML = html;
+        }
+    } else {
+        // Candidates View
+        discussionList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Loading candidates...</div>';
+
+        let allCandidates = [];
+        const seenIds = new Set();
+
+        // 1. Firebase
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchAllApplications) {
+            try {
+                const result = await firebaseJobs.fetchAllApplications();
+                if (result.success && result.data) {
+                    result.data.forEach(app => {
+                        if (!seenIds.has(app.id)) {
+                            seenIds.add(app.id);
+                            allCandidates.push({
+                                id: app.id,
+                                name: app.fullName || app.name,
+                                role: app.targetRole || 'Applicant',
+                                avatar: app.photoURL,
+                                university: app.university
+                            });
+                        }
+                    });
+                }
+            } catch (e) {
+                console.warn('Error fetching firebase candidates:', e);
+            }
+        }
+
+        // 2. LocalStorage
+        try {
+            const localApps = JSON.parse(localStorage.getItem('applications') || '[]');
+            localApps.forEach(app => {
+                // Determine ID (handle the `local-` prefixing if not present or inconsistent)
+                const id = app.id ? (String(app.id).startsWith('local-') ? app.id : `local-${app.id}`) : `local-${Math.random().toString(36).substr(2, 9)}`;
+
+                // Avoid dupes if mixed sources (though local IDs usually distinct)
+                // Use a simpler check: if we haven't seen this specific ID string
+                if (!seenIds.has(id)) {
+                    seenIds.add(id);
+                    allCandidates.push({
+                        id: id,
+                        name: app.fullName || app.name,
+                        role: app.targetRole || 'Applicant',
+                        avatar: app.photoURL || null,
+                        university: app.university,
+                        isLocal: true
+                    });
+                }
+            });
+        } catch (e) {
+            console.error('Error loading local applicants for discussion:', e);
+        }
+
+        // 3. Mock Data (fallback if completely empty?)
+        if (allCandidates.length === 0) {
+            Object.values(applicantsData).forEach(list => {
+                list.forEach(c => {
+                    if (!seenIds.has(c.id)) {
+                        seenIds.add(c.id);
+                        allCandidates.push(c);
+                    }
+                });
+            });
+        }
+
+        if (allCandidates.length === 0) {
+            discussionList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No candidates found.</div>';
             return;
         }
 
-        // Render Candidate Chats
-        const html = allChats.map(chat => {
-            const jobTitle = getJobTitle(chat.jobId) !== 'Unknown Job' ? getJobTitle(chat.jobId) : (chat.jobTitle || 'Job Application');
-
-            // Dynamic Lookup for Real Applicant Profile
-            let realAvatarUrl = chat.avatar;
-            let detailText = "1 year experience"; // Default fallback
-
-            // Search in Applications (Firebase + Local Storage)
-            try {
-                let foundApp;
-
-                // 1. Try Firebase Applications (if we fetched them earlier or fetch now)
-                if (typeof firebaseJobs !== 'undefined' && window.firebaseApplicationsCache) {
-                    // Check cache first
-                    if (chat.jobId && chat.jobId !== 'Unknown') {
-                        foundApp = window.firebaseApplicationsCache.find(a =>
-                            (a.fullName === chat.applicantName || a.name === chat.applicantName) &&
-                            String(a.jobId) === String(chat.jobId)
-                        );
-                    }
-                    if (!foundApp) {
-                        foundApp = window.firebaseApplicationsCache.find(a => (a.fullName === chat.applicantName || a.name === chat.applicantName));
-                    }
-                }
-
-                // 2. Try Local Storage 'applications' if not found in Firebase cache
-                if (!foundApp) {
-                    const storedApps = JSON.parse(localStorage.getItem('applications') || '[]');
-                    if (chat.jobId && chat.jobId !== 'Unknown' && chat.jobId !== 'Unknown Job') {
-                        foundApp = storedApps.find(a =>
-                            (a.fullName === chat.applicantName || a.name === chat.applicantName) &&
-                            String(a.jobId) === String(chat.jobId)
-                        );
-                    }
-                    if (!foundApp) {
-                        foundApp = storedApps.find(a => (a.fullName === chat.applicantName || a.name === chat.applicantName));
-                    }
-                }
-
-                if (foundApp) {
-                    // Always prefer the photo from the application if it exists
-                    if (foundApp.photoURL) realAvatarUrl = foundApp.photoURL;
-
-                    if (foundApp.jobRole) detailText = foundApp.jobRole;
-                    else if (foundApp.yearsOfExperience) detailText = `${foundApp.yearsOfExperience} years experience`;
-                    else if (foundApp.email) detailText = foundApp.email;
-                }
-            } catch (e) {
-                console.warn('Error lookup applications for chat', e);
-            }
-
-            // Search in applicantsData (Static fallback)
-            if (typeof applicantsData !== 'undefined') {
-                // 1. Try specific job ID first (Most accurate)
-                if (chat.jobId && applicantsData[chat.jobId]) {
-                    const found = applicantsData[chat.jobId].find(a => a.name === chat.applicantName);
-                    if (found) {
-                        if (!realAvatarUrl && found.avatar) realAvatarUrl = found.avatar;
-                        // Improve detail text
-                        if (detailText === "1 year experience") {
-                            if (found.location && found.location !== '------') detailText = found.location;
-                            else if (found.university && found.university !== '------') detailText = found.university;
-                        }
-                    }
-                }
-
-                // 2. Fallback to searching all jobs if not found in specific job (or avatar still missing)
-                if (!realAvatarUrl || detailText === "1 year experience") {
-                    for (const [jId, apps] of Object.entries(applicantsData)) {
-                        // Skip if we already checked this jobId above
-                        if (String(jId) === String(chat.jobId)) continue;
-
-                        const found = apps.find(a => a.name === chat.applicantName);
-                        if (found) {
-                            if (!realAvatarUrl && found.avatar) realAvatarUrl = found.avatar;
-                            if (detailText === "1 year experience") {
-                                if (found.location && found.location !== '------') detailText = found.location;
-                                else if (found.university && found.university !== '------') detailText = found.university;
-                            }
-                            // Don't break immediately, keep creating best match, or break if satisfied?
-                            if (realAvatarUrl && detailText !== "1 year experience") break;
-                        }
-                    }
-                }
-            }
-
-            // Determine avatar
-            let avatarHtml = '';
-            if (realAvatarUrl) {
-                avatarHtml = `<img src="${realAvatarUrl}" alt="${chat.applicantName}">`;
-            } else {
-                const initials = chat.applicantName.charAt(0).toUpperCase();
-                avatarHtml = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#eee; color:#555; font-weight:bold;">${initials}</div>`;
-            }
-
-            return `
-            <div class="discussion-item candidate-layout" onclick="openChat('${chat.id}')">
+        const html = allCandidates.map(candidate => `
+            <div class="discussion-item candidate-layout" onclick="chatWithApplicant('${candidate.id}')">
                 <div class="candidate-header-row">
                     <div class="avatar-small">
-                        ${avatarHtml}
+                         ${candidate.avatar ?
+                `<img src="${candidate.avatar}" alt="${candidate.name}">` :
+                `<div style="width:100%; height:100%; background:#eee; display:flex; align-items:center; justify-content:center; font-weight:700; color:#555; font-size:12px;">
+                                ${candidate.name ? candidate.name.charAt(0).toUpperCase() : '?'}
+                             </div>`
+            }
                     </div>
-                    <div class="candidate-name-title">${chat.applicantName}</div>
+                    <div class="candidate-name-title">${candidate.name}</div>
                 </div>
-                <div class="candidate-divider-line"></div>
                 <div class="candidate-footer-row">
-                    <span class="job-role-text">${jobTitle}</span>
-                    <span class="separator-dot">|</span>
-                    <span class="experience-text">${detailText}</span>
+                    <span class="job-role-text">${candidate.role || 'Applicant'}</span>
                 </div>
             </div>
-            `;
-        }).join('');
+        `).join('');
 
         discussionList.innerHTML = html;
     }
@@ -978,19 +707,8 @@ async function openJobPopup(jobId) {
         allApplicants = [...mockApps];
     }
 
-    // Filter out soft-deleted mocks
-    try {
-        const deletedMocks = JSON.parse(sessionStorage.getItem('deletedMockIds') || '[]');
-        if (deletedMocks.length > 0) {
-            allApplicants = allApplicants.filter(app => !deletedMocks.includes(String(app.id)));
-        }
-    } catch (e) {
-        console.warn('Error filtering deleted mocks:', e);
-    }
-
-    // Cache applicants for later updates (select/reject etc.)
-    window.currentApplicants = allApplicants;
-    window.currentApplicantsJobId = jobId;
+    // Capture for status updates
+    window.currentRenderedApplicants = allApplicants;
 
     // Render Applicants
     document.getElementById('applicantCount').textContent = allApplicants.length;
@@ -999,7 +717,7 @@ async function openJobPopup(jobId) {
         applicantsGrid.innerHTML = '<div style="text-align:center; padding: 20px; color: #666;">No applicants yet.</div>';
     } else {
         applicantsGrid.innerHTML = allApplicants.map(applicant => `
-            <div class="applicant-card" data-applicant-id="${applicant.id}" data-job-id="${jobId}">
+            <div class="applicant-card">
                 <!-- Top Row: Profile + Status -->
                 <div class="applicant-top-row">
                     <div class="applicant-profile">
@@ -1015,7 +733,7 @@ async function openJobPopup(jobId) {
                         </div>
                     </div>
                     <div class="applicant-status-container">
-                        <span class="applicant-status-badge ${applicant.status}" data-applicant-status="${applicant.status}">${applicant.statusText}</span>
+                        <span class="applicant-status-badge ${applicant.status}">${applicant.statusText}</span>
                         <a href="#" class="view-submission-link">View Submission</a>
                     </div>
                 </div>
@@ -1116,22 +834,6 @@ async function openJobPopup(jobId) {
     }
 }
 
-// Close chat modal
-function closeChat() {
-    const chatModal = document.getElementById('chatModal');
-    if (chatModal) {
-        chatModal.classList.remove('show');
-    }
-    currentChatJob = null;
-
-    // Stop listening
-    if (currentChatUnsubscribe) {
-        if (typeof currentChatUnsubscribe === 'function') currentChatUnsubscribe();
-        currentChatUnsubscribe = null;
-    }
-}
-window.closeChat = closeChat; // Explicitly expose to window for onclick handlers
-
 // Close job popup
 function closeJobPopup() {
     document.getElementById('jobPopupOverlay').classList.remove('show');
@@ -1141,24 +843,252 @@ function closeJobPopup() {
 
 // Applicant actions
 function chatWithApplicant(applicantId) {
-    alert(`Opening chat with applicant ${applicantId}`);
+    // 1. Close job popup if open
+    closeJobPopup();
+
+    // 2. Open Discussion Panel and ensure Candidates tab is active
+    // We manually open checking logic to avoid openDiscussion's default internal tab behavior if we want cleaner flow, 
+    // or just call it and override. Overriding is safer to ensure panel opens.
+    const panel = document.getElementById('discussionPanel');
+    panel.classList.add('show');
+    document.querySelector('.main-content').classList.remove('full-width');
+
+    setDiscussionTab('candidates');
+
+    // 3. Find Name/Avatar
+    let name = 'Candidate';
+    let avatar = null;
+
+    // Try finding in rendered applicants (popup context)
+    if (window.currentRenderedApplicants) {
+        const found = window.currentRenderedApplicants.find(a => a.id === applicantId);
+        if (found) {
+            name = found.name;
+            avatar = found.avatar;
+        }
+    }
+
+    // 4. Load Chat
+    const messages = getCandidateChat(applicantId);
+
+    // 5. Set Current Chat Context
+    currentChatJob = {
+        id: applicantId,
+        jobTitle: name, // Header uses this property
+        avatar: avatar,
+        messages: messages,
+        isCandidate: true
+    };
+
+    // 6. Open Modal
+    const chatModal = document.getElementById('chatModal');
+    const chatTitle = document.getElementById('chatJobTitle');
+    const chatMessages = document.getElementById('chatMessages');
+
+    chatTitle.textContent = name;
+
+    // Render messages
+    const html = messages.map(msg => {
+        // Avatar Handling
+        let avatarHtml = '';
+        if (msg.avatar && msg.avatar.includes('http')) {
+            avatarHtml = `<img src="${msg.avatar}" alt="${msg.sender}">`;
+        } else {
+            const letter = msg.sender ? msg.sender.charAt(0).toUpperCase() : '?';
+            avatarHtml = `<div style="width:100%; height:100%; font-weight:700; color:#555; display:flex; align-items:center; justify-content:center;">${letter}</div>`;
+        }
+
+        return `
+        <div class="message">
+            <div class="message-header">
+                <div class="message-avatar">
+                   ${avatarHtml}
+                </div>
+                <div class="message-name">${msg.sender}</div>
+            </div>
+            <div class="message-content">${msg.content}</div>
+        </div>
+    `}).join('');
+
+    chatMessages.innerHTML = html;
+    chatModal.classList.add('show');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
+let currentInterviewApplicantId = null;
 
 function scheduleInterview(applicantId) {
-    alert(`Scheduling interview for applicant ${applicantId}`);
+    currentInterviewApplicantId = applicantId;
+
+    // Find applicant data to show name
+    // We need to look in the rendered list or fetch again.
+    // For simplicity, let's look in all gathered applicants if possible, or just use ID/Generic
+    // Ideally we should have passed the name too, but let's try to find it in the DOM or global store
+
+    // Attempt to find name from the card in the DOM
+    // This is a bit hacky but works without state management
+    const card = document.querySelector(`.action-btn.interview-btn[onclick="scheduleInterview('${applicantId}')"]`).closest('.applicant-card');
+    const name = card ? card.querySelector('.applicant-name').textContent : 'Candidate';
+
+    document.getElementById('interviewApplicantName').textContent = name;
+
+    // Add show class
+    document.getElementById('interviewOverlay').classList.add('show');
+    document.getElementById('interviewPopup').classList.add('show');
 }
+
+function closeInterviewPopup() {
+    document.getElementById('interviewOverlay').classList.remove('show');
+    document.getElementById('interviewPopup').classList.remove('show');
+    document.getElementById('interviewForm').reset();
+    currentInterviewApplicantId = null;
+}
+
+function handleSendInterview(event) {
+    event.preventDefault();
+
+    const date = document.getElementById('interviewDate').value;
+    const time = document.getElementById('interviewTime').value;
+    const link = document.getElementById('interviewLink').value;
+    const message = document.getElementById('interviewMessage').value;
+
+    if (!date || !time || !link) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    // Create interview message
+    const interviewMessage = {
+        sender: 'You',
+        avatar: 'https://ui-avatars.com/api/?name=You&background=e11d48&color=fff',
+        content: `
+            <div class="interview-msg">
+                <div class="msg-header-row">
+                     <span class="icon">📅</span>
+                     <span class="msg-title">Interview Scheduled</span>
+                </div>
+                <div class="msg-row"><strong>Date:</strong> ${date}</div>
+                <div class="msg-row"><strong>Time:</strong> ${time}</div>
+                <div class="msg-row"><strong>Link:</strong> <a href="${link}" target="_blank">Join Meeting</a></div>
+                ${message ? `<div class="msg-note">"${message}"</div>` : ''}
+            </div>
+        `,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        type: 'interview'
+    };
+
+    // Save to chat history
+    if (typeof currentInterviewApplicantId !== 'undefined' && currentInterviewApplicantId) {
+        const chatHistory = getCandidateChat(currentInterviewApplicantId);
+        chatHistory.push(interviewMessage);
+        saveCandidateChat(currentInterviewApplicantId, chatHistory);
+
+        // If chat is open for this user, refresh it
+        if (currentChatJob && currentChatJob.id === currentInterviewApplicantId) {
+            chatWithApplicant(currentInterviewApplicantId);
+        }
+    }
+
+    // In a real app, send to backend
+    console.log(`[INTERVIEW] Scheduling for ${currentInterviewApplicantId}`, { date, time, link, message });
+
+    alert(`Interview invitation sent successfully!`);
+    closeInterviewPopup();
+}
+
+let currentAssessmentApplicantId = null;
 
 function assessApplicant(applicantId) {
-    alert(`Opening assessment for applicant ${applicantId}`);
+    currentAssessmentApplicantId = applicantId;
+
+    // Find name (similar hack to scheduleInterview)
+    const card = document.querySelector(`.action-btn.assess-btn[onclick="assessApplicant('${applicantId}')"]`).closest('.applicant-card');
+    const name = card ? card.querySelector('.applicant-name').textContent : 'Candidate';
+
+    document.getElementById('assessmentApplicantName').textContent = name;
+
+    // Show popup
+    document.getElementById('assessmentOverlay').classList.add('show');
+    document.getElementById('assessmentPopup').classList.add('show');
 }
 
-async function selectApplicant(applicantId) {
-    if (!applicantId) return;
-    const confirmed = confirm('Are you sure you want to select this applicant?');
-    if (!confirmed) return;
+function closeAssessmentPopup() {
+    document.getElementById('assessmentOverlay').classList.remove('show');
+    document.getElementById('assessmentPopup').classList.remove('show');
+    document.getElementById('assessmentForm').reset();
+    currentAssessmentApplicantId = null;
+}
 
-    await updateApplicantStatus(applicantId, 'selected', 'Selected');
-    alert(`Applicant ${applicantId} selected!`);
+function handleSendAssessment(event) {
+    event.preventDefault();
+
+    const link = document.getElementById('assessmentLinkInput').value;
+    const message = document.getElementById('assessmentMessage').value;
+
+    if (!link) {
+        alert("Please provide the assessment link.");
+        return;
+    }
+
+    // Create assessment message
+    const assessmentMessage = {
+        sender: 'You',
+        avatar: 'https://ui-avatars.com/api/?name=You&background=e11d48&color=fff',
+        content: `
+            <div class="assessment-msg">
+                <div class="msg-header-row">
+                     <span class="icon">📋</span>
+                     <span class="msg-title">Assessment Task</span>
+                </div>
+                <div class="msg-row">Please complete the following assessment:</div>
+                <div class="msg-row"><strong>Link:</strong> <a href="${link}" target="_blank">Start Assessment</a></div>
+                ${message ? `<div class="msg-note">"${message}"</div>` : ''}
+            </div>
+        `,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        type: 'assessment'
+    };
+
+    // Save to chat history
+    if (typeof currentAssessmentApplicantId !== 'undefined' && currentAssessmentApplicantId) {
+        const chatHistory = getCandidateChat(currentAssessmentApplicantId);
+        chatHistory.push(assessmentMessage);
+        saveCandidateChat(currentAssessmentApplicantId, chatHistory);
+
+        // If chat is open, refresh it
+        if (currentChatJob && currentChatJob.id === currentAssessmentApplicantId) {
+            chatWithApplicant(currentAssessmentApplicantId);
+        }
+    }
+
+    // In a real app, send to backend
+    console.log(`[ASSESSMENT] Sending to ${currentAssessmentApplicantId}`, { link, message });
+
+    alert(`Assessment Sent!`);
+    closeAssessmentPopup();
+}
+
+function selectApplicant(applicantId) {
+    // 1. Find the applicant
+    const applicant = window.currentRenderedApplicants ? window.currentRenderedApplicants.find(a => a.id === applicantId) : null;
+
+    if (!applicant) {
+        console.error('Applicant not found in rendered list:', applicantId);
+        return;
+    }
+
+    // 2. Check for existing status (Rule: Only admin can change status multiple times)
+    const isAdmin = sessionStorage.getItem('hrRole') === 'admin';
+    const currentStatus = (applicant.status || 'new').toLowerCase();
+
+    if (!isAdmin && (currentStatus === 'selected' || currentStatus === 'rejected')) {
+        alert('Only admin can change status multiple times.');
+        return;
+    }
+
+    if (confirm(`Are you sure you want to select ${applicant.name}?`)) {
+        updateApplicantStatus(applicant, 'selected');
+    }
 }
 
 function rejectApplicant(applicantId) {
@@ -1170,194 +1100,153 @@ function rejectApplicant(applicantId) {
     document.getElementById('rejectDialog').classList.add('show');
 }
 
+// Close reject dialog
 function closeRejectDialog() {
     document.getElementById('rejectOverlay').classList.remove('show');
     document.getElementById('rejectDialog').classList.remove('show');
     window.pendingRejectId = null;
 }
 
-async function confirmReject() {
-    if (!window.pendingRejectId) {
+// Confirm reject
+function confirmReject() {
+    const applicantId = window.pendingRejectId;
+    if (applicantId) {
+        // 1. Find the applicant
+        const applicant = window.currentRenderedApplicants ? window.currentRenderedApplicants.find(a => a.id === applicantId) : null;
+
+        if (!applicant) {
+            console.error('Applicant not found:', applicantId);
+            closeRejectDialog();
+            return;
+        }
+
+        // 2. Check for existing status
+        const isAdmin = sessionStorage.getItem('hrRole') === 'admin';
+        const currentStatus = (applicant.status || 'new').toLowerCase();
+
+        if (!isAdmin && (currentStatus === 'selected' || currentStatus === 'rejected')) {
+            alert('Only admin can change status multiple times.');
+            closeRejectDialog();
+            return;
+        }
+
+        // 3. Update status
+        updateApplicantStatus(applicant, 'rejected');
         closeRejectDialog();
-        return;
     }
-    await updateApplicantStatus(window.pendingRejectId, 'rejected', 'Rejected');
-    closeRejectDialog();
-    alert(`Applicant ${window.pendingRejectId} rejected.`);
 }
 
-async function updateApplicantStatus(applicantId, status, statusText) {
+// Update applicant status helper
+async function updateApplicantStatus(applicant, newStatus) {
+    const isFirebase = typeof firebaseJobs !== 'undefined' && firebaseJobs.updateApplicationStatus;
+    const applicantId = applicant.id;
+
+    // Status Text Map
+    const statusTextMap = {
+        'selected': 'Selected',
+        'rejected': 'Rejected',
+        'new': 'Received',
+        'interview': 'Interview',
+        'reviewed': 'Reviewed'
+    };
+
+    const statusText = statusTextMap[newStatus] || newStatus;
+
     try {
-        // Update cached data for current popup
-        if (Array.isArray(window.currentApplicants)) {
-            const target = window.currentApplicants.find(a => String(a.id) === String(applicantId));
-            if (target) {
-                target.status = status;
-                target.statusText = statusText;
-            }
+        let success = false;
+
+        // 1. Try Firebase Update
+        if (isFirebase && !applicantId.startsWith('local-')) {
+            const result = await firebaseJobs.updateApplicationStatus(applicantId, newStatus);
+            if (result.success) success = true;
         }
 
-        // Update DOM badge
-        const card = document.querySelector(`.applicant-card[data-applicant-id="${applicantId}"]`);
-        if (card) {
-            const badge = card.querySelector('.applicant-status-badge');
-            if (badge) {
-                badge.textContent = statusText;
-                badge.className = `applicant-status-badge ${status}`;
-                badge.setAttribute('data-applicant-status', status);
-            }
+        // 2. Try LocalStorage Update (always do this for local apps or fallback)
+        // If it's a local app, it definitely exists here. If it's a hybrid, we still might want to track it locally if firebase failed or isn't used.
+        const allLocalApps = JSON.parse(localStorage.getItem('applications') || '[]');
+
+        // Find by ID. 
+        // Note: 'applicant.id' might be 'local-123' but stored ID might be '123' if we stripped it, OR logic in openJobPopup added 'local-'.
+        // In openJobPopup (line 577): id: `local-${app.id || index}`
+        // So we need to match carefully.
+
+        const localIndex = allLocalApps.findIndex((a, idx) => {
+            const generatedId = `local-${a.id || idx}`;
+            return generatedId === applicantId || a.id === applicantId;
+        });
+
+        if (localIndex !== -1) {
+            allLocalApps[localIndex].status = newStatus;
+            localStorage.setItem('applications', JSON.stringify(allLocalApps));
+            success = true;
+            console.log('[UPDATE] Updated status in LocalStorage');
         }
 
-        // Persist to localStorage applications (if present)
-        try {
-            const apps = JSON.parse(localStorage.getItem('applications') || '[]');
-            const idx = apps.findIndex(app => String(app.id || app.applicationId || app.appId) === String(applicantId));
-            if (idx !== -1) {
-                apps[idx].status = status;
-                apps[idx].statusText = statusText;
-                localStorage.setItem('applications', JSON.stringify(apps));
-            }
-        } catch (e) {
-            console.warn('Could not update local applications storage', e);
-        }
+        if (success) {
+            // Update UI/DOM immediately
+            // Find the badge
+            // We can search by structure or ID if we had one. Since we don't have unique ID on card, we rely on the button click context or re-render.
+            // Re-rendering the list is safest to show correct state.
 
-        // Persist to Firebase if available
-        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.updateApplicationStatus) {
-            try {
-                await firebaseJobs.updateApplicationStatus(applicantId, status, statusText);
-            } catch (e) {
-                console.warn('Firebase status update failed', e);
-            }
-        }
-    } catch (error) {
-        console.error('Error updating applicant status:', error);
-    }
-}
+            // Update the object in memory
+            applicant.status = newStatus;
+            applicant.statusText = statusText;
 
-// Helper to get job title
-function getJobTitle(jobId, chatId) {
-    // 1. Try Metadata (Most reliable for local chats)
-    if (chatId) {
-        try {
-            const meta = JSON.parse(localStorage.getItem(`local_chat_meta_${chatId}`) || 'null');
-            if (meta && meta.jobTitle) return meta.jobTitle;
-        } catch (e) { }
-    }
+            alert(`Applicant marked as ${statusText}.`);
 
-    // 2. Try Current Rendered Jobs
-    if (window.currentRenderedJobs) {
-        const j = window.currentRenderedJobs.find(x => String(x.id) === String(jobId));
-        if (j) return j.title;
-    }
-
-    // 3. Try Static Data
-    const k = jobsData.find(x => String(x.id) === String(jobId));
-    if (k) return k.title;
-
-    // 4. Try Local Storage Jobs
-    try {
-        const localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
-        const l = localJobs.find(x => String(x.id || x._id) === String(jobId));
-        if (l) return l.title;
-    } catch (e) { }
-
-    return 'Unknown Job';
-}
-
-
-
-// Open chat modal (from Discussion List)
-function openChat(threadId) {
-    // 1. Check if we have an "upgraded" version of this static thread in local storage
-    // This happens if a user sent a message to a static thread (ID 1, 2, etc.)
-    const potentialLocalId = `local_chat_static_${threadId}`;
-    if (localStorage.getItem(potentialLocalId)) {
-        // Switch to the local version which has the history + new messages
-        threadId = potentialLocalId;
-    }
-
-    // Find in candidate list first (static data) - if we haven't switched to local
-    let thread = discussionThreads.find(t => String(t.id) === String(threadId));
-
-    // If getting from local storage explicitly
-    if (!thread && String(threadId).startsWith('local_chat_')) {
-        // Create a temporary thread object wrapper so we can open the modal
-        // The actual messages will be loaded by startChatListen
-        const metaKey = `local_chat_meta_${threadId}`;
-        let meta = { jobTitle: 'Chat', applicantName: 'Applicant' };
-        try {
-            const rawMeta = localStorage.getItem(metaKey);
-            if (rawMeta) meta = JSON.parse(rawMeta);
-            // Fallback: try to find original static thread info if it was an upgrade
-            if (threadId.startsWith('local_chat_static_')) {
-                const originalId = threadId.replace('local_chat_static_', '');
-                const orig = discussionThreads.find(t => String(t.id) === String(originalId));
-                if (orig) {
-                    meta.jobTitle = orig.jobTitle;
-                    meta.applicantName = 'Applicant'; // or specific name if available
-                }
-            }
-        } catch (e) { }
-
-        thread = {
-            id: threadId,
-            jobTitle: meta.jobTitle,
-            applicantName: meta.applicantName,
-            messages: []
-        };
-    }
-
-    // If still not found, maybe it's internal/new logic
-    if (!thread && String(threadId).startsWith('internal_')) {
-        const jobId = threadId.replace('internal_', '');
-
-        // 1. Try to find a matching STATIC mock thread first
-        const staticMatch = discussionThreads.find(t => String(t.jobId) === String(jobId));
-
-        if (staticMatch) {
-            // Found a mock thread for this job!
-            // Check if it was already upgraded to local storage
-            const upgradedId = `local_chat_static_${staticMatch.id}`;
-            if (localStorage.getItem(upgradedId)) {
-                thread = {
-                    id: upgradedId,
-                    jobTitle: staticMatch.jobTitle,
-                    applicantName: staticMatch.applicantName || 'Internal Team',
-                    isInternal: true
-                };
-            } else {
-                thread = {
-                    ...staticMatch,
-                    applicantName: staticMatch.applicantName || 'Internal Team',
-                    isInternal: true
-                };
+            // Refresh the popup content
+            // We can just call openJobPopup again with the current job ID to re-fetch and re-render
+            if (currentJobPopup) {
+                openJobPopup(currentJobPopup.id);
             }
         } else {
-            // 2. No mock found, create fresh local chat
-            thread = {
-                id: `local_chat_internal_${jobId}`,
-                jobId,
-                jobTitle: getJobTitle(jobId),
-                applicantName: 'Internal Team',
-                isInternal: true
-            };
-
-            // ensure meta for title persistence
-            try {
-                localStorage.setItem(`local_chat_meta_local_chat_internal_${jobId}`, JSON.stringify({
-                    jobId,
-                    jobTitle: thread.jobTitle,
-                    applicantName: thread.applicantName
-                }));
-            } catch (e) { }
-
-            // bootstrap storage with empty array if missing
-            if (!localStorage.getItem(thread.id)) {
-                localStorage.setItem(thread.id, JSON.stringify([]));
+            // Mock only (no persistence found)
+            alert(`[Mock] Applicant marked as ${statusText}. (Persistence not available for this data type)`);
+            // Update memory
+            applicant.status = newStatus;
+            // Re-render
+            if (currentJobPopup) {
+                openJobPopup(currentJobPopup.id);
             }
         }
-    }
 
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update status.');
+    }
+}
+
+// Open discussion panel
+// Open discussion panel
+function openDiscussion(jobId) {
+    const panel = document.getElementById('discussionPanel');
+    panel.classList.add('show');
+
+    const mainContent = document.querySelector('.main-content');
+    mainContent.classList.remove('full-width');
+
+    // Switch to Internal tab by default when opening panel via this button
+    setDiscussionTab('internal');
+
+    // If a specific job ID was clicked, open that chat immediately
+    if (jobId && jobId !== 'undefined' && jobId !== 'null') {
+        openChat(jobId);
+    }
+}
+
+// Close discussion panel
+function closeDiscussion() {
+    const panel = document.getElementById('discussionPanel');
+    panel.classList.remove('show');
+
+    const mainContent = document.querySelector('.main-content');
+    mainContent.classList.add('full-width');
+}
+
+// Open chat modal
+function openChat(threadId) {
+    // Ensure threadId comparison handles both string and number
+    const thread = discussionThreads.find(t => String(t.id) === String(threadId));
     if (!thread) return;
 
     currentChatJob = thread;
@@ -1366,248 +1255,164 @@ function openChat(threadId) {
     const chatTitle = document.getElementById('chatJobTitle');
     const chatMessages = document.getElementById('chatMessages');
 
-    chatTitle.textContent = `${thread.jobTitle} - ${thread.applicantName}`;
-    chatMessages.innerHTML = ''; // Clear previous content immediately. loading state handled by render function or empty state.
+    chatTitle.textContent = thread.jobTitle;
+
+    const currentUser = getCurrentUserIdentity();
+
+    // Load messages
+    const validMessages = thread.messages.filter(msg => msg && msg.sender && msg.content && msg.sender !== 'System' && msg.content !== 'undefined');
+    const messagesHtml = validMessages.map(msg => {
+        let displayName = msg.sender || 'Unknown';
+        let isMe = false;
+
+        if (msg.username && currentUser.username && msg.username === currentUser.username) {
+            displayName = `You (${capitalize(msg.role || currentUser.role)})`;
+            isMe = true;
+        } else if (msg.sender === 'You') {
+            displayName = 'You';
+        } else if (msg.role && msg.sender) {
+            displayName = `${msg.sender} (${capitalize(msg.role)})`;
+        }
+
+        return `
+        <div class="message ${isMe ? 'own-message' : ''}">
+            <div class="message-header">
+                <div class="message-avatar">
+                    ${msg.avatar ? `<img src="${msg.avatar}" alt="${displayName}">` :
+                `<div style="width:100%; height:100%; background:#eee; display:flex; align-items:center; justify-content:center; font-weight:700; color:#555;">${displayName.charAt(0)}</div>`}
+                </div>
+                <div class="message-name">${displayName}</div>
+            </div>
+            <div class="message-content">${msg.content}</div>
+            ${msg.action ? `<div class="message-action">${msg.action}</div>` : ''}
+        </div>
+    `}).join('');
+
+    chatMessages.innerHTML = messagesHtml;
     chatModal.classList.add('show');
 
-    // Start Listening
-    const listenId = thread.isInternal ? thread.id : thread.id;
-    startChatListen(listenId);
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Helper to start listening (Unified)
-function startChatListen(chatId) {
-    console.log('[CHAT] startChatListen called for:', chatId);
-
-    // Reset any previous listeners
-    if (currentChatUnsubscribe) {
-        if (typeof currentChatUnsubscribe === 'function') currentChatUnsubscribe();
-        currentChatUnsubscribe = null;
-    }
-
-    // 1. Handle Local Chat or Static Mock Chat
-    // First, check if it's a static mock thread ID (e.g., numeric ID from jobsData/discussionThreads)
-    const staticThread = discussionThreads.find(t => String(t.id) === String(chatId));
-
-    if (staticThread) {
-        console.log('[CHAT] Mode: Static Mock Data');
-        renderHRChatMessages(staticThread.messages || []);
-        return;
-    }
-
-    if (String(chatId).startsWith('local_chat_')) {
-        console.log('[CHAT] Mode: Local Storage');
-
-        const loadLocal = () => {
-            try {
-                const raw = localStorage.getItem(chatId);
-                console.log('[CHAT] Raw data:', raw);
-
-                if (raw === null) {
-                    // Chat doesn't exist yet but it's a valid local ID we just generated?
-                    // Just show empty state, it's fine.
-                    console.warn('[CHAT] No local data found for this ID');
-                    renderHRChatMessages([]);
-                    return;
-                }
-
-                const msgs = JSON.parse(raw);
-                renderHRChatMessages(msgs);
-            } catch (e) {
-                console.error('[CHAT] Error parsing local chat:', e);
-                renderHRChatMessages([]); // Show empty state on error
-            }
-        };
-
-        // Initial load
-        loadLocal();
-
-        // Listen for updates
-        const handler = (e) => {
-            if (e.key === chatId) {
-                console.log('[CHAT] Storage update received');
-                loadLocal();
-            }
-        };
-        window.addEventListener('storage', handler);
-        currentChatUnsubscribe = () => window.removeEventListener('storage', handler);
-        return;
-    }
-
-    // 2. Handle Firebase Chat
-    if (typeof firebaseJobs !== 'undefined' && firebaseJobs.listenToChat) {
-        console.log('[CHAT] Mode: Firebase');
-        currentChatUnsubscribe = firebaseJobs.listenToChat(chatId, (messages) => {
-            renderHRChatMessages(messages);
-        });
-    } else {
-        console.error('[CHAT] Firebase not available and not a local chat');
-        renderHRChatMessages([]); // Clear loading state
-    }
-}
-
-// Start chat from Applicant List
-function startChatWithApplicant(jobId, applicantId) {
-    if (!jobId || !applicantId) return;
-    const applicant = (chatApplicantsCache || []).find(a => String(a.id) === String(applicantId));
-
-    // Determine Chat ID
-    // 1. Check if local chat exists
-    const localId = `local_chat_${jobId}_${applicantId}`;
-    let chatId = `${jobId}_${applicantId}`; // Default Firebase ID
-
-    if (localStorage.getItem(localId)) {
-        chatId = localId;
-    }
-
-    currentChatJob = {
-        id: chatId,
-        jobTitle: `${chatApplicantsJobTitle || getJobTitle(jobId)}`,
-        applicantName: applicant ? applicant.name : 'Applicant',
-        messages: []
-    };
-
+// Close chat modal
+function closeChat() {
     const chatModal = document.getElementById('chatModal');
-    const chatTitle = document.getElementById('chatJobTitle');
-    const chatMessages = document.getElementById('chatMessages');
-
-    if (chatTitle) chatTitle.textContent = `${currentChatJob.jobTitle} - ${currentChatJob.applicantName}`;
-    if (chatMessages) chatMessages.innerHTML = '<p style="color:#676767;text-align:center;">Loading conversation...</p>';
-    if (chatModal) chatModal.classList.add('show');
-
-    closeChatApplicants();
-    startChatListen(chatId);
-}
-
-function renderHRChatMessages(messages) {
-    console.log('[CHAT] Rendering messages:', messages ? messages.length : 'null');
-    const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) {
-        console.error('[CHAT] chatMessages element not found!');
-        return;
-    }
-
-    if (!messages || messages.length === 0) {
-        chatMessages.innerHTML = `
-            <div class="chat-empty-state">
-                <div class="empty-icon">💬</div>
-                <p>Start the conversation</p>
-                <span class="empty-subtext">Send a message to explore this candidate.</span>
-            </div>
-        `;
-        return;
-    }
-
-    try {
-        chatMessages.innerHTML = messages.map(msg => {
-            const isMe = msg.sender === 'HR';
-
-            // Format time if needed, though design image doesn't emphasize it inside the bubble much
-            // let timeStr = '';
-            // try { timeStr = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch (e) { }
-
-            if (isMe) {
-                // SENT MESSAGE (Admin)
-                return `
-                    <div class="message message-sent">
-                        <div class="sender-label">Admin</div>
-                        <div class="message-bubble">
-                            <div class="message-text">${msg.content || ''}</div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // RECEIVED MESSAGE (Candidate/Other)
-                // Assuming msg.role or similar exists, or default to sender name
-                const senderName = msg.sender || 'Applicant';
-                const senderRole = msg.role || 'Candidate'; // We might need to fetch this or store it better
-                const avatarUrl = msg.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderName)}`;
-
-                return `
-                    <div class="message message-received">
-                        <div class="message-bubble">
-                            <div class="message-header-inside">
-                                <div class="message-avatar-small">
-                                    <img src="${avatarUrl}" alt="${senderName}">
-                                </div>
-                                <span class="message-sender-name">${senderName} | ${senderRole}</span>
-                            </div>
-                            <div class="message-separator"></div>
-                            <div class="message-text">${msg.content || ''}</div>
-                        </div>
-                    </div>
-                `;
-            }
-        }).join('');
-
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    } catch (err) {
-        console.error('[CHAT] Render error:', err);
-        chatMessages.innerHTML = '<p style="color:red;text-align:center;">Error loading messages.</p>';
-    }
+    chatModal.classList.remove('show');
+    currentChatJob = null;
 }
 
 // Send message
-async function sendMessage() {
+function sendMessage() {
     const input = document.getElementById('messageInput');
     const message = input.value.trim();
 
     if (!message || !currentChatJob) return;
 
-    // Handle Local or Static
-    // If it's a static thread (numeric ID) and we are sending a message, we must "upgrade" it to a local storage chat to persist the new message
-    if (!String(currentChatJob.id).startsWith('local_chat_') && !isNaN(currentChatJob.id)) {
-        // It's a static thread. Let's convert it to local storage.
-        const newId = `local_chat_static_${currentChatJob.id}`;
+    const chatMessages = document.getElementById('chatMessages');
 
-        // Get existing static messages
-        const existingMsgs = currentChatJob.messages || [];
+    const currentUser = getCurrentUserIdentity();
+    const roleLabel = currentUser.role ? ` (${capitalize(currentUser.role)})` : '';
+    const senderDisplay = currentUser.displayName || 'You';
 
-        // Create new message
-        const newMsg = {
-            sender: 'HR',
-            content: message,
-            timestamp: new Date().toISOString(),
-            avatar: 'https://ui-avatars.com/api/?name=HR'
-        };
+    const newMessage = {
+        sender: senderDisplay,
+        username: currentUser.username,
+        role: currentUser.role,
+        avatar: currentUser.avatar || 'https://i.pravatar.cc/32?img=1',
+        content: message,
+        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
 
-        // Save combined history to local storage
-        const fullHistory = [...existingMsgs, newMsg];
-        localStorage.setItem(newId, JSON.stringify(fullHistory));
+    currentChatJob.messages.push(newMessage);
 
-        // Update current chat ref to point to new local ID so future messages go there
-        currentChatJob = { ...currentChatJob, id: newId, messages: fullHistory };
-
-        // Render
-        renderHRChatMessages(fullHistory);
-        input.value = '';
-        return;
+    // Save internal chat if applicable
+    if (currentDiscussionTab === 'internal' && !currentChatJob.isCandidate) {
+        saveInternalChat(currentChatJob.id, currentChatJob.messages);
+    } else if (currentChatJob.isCandidate) {
+        saveCandidateChat(currentChatJob.id, currentChatJob.messages);
     }
 
-    if (String(currentChatJob.id).startsWith('local_chat_')) {
-        const msgs = JSON.parse(localStorage.getItem(currentChatJob.id) || '[]');
-        msgs.push({
-            sender: 'HR',
-            content: message,
-            timestamp: new Date().toISOString(),
-            avatar: 'https://ui-avatars.com/api/?name=HR'
-        });
-        localStorage.setItem(currentChatJob.id, JSON.stringify(msgs));
+    const messageHtml = `
+        <div class="message own-message">
+            <div class="message-header">
+                <div class="message-avatar">
+                    <img src="${newMessage.avatar}" alt="You">
+                </div>
+                <div class="message-name">You${roleLabel}</div>
+            </div>
+            <div class="message-content">${newMessage.content}</div>
+        </div>
+    `;
 
-        // Manual render for self
-        renderHRChatMessages(msgs);
-        input.value = '';
-        return;
+    chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    input.value = '';
+}
+
+// Helper to save internal chat
+function saveInternalChat(jobId, messages) {
+    const key = `fvc_internal_chat_${jobId}`;
+    localStorage.setItem(key, JSON.stringify(messages));
+}
+
+// Helper to save candidate chat
+function saveCandidateChat(applicantId, messages) {
+    const key = `fvc_candidate_chat_${applicantId}`;
+    localStorage.setItem(key, JSON.stringify(messages));
+}
+
+// Helper to get internal chat
+function getInternalChat(jobId) {
+    const key = `fvc_internal_chat_${jobId}`;
+    try {
+        return JSON.parse(localStorage.getItem(key) || '[]');
+    } catch (e) {
+        return [];
+    }
+}
+
+// Helper to get candidate chat
+function getCandidateChat(applicantId) {
+    const key = `fvc_candidate_chat_${applicantId}`;
+    try {
+        return JSON.parse(localStorage.getItem(key) || '[]');
+    } catch (e) {
+        return [];
+    }
+}
+
+
+// Helper: Get Current User Identity
+function getCurrentUserIdentity() {
+    const username = sessionStorage.getItem('hrUsername') || 'guest';
+    const role = sessionStorage.getItem('hrRole') || 'hr';
+    let avatar = null;
+    let displayName = username;
+
+    try {
+        const teamMembers = JSON.parse(localStorage.getItem('fvc_team_members') || '[]');
+        const member = teamMembers.find(m => m.username === username);
+        if (member) {
+            avatar = member.photo;
+            displayName = member.name;
+        } else {
+            displayName = capitalize(username.replace('_', ' '));
+        }
+    } catch (e) { }
+
+    if (!avatar) {
+        const headerAvatar = document.getElementById('userAvatar');
+        if (headerAvatar) avatar = headerAvatar.src;
     }
 
-    // Send to Firebase
-    if (typeof firebaseJobs !== 'undefined' && firebaseJobs.sendMessage) {
-        await firebaseJobs.sendMessage(currentChatJob.id, 'HR', message, 'https://ui-avatars.com/api/?name=HR');
-        input.value = '';
-    } else {
-        console.warn('Firebase chat not available');
-        alert('Chat unavailable');
-    }
+    return { username, role, displayName, avatar };
+}
+
+function capitalize(str) {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // Handle Enter key in message input
@@ -1804,12 +1609,89 @@ async function deleteCurrentJob() {
             alert('This is a demo job and cannot be permanently deleted in this preview.');
             closeJobPopup();
         }
-
     } catch (error) {
         console.error('[DELETE] Error:', error);
         alert('An error occurred while deleting the job.');
     }
 }
+
+let currentJobFilter = 'all';
+
+// Update checkUserRole to handle Archive Button
+// We need to modify the original function or overwrite it if it's cleaner. 
+// But since we can't overwrite easily without finding it, let's just use this space to fix the previous error first.
+
+
+function setJobFilter(filter) {
+    currentJobFilter = filter;
+
+    // Update tabs UI
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Convert text temporarily for visual feedback if needed? No, just reload
+    loadJobs();
+}
+
+// Archive current job (instead of delete)
+async function archiveCurrentJob() {
+    if (!currentJobPopup) return;
+
+    if (!confirm(`Are you sure you want to archive the job position "${currentJobPopup.title}"? It will be moved to Past Jobs.`)) {
+        return;
+    }
+
+    const jobId = currentJobPopup.id;
+    console.log('[ARCHIVE] Attempting to archive job:', jobId);
+
+    try {
+        let archived = false;
+
+        // 1. Try Firebase Archive (Update status)
+        if (typeof firebaseJobs !== 'undefined' && firebaseJobs.archiveJob) {
+            try {
+                const result = await firebaseJobs.archiveJob(String(jobId));
+                if (result.success) {
+                    archived = true;
+                    console.log('[ARCHIVE] Archived in Firebase');
+                }
+            } catch (e) {
+                console.warn('[ARCHIVE] Firebase archive failed', e);
+            }
+        }
+
+        // If firebaseJobs.archiveJob doesn't exist (likely), manually update status if updateJob exists.
+        // Actually, for simplicity/mock:
+
+        // 2. Local Mock Archive (LocalStorage)
+        // We will store "archived_jobs" IDs in a separate list or update the local object
+        // Let's use a "archived_statuses" map in local storage for simplicity to persist across reloading mock data
+
+        const archivedMap = JSON.parse(localStorage.getItem('fvc_archived_jobs') || '{}');
+        archivedMap[jobId] = true;
+        localStorage.setItem('fvc_archived_jobs', JSON.stringify(archivedMap));
+
+        archived = true;
+
+        // 3. Fallback/Success handling
+        if (archived) {
+            alert('Job archived successfully.');
+            closeJobPopup();
+            await loadJobs(); // Refresh grid
+            await loadStats(); // Refresh stats
+        }
+
+    } catch (error) {
+        console.error('[ARCHIVE] Error:', error);
+        alert('An error occurred while archiving the job.');
+    }
+}
+
 
 // Logout function
 // Logout function
@@ -1819,54 +1701,3 @@ function logout() {
     sessionStorage.clear();
     window.location.replace('hr-login.html');
 }
-
-// Mobile sidebar + panels
-function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar-collapsed');
-    const overlay = document.querySelector('.sidebar-overlay');
-    if (!sidebar || !overlay) return;
-
-    const isOpen = sidebar.classList.toggle('sidebar-open');
-    overlay.classList.toggle('show', isOpen);
-    document.body.classList.toggle('no-scroll', isOpen);
-}
-
-function closeSidebar() {
-    const sidebar = document.querySelector('.sidebar-collapsed');
-    const overlay = document.querySelector('.sidebar-overlay');
-    if (!sidebar || !overlay) return;
-    sidebar.classList.remove('sidebar-open');
-    overlay.classList.remove('show');
-    document.body.classList.remove('no-scroll');
-}
-
-function openDiscussion() {
-    const panel = document.getElementById('discussionPanel');
-    if (panel) {
-        panel.classList.add('show');
-        document.body.classList.add('no-scroll');
-    }
-}
-
-function closeDiscussion() {
-    const panel = document.getElementById('discussionPanel');
-    if (panel) {
-        panel.classList.remove('show');
-        document.body.classList.remove('no-scroll');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Close sidebar when overlay is tapped
-    const overlay = document.querySelector('.sidebar-overlay');
-    if (overlay) {
-        overlay.addEventListener('click', closeSidebar);
-    }
-
-    // Close sidebar on nav click (mobile)
-    document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
-        item.addEventListener('click', closeSidebar);
-    });
-});
-
-

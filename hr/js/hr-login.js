@@ -2,16 +2,38 @@
 
 // Demo credentials (in production, use Firebase Authentication)
 const DEMO_CREDENTIALS = {
-    hr: {
-        username: 'hr_admin',
-        password: 'hr123',
-        code: 'FVC2025'
-    },
-    admin: {
+    hr: [
+        {
+            username: 'hr_admin',
+            password: 'hr123',
+            code: 'FVC2025'
+        },
+        {
+            username: 'recruiter',
+            password: 'rec123',
+            code: 'FVC2025'
+        },
+        {
+            username: 'hiring_manager',
+            password: 'hm123',
+            code: 'FVC2025'
+        },
+        {
+            username: 'talent_scout',
+            password: 'ts123',
+            code: 'FVC2025'
+        }
+    ],
+    admin: [{
         username: 'admin',
         password: 'admin123',
         code: 'ADMIN2025'
-    }
+    }],
+    manager: [{
+        username: 'manager_demo',
+        password: 'manager123',
+        code: 'MANAGER2025'
+    }]
 };
 
 let currentRole = 'hr';
@@ -72,12 +94,17 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Validate credentials
-    const credentials = DEMO_CREDENTIALS[currentRole];
+    // Validate credentials (handle array of possible users)
+    const credentialsList = DEMO_CREDENTIALS[currentRole];
 
-    if (username === credentials.username &&
-        password === credentials.password &&
-        code === credentials.code) {
+    // Find matching credential
+    const validUser = credentialsList.find(c =>
+        c.username === username &&
+        c.password === password &&
+        c.code === code
+    );
 
+    if (validUser) {
         // Success!
         showSuccess('Login successful! Redirecting...');
 
@@ -157,14 +184,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Show demo credentials in console
     console.log('=== HR Portal Demo Credentials ===');
-    console.log('HR Role:');
-    console.log('  Username: hr_admin');
-    console.log('  Password: hr123');
-    console.log('  Code: FVC2025');
+    console.log('Internal Team (Multiple Users):');
+    console.log('  1. hr_admin / hr123 / FVC2025');
+    console.log('  2. recruiter / rec123 / FVC2025');
+    console.log('  3. hiring_manager / hm123 / FVC2025');
+    console.log('  4. talent_scout / ts123 / FVC2025');
     console.log('');
     console.log('Admin Role:');
     console.log('  Username: admin');
     console.log('  Password: admin123');
     console.log('  Code: ADMIN2025');
+    console.log('');
+    console.log('Manager Role:');
+    console.log('  Username: manager_demo');
+    console.log('  Password: manager123');
+    console.log('  Code: MANAGER2025');
     console.log('================================');
 });

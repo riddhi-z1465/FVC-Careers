@@ -575,7 +575,7 @@ body {
 .discussion-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
   font-family: "Manrope", sans-serif;
 }
 
@@ -702,7 +702,13 @@ body {
   color: #676767;
 }
 
-.discussion-item.active .discussion-subtitle {
+.discussion-count {
+  font-size: 12px;
+  color: #676767;
+}
+
+.discussion-item.active .discussion-subtitle,
+.discussion-item.active .discussion-count {
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -792,6 +798,8 @@ body {
 
 /* Specific overrides for Internal Team list to keep it as-is if needed, or it shares base styles */
 /* The base .discussion-item will handle the Internal Team row layout if we didn't add candidate-layout class there */
+
+
 .chat-modal {
   position: fixed;
   right: 340px;
@@ -802,6 +810,7 @@ body {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   display: none;
+  /* Ensure hidden by default, .show toggles flex */
   flex-direction: column;
   overflow: hidden;
   border: 1px solid #e5e5e5;
@@ -833,7 +842,6 @@ body {
 .chat-header-icon {
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .chat-header .close-btn {
@@ -859,7 +867,6 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   color: #b0b0b0;
   text-align: center;
@@ -884,83 +891,158 @@ body {
   color: #888;
 }
 
-/* Message Styles */
+/* Message Styles - Clean/Slack-like */
 .message {
   display: flex;
   flex-direction: column;
-  max-width: 85%;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 24px;
+  animation: fadeIn 0.3s ease;
 }
 
-.message-received {
-  align-self: flex-start;
+@keyframes fadeIn {
+  from {
+    transform: translateY(10px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
+.message-received,
 .message-sent {
-  align-self: flex-end;
-  align-items: flex-end;
+  align-self: flex-start;
+  align-items: flex-start;
 }
 
-.message-bubble {
-  padding: 16px;
-  border-radius: 12px;
-  position: relative;
-}
-
-.message-received .message-bubble {
-  background: #f5f5f5;
-  border-bottom-left-radius: 4px;
-}
-
-.message-sent .message-bubble {
-  background: #ffc5c5;
-  /* Pinkish color from image */
-  border-bottom-right-radius: 4px;
-}
-
-.sender-label {
-  font-size: 11px;
-  color: #888;
-  margin-bottom: 4px;
-  margin-right: 4px;
-}
-
-.message-header-inside {
+.message-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
-.message-avatar-small {
-  width: 28px;
-  height: 28px;
+.message-avatar {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid #eee;
 }
 
-.message-avatar-small img {
+.message-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.message-sender-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #2d3436;
+.message-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
 }
 
-.message-separator {
-  height: 1px;
-  background: #e0e0e0;
-  margin-bottom: 12px;
-  width: 100%;
+.message-content {
+  padding-left: 48px;
+  /* Align with text start (36px avatar + 12px gap) */
+  font-size: 15px;
+  color: #1a1a1a;
+  line-height: 1.6;
 }
 
-.message-text {
+/* Remove old bubble styles */
+.message-bubble {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+/* Specialized Message Cards (Interview, Assessment) */
+.interview-msg,
+.assessment-msg {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  /* Wider padding */
+  max-width: 320px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.msg-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.msg-header-row .icon {
+  font-size: 18px;
+}
+
+.msg-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1a1a1a;
+}
+
+.interview-msg .msg-title {
+  color: #2563eb;
+  /* Blue for Interview */
+}
+
+.assessment-msg .msg-title {
+  color: #e11d48;
+  /* Pink/Red for Assessment */
+}
+
+.msg-row {
   font-size: 14px;
-  color: #2d3436;
-  line-height: 1.5;
+  color: #4b5563;
+  display: flex;
+  gap: 6px;
+}
+
+.msg-row strong {
+  font-weight: 600;
+  color: #111827;
+  min-width: 40px;
+}
+
+.msg-row a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.msg-row a:hover {
+  text-decoration: underline;
+}
+
+.assessment-msg .msg-row a {
+  color: #e11d48;
+}
+
+.msg-note {
+  font-size: 13px;
+  font-style: italic;
+  color: #6b7280;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed #eee;
+}
+
+/* Override for simple text messages to just be text */
+.message-content p {
+  margin: 0;
 }
 
 /* Chat Input Area */
@@ -1164,17 +1246,17 @@ body {
 /* Job Management Popup */
 .job-popup-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
   display: none;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .job-popup-overlay.show {
   display: block;
+  opacity: 1;
 }
 
 .job-popup {
@@ -1242,15 +1324,47 @@ body {
   transition: all 0.3s;
 }
 
+
 .delete-job-btn:hover {
   background: #ffb3b3;
+}
+
+.archive-job-btn {
+  width: 36px;
+  height: 36px;
+  background: #f1f2f6;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #636e72;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archive-job-btn:hover {
+  background: #dfe4ea;
+  color: #2d3436;
+}
+
+/* Single Page Scroll Container */
+.job-popup-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .job-popup-about {
   padding: 24px 32px;
   border-bottom: 1px solid #e5e5e5;
-  max-height: 200px;
-  overflow-y: auto;
+  /* Remove max-height and overflow to allow natural flow */
+  max-height: none;
+  overflow: visible;
+  flex-shrink: 0;
 }
 
 .job-popup-about h3 {
@@ -1271,15 +1385,15 @@ body {
 
 .job-popup-applicants {
   padding: 24px 32px;
-  flex: 1;
-  overflow-y: auto;
+  /* Remove flex: 1 and overflow to allow natural flow */
+  flex: none;
+  overflow: visible;
 }
 
 .job-popup-applicants h3 {
   font-size: 18px;
   font-weight: 600;
   color: #2d3436;
-  margin-bottom: 24px;
 }
 
 .applicants-grid {
@@ -1613,6 +1727,7 @@ body {
   display: none;
   opacity: 0;
   transition: all 0.3s;
+
 }
 
 .create-job-popup.show {
@@ -2047,4 +2162,208 @@ body.no-scroll {
   .chat-input .send-btn {
     align-self: flex-end;
   }
+}
+
+/* Interview Popup */
+.interview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  display: none;
+}
+
+.interview-overlay.show {
+  display: block;
+}
+
+.interview-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90%;
+  max-width: 500px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1002;
+  display: none;
+  opacity: 0;
+  transition: all 0.3s;
+  padding: 0;
+  overflow: hidden;
+}
+
+.interview-popup.show {
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.interview-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.interview-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.interview-subtitle {
+  font-size: 14px;
+  color: #676767;
+  margin-bottom: 24px;
+}
+
+.interview-form {
+  padding: 24px 32px 32px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  padding-left: 16px;
+}
+
+@media (max-width: 600px) {
+  .interview-popup {
+    width: 95%;
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Assessment Popup */
+.assessment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  display: none;
+}
+
+.assessment-overlay.show {
+  display: block;
+}
+
+.assessment-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90%;
+  max-width: 500px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1002;
+  display: none;
+  opacity: 0;
+  transition: all 0.3s;
+  padding: 0;
+  overflow: hidden;
+}
+
+.assessment-popup.show {
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.assessment-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assessment-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.assessment-subtitle {
+  font-size: 14px;
+  color: #676767;
+  margin-bottom: 24px;
+}
+
+.assessment-form {
+  padding: 24px 32px 32px;
+}
+
+@media (max-width: 600px) {
+  .assessment-popup {
+    width: 95%;
+  }
+}
+
+/* Job Status Dot */
+.job-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.job-status-dot.active {
+  background-color: #2ecc71;
+  /* Green */
+  box-shadow: 0 0 4px rgba(46, 204, 113, 0.4);
+}
+
+.job-status-dot.past {
+  background-color: #f52b14;
+  /* Red */
+  opacity: 0.8;
+}
+
+.job-status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fcfcfc;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+}
+
+.job-status-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.job-status-text.active {
+  color: #27ae60;
+}
+
+.job-status-text.past {
+  color: #c0392b;
 }

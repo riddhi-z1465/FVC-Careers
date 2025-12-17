@@ -77,87 +77,66 @@ let currentPage = 1;
 const jobsPerPage = 10;
 
 // Fetch jobs from API or use mock data
+// Fetch jobs from API or use mock data
 async function fetchJobs() {
     console.log('🔍 fetchJobs called, USE_MOCK_DATA:', USE_MOCK_DATA);
+
+    // Load archived jobs from local storage (synced with HR portal)
+    const archivedMap = JSON.parse(localStorage.getItem('fvc_archived_jobs') || '{}');
+
+    function isJobActive(job) {
+        const id = String(job._id || job.id);
+        // Exclude if in archived map or explicitly inactive
+        if (archivedMap[id]) return false;
+        if (job.isActive === false) return false;
+        return true;
+    }
+
     try {
-        // Try to fetch from Firebase first
+        let allJobs = [];
+        let fetchedFromSource = false;
+
+        // 1. Try to fetch from Firebase first
         if (typeof firebaseJobs !== 'undefined' && firebaseJobs.fetchJobs) {
             console.log('📡 Fetching jobs from Firebase...');
-
-            const result = await firebaseJobs.fetchJobs(currentFilters);
-
-            if (result.success && result.data && result.data.length > 0) {
-                console.log(`✅ Loaded ${result.data.length} jobs from Firebase`);
-
-                // Combine with Mock Data if enabled
-                let allJobs = result.data;
-                if (USE_MOCK_DATA) {
-                    console.log('➕ Merging with MOCK_JOBS');
-                    allJobs = [...result.data, ...MOCK_JOBS];
-                }
-
-                displayJobs(allJobs);
-
-                if (result.pagination) {
-                    updatePagination(result.pagination);
-                }
-                return;
-            } else {
-                console.log('⚠️ No jobs in Firebase, using mock data');
-            }
-        }
-
-        // Fallback to mock data
-        if (USE_MOCK_DATA) {
-            console.log('✅ Using MOCK_JOBS, not calling backend API');
-
-            // Get locally saved jobs (from HR dashboard)
-            let localJobs = [];
             try {
-                localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
-                console.log(`📂 Loaded ${localJobs.length} local jobs`);
+                const result = await firebaseJobs.fetchJobs(currentFilters);
+                if (result.success && result.data) {
+                    allJobs = result.data;
+                    fetchedFromSource = true;
+                    console.log(`✅ Loaded ${result.data.length} jobs from Firebase`);
+                }
             } catch (e) {
-                console.error('Error loading local jobs:', e);
+                console.warn('Firebase fetch error:', e);
             }
-
-            // Merge local jobs with mock jobs (local jobs first)
-            displayJobs([...localJobs, ...MOCK_JOBS]);
-            return;
         }
 
-        // Build query parameters for backend API
-        const params = new URLSearchParams();
-
-        if (currentFilters.search) params.append('search', currentFilters.search);
-        if (currentFilters.location) params.append('location', currentFilters.location);
-
-        currentFilters.experience.forEach(exp => params.append('experience', exp));
-        currentFilters.jobType.forEach(type => params.append('jobType', type));
-        currentFilters.qualifications.forEach(qual => params.append('qualifications', qual));
-        currentFilters.skills.forEach(skill => params.append('skills', skill));
-
-        params.append('page', currentPage);
-        params.append('limit', jobsPerPage);
-
-        const response = await fetch(`${API_BASE_URL}/jobs?${params}`);
-
-        if (!response.ok) {
-            throw new Error('Backend not available');
+        // 2. Fallback or Merge Mock Data
+        if (!fetchedFromSource || USE_MOCK_DATA) {
+            if (USE_MOCK_DATA) {
+                console.log('➕ Merging with MOCK_JOBS');
+                allJobs = [...allJobs, ...MOCK_JOBS];
+            } else if (!fetchedFromSource) {
+                // Fully fallback if firebase failed
+                console.log('Using local/mock fallback');
+                let localJobs = [];
+                try {
+                    localJobs = JSON.parse(localStorage.getItem('fvc_jobs_local_storage') || '[]');
+                } catch (e) { }
+                allJobs = [...localJobs, ...MOCK_JOBS];
+            }
         }
 
-        const data = await response.json();
+        // 3. Filter out archived and inactive jobs
+        const activeJobs = allJobs.filter(isJobActive);
 
-        if (data.success) {
-            displayJobs(data.data);
-            updatePagination(data.pagination);
-        } else {
-            console.error('Error fetching jobs:', data.error);
-            showError('Failed to load jobs. Please try again later.');
-            displayJobs([]);
-        }
+        console.log(`🔎 Filtering: Total ${allJobs.length} -> Active ${activeJobs.length}`);
+
+        displayJobs(activeJobs);
+        // updatePagination(result.pagination); // Pagination might be inaccurate after client-side filtering, but acceptable for now
+
     } catch (error) {
-        console.error('Error:', error);
-        console.log('Backend not available. No jobs to display.');
+        console.error('Error in fetchJobs:', error);
         displayJobs([]);
     }
 }

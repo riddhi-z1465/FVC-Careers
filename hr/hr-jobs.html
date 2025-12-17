@@ -58,8 +58,24 @@
 
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="user-avatar-circle">
-                    <img src="../images/hr-avatar.png" alt="User">
+                <div class="user-avatar-circle" id="userAvatarContainer" onclick="openUserProfileModal()"
+                    style="cursor: pointer;">
+                    <img src="../images/hr-avatar.png" alt="User" id="userAvatar">
+                </div>
+                <!-- Admin Profile (Settings + Manage) -->
+                <div id="adminAvatarContainer" onclick="window.location.href='hr-admin-settings.html'"
+                    style="display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #2d3436;">
+                    <div
+                        style="background: #2d3436; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H15a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span style="font-size: 12px; font-weight: 600; margin-top: 4px;">Manage</span>
                 </div>
                 <button class="logout-link" onclick="logout()">
                     Logout <span class="logout-icon">
@@ -79,7 +95,7 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content full-width">
         <!-- Header -->
         <header class="page-header">
             <div class="header-top-row">
@@ -93,9 +109,9 @@
                 <h1>Jobs</h1>
             </div>
             <div class="header-tabs">
-                <button class="tab-btn active">All</button>
-                <button class="tab-btn">Active</button>
-                <button class="tab-btn">Past</button>
+                <button class="tab-btn active" onclick="setJobFilter('all')" data-filter="all">All</button>
+                <button class="tab-btn" onclick="setJobFilter('active')" data-filter="active">Active</button>
+                <button class="tab-btn" onclick="setJobFilter('past')" data-filter="past">Past</button>
             </div>
         </header>
 
@@ -105,9 +121,16 @@
                 <div class="stat-label">Active Jobs</div>
                 <div class="stat-value" id="activeJobsCount">0</div>
                 <div class="stat-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_1_1904" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                            width="60" height="60">
+                            <rect width="60" height="60" fill="#D9D9D9" />
+                        </mask>
+                        <g mask="url(#mask0_1_1904)">
+                            <path
+                                d="M12.5 47.5V12.5V23.6875V22.5V47.5ZM17.5 32.5H31.3125C31.3958 31.5833 31.6042 30.7083 31.9375 29.875C32.2708 29.0417 32.6875 28.25 33.1875 27.5H17.5V32.5ZM17.5 42.5H27.3125C28.0208 41.6667 28.8333 40.9896 29.75 40.4688C30.6667 39.9479 31.625 39.5208 32.625 39.1875C32.4583 38.9375 32.3125 38.6667 32.1875 38.375C32.0625 38.0833 31.9583 37.7917 31.875 37.5H17.5V42.5ZM17.5 22.5H42.5V17.5H17.5V22.5ZM12.5 52.5C11.125 52.5 9.94792 52.0104 8.96875 51.0312C7.98958 50.0521 7.5 48.875 7.5 47.5V12.5C7.5 11.125 7.98958 9.94792 8.96875 8.96875C9.94792 7.98958 11.125 7.5 12.5 7.5H47.5C48.875 7.5 50.0521 7.98958 51.0313 8.96875C52.0104 9.94792 52.5 11.125 52.5 12.5V28.625C51.9167 27.5417 51.2083 26.5833 50.375 25.75C49.5417 24.9167 48.5833 24.2292 47.5 23.6875V12.5H12.5V47.5H25.125C25.0833 47.75 25.0521 48 25.0313 48.25C25.0104 48.5 25 48.75 25 49V52.5H12.5ZM42.5 40C40.75 40 39.2708 39.3958 38.0625 38.1875C36.8542 36.9792 36.25 35.5 36.25 33.75C36.25 32 36.8542 30.5208 38.0625 29.3125C39.2708 28.1042 40.75 27.5 42.5 27.5C44.25 27.5 45.7292 28.1042 46.9375 29.3125C48.1458 30.5208 48.75 32 48.75 33.75C48.75 35.5 48.1458 36.9792 46.9375 38.1875C45.7292 39.3958 44.25 40 42.5 40ZM30 52.5V49C30 48 30.2604 47.0729 30.7813 46.2188C31.3021 45.3646 32.0417 44.75 33 44.375C34.5 43.75 36.0521 43.2812 37.6563 42.9688C39.2604 42.6562 40.875 42.5 42.5 42.5C44.125 42.5 45.7396 42.6562 47.3438 42.9688C48.9479 43.2812 50.5 43.75 52 44.375C52.9583 44.75 53.6979 45.3646 54.2188 46.2188C54.7396 47.0729 55 48 55 49V52.5H30Z"
+                                fill="black" fill-opacity="0.6" />
+                        </g>
                     </svg>
                 </div>
             </div>
@@ -115,8 +138,16 @@
                 <div class="stat-label">Total Applicants</div>
                 <div class="stat-value" id="totalApplicantsCount">0</div>
                 <div class="stat-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m8-10a4 4 0 100-8 4 4 0 000 8z" />
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_1_1911" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                            width="60" height="60">
+                            <rect width="60" height="60" fill="#D9D9D9" />
+                        </mask>
+                        <g mask="url(#mask0_1_1911)">
+                            <path
+                                d="M25 55.0002V37.5002H20V22.5002C20 21.1252 20.4896 19.9482 21.4688 18.969C22.4479 17.9898 23.625 17.5002 25 17.5002H35C36.375 17.5002 37.5521 17.9898 38.5312 18.969C39.5104 19.9482 40 21.1252 40 22.5002V37.5002H35V55.0002H25ZM30 15.0002C28.625 15.0002 27.4479 14.5107 26.4688 13.5315C25.4896 12.5523 25 11.3752 25 10.0002C25 8.62524 25.4896 7.44816 26.4688 6.46899C27.4479 5.48983 28.625 5.00024 30 5.00024C31.375 5.00024 32.5521 5.48983 33.5312 6.46899C34.5104 7.44816 35 8.62524 35 10.0002C35 11.3752 34.5104 12.5523 33.5312 13.5315C32.5521 14.5107 31.375 15.0002 30 15.0002Z"
+                                fill="black" fill-opacity="0.6" />
+                        </g>
                     </svg>
                 </div>
             </div>
@@ -124,9 +155,10 @@
                 <div class="stat-label">Pending Reviews</div>
                 <div class="stat-value" id="pendingReviewsCount">0</div>
                 <div class="stat-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 6v6l4 2" />
+                    <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M25 50C21.5417 50 18.2917 49.3438 15.25 48.0312C12.2083 46.7188 9.5625 44.9375 7.3125 42.6875C5.0625 40.4375 3.28125 37.7917 1.96875 34.75C0.65625 31.7083 0 28.4583 0 25C0 21.5417 0.65625 18.2917 1.96875 15.25C3.28125 12.2083 5.0625 9.5625 7.3125 7.3125C9.5625 5.0625 12.2083 3.28125 15.25 1.96875C18.2917 0.65625 21.5417 0 25 0C28.4583 0 31.7083 0.65625 34.75 1.96875C37.7917 3.28125 40.4375 5.0625 42.6875 7.3125C44.9375 9.5625 46.7188 12.2083 48.0312 15.25C49.3438 18.2917 50 21.5417 50 25C50 26.125 49.9375 27.2292 49.8125 28.3125C49.6875 29.3958 49.4792 30.4583 49.1875 31.5C48.6042 30.8333 47.9271 30.2708 47.1563 29.8125C46.3854 29.3542 45.5417 29.0417 44.625 28.875C44.75 28.25 44.8438 27.6146 44.9062 26.9688C44.9688 26.3229 45 25.6667 45 25C45 19.4167 43.0625 14.6875 39.1875 10.8125C35.3125 6.9375 30.5833 5 25 5C19.4167 5 14.6875 6.9375 10.8125 10.8125C6.9375 14.6875 5 19.4167 5 25C5 30.5833 6.9375 35.3125 10.8125 39.1875C14.6875 43.0625 19.4167 45 25 45C27.125 45 29.1562 44.6875 31.0938 44.0625C33.0312 43.4375 34.8125 42.5625 36.4375 41.4375C36.9375 42.1458 37.5521 42.7708 38.2812 43.3125C39.0104 43.8542 39.7917 44.2708 40.625 44.5625C38.5 46.2708 36.1146 47.6042 33.4688 48.5625C30.8229 49.5208 28 50 25 50ZM43.125 40C42.25 40 41.5104 39.6979 40.9063 39.0938C40.3021 38.4896 40 37.75 40 36.875C40 36 40.3021 35.2604 40.9063 34.6562C41.5104 34.0521 42.25 33.75 43.125 33.75C44 33.75 44.7396 34.0521 45.3438 34.6562C45.9479 35.2604 46.25 36 46.25 36.875C46.25 37.75 45.9479 38.4896 45.3438 39.0938C44.7396 39.6979 44 40 43.125 40ZM33.25 36.75L22.5 26V12.5H27.5V24L36.75 33.25L33.25 36.75Z"
+                            fill="black" fill-opacity="0.6" />
                     </svg>
                 </div>
             </div>
@@ -134,9 +166,10 @@
                 <div class="stat-label">Past Jobs</div>
                 <div class="stat-value" id="pastJobsCount">0</div>
                 <div class="stat-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 6v6l4 2" />
+                    <svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22.5 45C16.75 45 11.7396 43.0938 7.46875 39.2812C3.19792 35.4688 0.75 30.7083 0.125 25H5.25C5.83333 29.3333 7.76042 32.9167 11.0312 35.75C14.3021 38.5833 18.125 40 22.5 40C27.375 40 31.5104 38.3021 34.9062 34.9062C38.3021 31.5104 40 27.375 40 22.5C40 17.625 38.3021 13.4896 34.9062 10.0938C31.5104 6.69792 27.375 5 22.5 5C19.625 5 16.9375 5.66667 14.4375 7C11.9375 8.33333 9.83333 10.1667 8.125 12.5H15V17.5H0V2.5H5V8.375C7.125 5.70833 9.71875 3.64583 12.7812 2.1875C15.8438 0.729167 19.0833 0 22.5 0C25.625 0 28.5521 0.59375 31.2812 1.78125C34.0104 2.96875 36.3854 4.57292 38.4062 6.59375C40.4271 8.61458 42.0312 10.9896 43.2188 13.7188C44.4062 16.4479 45 19.375 45 22.5C45 25.625 44.4062 28.5521 43.2188 31.2812C42.0312 34.0104 40.4271 36.3854 38.4062 38.4062C36.3854 40.4271 34.0104 42.0312 31.2812 43.2188C28.5521 44.4062 25.625 45 22.5 45ZM29.5 33L20 23.5V10H25V21.5L33 29.5L29.5 33Z"
+                            fill="black" fill-opacity="0.6" />
                     </svg>
                 </div>
             </div>
@@ -153,7 +186,8 @@
         <div class="discussion-header">
             <h3>Discussions</h3>
             <div class="discussion-actions">
-                <button class="icon-btn danger" title="Clear local chats" onclick="clearLocalChats()">
+                <button class="icon-btn danger" id="clearChatsBtn" title="Clear local chats"
+                    onclick="clearLocalChats()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2">
                         </path>
@@ -251,10 +285,13 @@
                         </svg>
                         Remote
                     </span>
-                    <button class="delete-job-btn" onclick="deleteCurrentJob()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <button class="archive-job-btn" id="archiveJobBtn" onclick="archiveCurrentJob()"
+                        title="Archive Job">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
-                            <path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                            <rect x="1" y="3" width="22" height="5"></rect>
+                            <line x1="10" y1="12" x2="14" y2="12"></line>
                         </svg>
                     </button>
                 </div>
@@ -262,18 +299,20 @@
             <button class="close-btn" onclick="closeJobPopup()">×</button>
         </div>
 
-        <div class="job-popup-about">
-            <h3>About</h3>
-            <p id="popupDescription">A Quality Assurance Intern supports testing activities by executing test cases,
-                identifying defects, documenting results, and assisting the QA team in ensuring the product meets
-                quality and performance standards.</p>
-        </div>
+        <div class="job-popup-scroll-container">
+            <div class="job-popup-about">
+                <h3>About</h3>
+                <p id="popupDescription">A Quality Assurance Intern supports testing activities by executing test cases,
+                    identifying defects, documenting results, and assisting the QA team in ensuring the product meets
+                    quality and performance standards.</p>
+            </div>
 
-        <div class="job-popup-applicants">
-            <h3><span id="applicantCount">6</span> Applicants</h3>
+            <div class="job-popup-applicants">
+                <h3><span id="applicantCount">6</span> Applicants</h3>
 
-            <div class="applicants-grid" id="applicantsGrid">
-                <!-- Applicants will be loaded here -->
+                <div class="applicants-grid" id="applicantsGrid">
+                    <!-- Applicants will be loaded here -->
+                </div>
             </div>
         </div>
     </div>
@@ -319,6 +358,109 @@
         </form>
     </div>
 
+    <!-- Interview Schedule Popup -->
+    <div class="interview-overlay" id="interviewOverlay" onclick="closeInterviewPopup()"></div>
+    <div class="interview-popup" id="interviewPopup">
+        <div class="interview-header">
+            <h2>Schedule Interview</h2>
+            <button class="close-btn" onclick="closeInterviewPopup()">×</button>
+        </div>
+
+        <form class="interview-form" id="interviewForm" onsubmit="handleSendInterview(event)">
+            <p class="interview-subtitle">Send an interview invitation to <span id="interviewApplicantName"
+                    style="font-weight: 600;">Candidate</span>.</p>
+
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Date <span class="required">*</span></label>
+                    <input type="date" id="interviewDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Time <span class="required">*</span></label>
+                    <input type="time" id="interviewTime" required>
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                <label>Meeting Link <span class="required">*</span></label>
+                <div class="input-with-icon">
+                    <input type="url" id="interviewLink" placeholder="https://meet.google.com/..." required>
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                <label>Message (Optional)</label>
+                <textarea id="interviewMessage" rows="3" placeholder="Add a personal note..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="closeInterviewPopup()">Cancel</button>
+                <button type="submit" class="publish-btn">Send Invitation</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Assessment Popup -->
+    <div class="assessment-overlay" id="assessmentOverlay" onclick="closeAssessmentPopup()"></div>
+    <div class="assessment-popup" id="assessmentPopup">
+        <div class="assessment-header">
+            <h2>Send Assessment</h2>
+            <button class="close-btn" onclick="closeAssessmentPopup()">×</button>
+        </div>
+
+        <form class="assessment-form" id="assessmentForm" onsubmit="handleSendAssessment(event)">
+            <p class="assessment-subtitle">Send an assessment link to <span id="assessmentApplicantName"
+                    style="font-weight: 600;">Candidate</span>.</p>
+
+            <div class="form-group-full">
+                <label>Assessment Link <span class="required">*</span></label>
+                <div class="input-with-icon">
+                    <input type="url" id="assessmentLinkInput" placeholder="https://forms.gle/..." required>
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                <label>Message (Optional)</label>
+                <textarea id="assessmentMessage" rows="3" placeholder="Add instructions..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="closeAssessmentPopup()">Cancel</button>
+                <button type="submit" class="publish-btn">Send Assessment</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="job-popup-overlay" id="userProfileOverlay" onclick="closeUserProfileModal()"></div>
+    <div class="create-job-popup" id="userProfileModal" style="height: auto; max-width: 400px;">
+        <div class="create-job-header">
+            <h2>Edit Profile Photo</h2>
+            <button class="close-btn" onclick="closeUserProfileModal()">×</button>
+        </div>
+
+        <form class="create-job-form" onsubmit="saveUserProfile(event)">
+            <div class="form-group"
+                style="display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;">
+                <div id="userProfilePreview"
+                    style="width: 100px; height: 100px; border-radius: 50%; background: #f1f3f5; margin-bottom: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #636e72; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <!-- Content via JS -->
+                </div>
+                <input type="file" id="userProfileInput" accept="image/*" style="display: none;"
+                    onchange="handleUserProfileSelect(this)">
+                <button type="button" onclick="document.getElementById('userProfileInput').click()"
+                    style="background:#f8f9fa; border:1px solid #dfe6e9; padding: 8px 16px; border-radius: 20px; color: #2d3436; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+                    Change Photo
+                </button>
+            </div>
+
+            <div class="form-actions" style="justify-content: center;">
+                <button type="button" class="cancel-btn" onclick="closeUserProfileModal()">Cancel</button>
+                <button type="submit" class="publish-btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Reject Confirmation Dialog -->
     <div class="reject-overlay" id="rejectOverlay" onclick="closeRejectDialog()"></div>
     <div class="reject-dialog" id="rejectDialog">
@@ -340,6 +482,7 @@
     <script src="../js/firebase-jobs.js?v=2"></script>
 
     <script src="./js/hr-jobs.js?v=3"></script>
+    <script src="./js/hr-user-profile.js"></script>
 </body>
 
 </html>

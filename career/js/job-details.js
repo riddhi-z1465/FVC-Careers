@@ -368,7 +368,7 @@ function formatDate(value) {
 let activeChatId = null;
 let chatUnsubscribe = null;
 const applicantName = 'Riddhi Zunjarrao'; // Hardcoded for this demo based on user screenshot
-const applicantId = 'guest-' + Math.floor(Math.random() * 10000); // Random session ID
+const applicantId = 'guest-demo-user-123'; // Fixed for persistent demo sync
 
 // Open chat
 async function openChat() {
@@ -418,17 +418,34 @@ async function openChat() {
             // 2. Fallback to Local Storage if Firebase failed or missing
             if (!firebaseSuccess) {
                 console.log('[CHAT] Using LocalStorage fallback');
-                activeChatId = `local_chat_${jobId}_${applicantId}`;
 
-                // Store metadata for HR title resolution
-                const metaKey = `local_chat_meta_${activeChatId}`;
-                localStorage.setItem(metaKey, JSON.stringify({
-                    jobTitle: title || 'Job Inquiry',
-                    jobId: jobId,
-                    applicantName: applicantName
-                }));
+                // Use a fixed ID for persistence demo or the generated one
+                const persistentId = applicantId;
 
-                // Initialize local chat history if needed
+                // IMPORTANT: Use the same key format HR expects
+                activeChatId = `fvc_candidate_chat_${persistentId}`;
+
+                // 1. Ensure this candidate appears in HR's "Candidates" list
+                try {
+                    const apps = JSON.parse(localStorage.getItem('applications') || '[]');
+                    const existing = apps.find(a => a.id === persistentId);
+                    if (!existing) {
+                        apps.push({
+                            id: persistentId,
+                            fullName: applicantName,
+                            jobId: jobId || 'general',
+                            targetRole: title || 'Applicant',
+                            photoURL: 'https://i.pravatar.cc/150?u=' + persistentId,
+                            university: 'Demo University',
+                            status: 'new',
+                            appliedAt: new Date().toISOString()
+                        });
+                        localStorage.setItem('applications', JSON.stringify(apps));
+                        console.log('[CHAT] Synced candidate to HR list:', persistentId);
+                    }
+                } catch (e) { console.error('Error syncing app:', e); }
+
+                // 2. Initialize local chat history if needed
                 const localHistory = localStorage.getItem(activeChatId);
                 if (!localHistory) {
                     localStorage.setItem(activeChatId, JSON.stringify([
@@ -492,13 +509,24 @@ function renderChatMessages(messages) {
     }
 
     chatBody.innerHTML = messages.map(msg => {
-        const isMe = msg.sender === applicantName || msg.sender === 'You'; // Simple check
+        const isMe = msg.sender === applicantName || msg.sender === 'You';
+
+        // Avatar Handling
+        let avatarHtml = '';
+        if (msg.avatar && msg.avatar.includes('http')) {
+            avatarHtml = `<img src="${msg.avatar}" class="message-avatar-img">`;
+        } else {
+            const letter = msg.sender ? msg.sender.charAt(0) : '?';
+            avatarHtml = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:#555;">${letter}</div>`;
+        }
 
         return `
             <div class="message ${isMe ? 'sent' : 'received'}">
-                <div class="message-avatar-container">
-                    ${!isMe ? `<img src="${msg.avatar || '../images/favicon-v2.png'}" class="message-avatar-img">` : ''}
-                    ${!isMe ? `<span class="message-sender-name">${msg.sender}</span>` : ''}
+                <div class="message-header">
+                    <div class="message-avatar-container">
+                        ${avatarHtml}
+                    </div>
+                    <div class="message-sender-name">${msg.sender}</div>
                 </div>
                 <div class="message-bubble">
                     ${msg.content}
